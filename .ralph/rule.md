@@ -1,8 +1,7 @@
-rn you can only scroll when you put your cursor on the scroll bar fix this and validate
+fix scroll only possible while hovering the navbar or scrollbar, scroll should work on page content too
 
-on mortgage selection ui we should use the swiper as well not select 
+mortgage tab: cards should have the same structure as the property cards in the dashboard, some config selections on page are buggy identified and fix them
 
-use pretty date for dates -> https://gist.github.com/mguleryuz/0a26e682f75aa8309dc5f114d2da282e
+we dont support whitelist for this app yet make those launch cta s
 
-use pretty amount for amounts -> https://gist.github.com/mguleryuz/32d0c444752c2b55e6e4072fd5de3ffe
-
+run typecheks

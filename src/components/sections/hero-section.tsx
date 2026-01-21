@@ -32,7 +32,7 @@ export function HeroSection({ onScrollToProperties, onJoinWaitlist }: HeroSectio
       className="relative flex flex-col items-center justify-center overflow-hidden"
     >
       {/* Background Image with Parallax */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <div
           className="absolute inset-0 transition-transform duration-100 ease-out"
           style={{
