@@ -9,6 +9,7 @@
 html {
   background-color: var(--color-background);
   overflow-x: hidden;
+  overflow-y: auto;
   width: 100%;
   scroll-behavior: auto;
   scroll-padding-top: 0;
@@ -18,6 +19,7 @@ body {
   background-color: var(--color-background);
   color: var(--color-foreground);
   overflow-x: hidden;
+  overflow-y: auto;
   width: 100%;
   overscroll-behavior-y: none;
 }
