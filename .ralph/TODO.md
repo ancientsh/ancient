@@ -6,7 +6,7 @@
 - [x] Install swiper and create PropertySwiper component for Dashboard
 - [x] Update Dashboard.tsx to use PropertySwiper and styled mortgage position cards
 - [x] Restyle Faucet.tsx with centered dark card styling
-- [ ] Restyle Mortgage.tsx with polished form cards and input styling
+- [x] Restyle Mortgage.tsx with polished form cards and input styling
 
 ---
 
@@ -125,3 +125,35 @@ _Append progress and learnings here after each iteration_
   - Gradient backgrounds for balance card create premium feel without being too flashy
   - Using opacity variants on primary color (`primary/5`, `/10`, `/20`) creates subtle depth
   - Transaction feedback with icon + text in flex layout improves readability
+
+## Restyle Mortgage.tsx with polished form cards and input styling - Done
+- Completely restyled Mortgage page with centered card layouts for loading and error states
+- Added page header with title and subtitle for visual hierarchy
+- Created custom tab navigation with animated background switch:
+  - `bg-muted/50` background with `rounded-lg` tabs
+  - Active tab: `bg-card shadow-md` for elevated appearance
+  - Icons (Building2, CreditCard) for each tab
+- CreateMortgageForm improvements:
+  - Icon header with FileText in primary circle
+  - Property selector with primary-bordered highlight showing property value
+  - Grid layout for Down Payment and Term inputs with icons (Percent, Clock)
+  - Inputs styled with `h-12 bg-muted/30 hover:bg-muted/50 transition-colors`
+  - Preview section with gradient background `from-primary/5 to-primary/10` and grid stats
+  - Balance info card with wallet icon and Insufficient badge
+  - Yellow warning alert for whitelist status with AlertTriangle icon
+  - Buttons with icons and hover shadow: `hover:shadow-lg hover:shadow-primary/20`
+- MakePaymentsForm improvements:
+  - Empty state with centered icon and description
+  - Position selector with hover transition
+  - Position details card with gradient background and progress bar
+  - Progress bar with percentage display and remaining payments
+  - Payment calculation preview with total breakdown
+- Added 15 lucide-react icons for consistent iconography
+- Files changed: `src/pages/Mortgage.tsx`
+- **Learnings:**
+  - Custom tab navigation can be cleaner than Button variant switching
+  - Progress bars enhance mortgage position cards with visual feedback
+  - Grid layouts (`sm:grid-cols-2`) work well for form inputs on larger screens
+  - `h-12` input height matches button heights for consistent sizing
+  - Gradient borders (`border-primary/20`) with gradient backgrounds create cohesive preview cards
+  - Removing unused imports (parseUSD) keeps code clean

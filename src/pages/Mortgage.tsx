@@ -22,7 +22,6 @@ import {
 import {
   useWeb3,
   formatUSD,
-  parseUSD,
   formatBps,
   parseBps,
   PropertyOracleAbi,
@@ -32,6 +31,22 @@ import {
   getContractAddresses,
   anvilChain,
 } from "../contracts";
+import {
+  Building2,
+  Calculator,
+  CreditCard,
+  Wallet,
+  RefreshCw,
+  AlertCircle,
+  CheckCircle2,
+  TrendingUp,
+  DollarSign,
+  Clock,
+  Percent,
+  AlertTriangle,
+  FileText,
+  Banknote,
+} from "lucide-react";
 
 interface Property {
   id: number;
@@ -61,57 +76,93 @@ interface Position {
 }
 
 export function Mortgage() {
-  const { isConnected, isConnecting, error, address, publicClient, walletClient, account } = useWeb3();
+  const { isConnected, isConnecting, error } = useWeb3();
   const [activeTab, setActiveTab] = useState<"create" | "pay">("create");
 
   if (isConnecting) {
     return (
-      <div className="text-center py-12">
-        <p className="text-muted-foreground">Connecting to local chain...</p>
+      <div className="min-h-[60vh] flex items-center justify-center px-4">
+        <Card className="w-full max-w-md shadow-xl border-border/50">
+          <CardHeader className="text-center space-y-4 pb-2">
+            <div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+              <RefreshCw className="w-8 h-8 text-primary animate-spin" />
+            </div>
+            <div>
+              <CardTitle className="text-2xl">Mortgage Portal</CardTitle>
+              <CardDescription className="mt-2">Connecting to local chain...</CardDescription>
+            </div>
+          </CardHeader>
+        </Card>
       </div>
     );
   }
 
   if (error || !isConnected) {
     return (
-      <Card className="max-w-md mx-auto">
-        <CardHeader>
-          <CardTitle>Mortgage</CardTitle>
-          <CardDescription className="text-destructive">
-            {error || "Not connected to local chain. Make sure Anvil is running."}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground mb-4">
-            Start Anvil with: <code className="bg-muted px-2 py-1 rounded">anvil</code>
-          </p>
-          <p className="text-sm text-muted-foreground">
-            Deploy contracts with:
-          </p>
-          <code className="block bg-muted px-2 py-1 rounded text-xs mt-1">
-            forge script script/Deploy.s.sol --rpc-url http://localhost:8545 --broadcast
-          </code>
-        </CardContent>
-      </Card>
+      <div className="min-h-[60vh] flex items-center justify-center px-4">
+        <Card className="w-full max-w-md shadow-xl border-border/50">
+          <CardHeader className="text-center space-y-4 pb-2">
+            <div className="mx-auto w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center">
+              <AlertCircle className="w-8 h-8 text-destructive" />
+            </div>
+            <div>
+              <CardTitle className="text-2xl">Mortgage Portal</CardTitle>
+              <CardDescription className="text-destructive mt-2">
+                {error || "Not connected to local chain. Make sure Anvil is running."}
+              </CardDescription>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="rounded-lg bg-muted/50 p-4 space-y-3">
+              <p className="text-sm text-muted-foreground">Start Anvil with:</p>
+              <code className="block bg-background px-3 py-2 rounded-md text-sm font-mono border border-border">
+                anvil
+              </code>
+            </div>
+            <div className="rounded-lg bg-muted/50 p-4 space-y-3">
+              <p className="text-sm text-muted-foreground">Deploy contracts with:</p>
+              <code className="block bg-background px-3 py-2 rounded-md text-xs font-mono border border-border break-all">
+                forge script script/Deploy.s.sol --rpc-url http://localhost:8545 --broadcast
+              </code>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <div className="max-w-3xl mx-auto space-y-8 px-4 py-8">
+      {/* Header */}
+      <div className="text-center space-y-2">
+        <h1 className="text-3xl font-bold">Mortgage Portal</h1>
+        <p className="text-muted-foreground">Create new mortgages or make payments on existing positions</p>
+      </div>
+
       {/* Tab navigation */}
-      <div className="flex gap-2">
-        <Button
-          variant={activeTab === "create" ? "default" : "outline"}
+      <div className="flex gap-2 p-1 bg-muted/50 rounded-lg">
+        <button
           onClick={() => setActiveTab("create")}
+          className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-md text-sm font-medium transition-all ${
+            activeTab === "create"
+              ? "bg-card text-foreground shadow-md"
+              : "text-muted-foreground hover:text-foreground hover:bg-card/50"
+          }`}
         >
+          <Building2 className="w-4 h-4" />
           Create Mortgage
-        </Button>
-        <Button
-          variant={activeTab === "pay" ? "default" : "outline"}
+        </button>
+        <button
           onClick={() => setActiveTab("pay")}
+          className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-md text-sm font-medium transition-all ${
+            activeTab === "pay"
+              ? "bg-card text-foreground shadow-md"
+              : "text-muted-foreground hover:text-foreground hover:bg-card/50"
+          }`}
         >
+          <CreditCard className="w-4 h-4" />
           Make Payments
-        </Button>
+        </button>
       </div>
 
       {activeTab === "create" && <CreateMortgageForm />}
@@ -309,26 +360,41 @@ function CreateMortgageForm() {
   const insufficientBalance = !!(preview && balance !== null && balance < preview.downPayment);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Create New Mortgage</CardTitle>
-        <CardDescription>Select a property and configure your mortgage terms</CardDescription>
+    <Card className="shadow-xl border-border/50 transition-shadow hover:shadow-2xl">
+      <CardHeader className="space-y-4 pb-2">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+            <FileText className="w-6 h-6 text-primary" />
+          </div>
+          <div>
+            <CardTitle className="text-xl">Create New Mortgage</CardTitle>
+            <CardDescription>Select a property and configure your mortgage terms</CardDescription>
+          </div>
+        </div>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-6 pt-4">
         {/* Whitelist check */}
         {isWhitelisted === false && (
-          <div className="bg-yellow-50 dark:bg-yellow-950/30 text-yellow-800 dark:text-yellow-200 px-4 py-3 rounded">
-            <p className="font-medium">Not Whitelisted</p>
-            <p className="text-sm">You must be whitelisted to create mortgages. Contact an admin.</p>
+          <div className="rounded-lg border border-yellow-500/50 bg-yellow-500/10 p-4">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="w-5 h-5 text-yellow-500 shrink-0 mt-0.5" />
+              <div className="space-y-1">
+                <p className="font-semibold text-yellow-500">Not Whitelisted</p>
+                <p className="text-sm text-muted-foreground">You must be whitelisted to create mortgages. Contact an admin.</p>
+              </div>
+            </div>
           </div>
         )}
 
         {/* Property selection */}
-        <div className="space-y-2">
-          <Label>Property</Label>
+        <div className="space-y-3">
+          <Label className="flex items-center gap-2 text-sm font-medium">
+            <Building2 className="w-4 h-4 text-muted-foreground" />
+            Select Property
+          </Label>
           <Select value={selectedPropertyId} onValueChange={setSelectedPropertyId}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select a property" />
+            <SelectTrigger className="h-12 bg-muted/30 border-border hover:bg-muted/50 transition-colors">
+              <SelectValue placeholder="Choose a property to finance" />
             </SelectTrigger>
             <SelectContent>
               {properties.map((prop) => (
@@ -339,103 +405,191 @@ function CreateMortgageForm() {
             </SelectContent>
           </Select>
           {selectedProperty && (
-            <p className="text-sm text-muted-foreground">
-              Value: ${formatUSD(selectedProperty.currentValuation)}
-            </p>
+            <div className="rounded-lg bg-primary/5 border border-primary/20 p-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Property Value</span>
+                <span className="font-semibold text-primary">${formatUSD(selectedProperty.currentValuation)}</span>
+              </div>
+            </div>
           )}
         </div>
 
-        {/* Down payment */}
-        <div className="space-y-2">
-          <Label>Down Payment (%)</Label>
-          <Input
-            type="number"
-            min="20"
-            max="80"
-            value={downPaymentPercent}
-            onChange={(e) => setDownPaymentPercent(e.target.value)}
-          />
-          <p className="text-xs text-muted-foreground">Minimum 20%</p>
-        </div>
+        {/* Down payment and Term in grid */}
+        <div className="grid sm:grid-cols-2 gap-4">
+          {/* Down payment */}
+          <div className="space-y-3">
+            <Label className="flex items-center gap-2 text-sm font-medium">
+              <Percent className="w-4 h-4 text-muted-foreground" />
+              Down Payment
+            </Label>
+            <div className="relative">
+              <Input
+                type="number"
+                min="20"
+                max="80"
+                value={downPaymentPercent}
+                onChange={(e) => setDownPaymentPercent(e.target.value)}
+                className="h-12 bg-muted/30 border-border pr-8 hover:bg-muted/50 transition-colors"
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">%</span>
+            </div>
+            <p className="text-xs text-muted-foreground">Minimum 20%</p>
+          </div>
 
-        {/* Term */}
-        <div className="space-y-2">
-          <Label>Term (Periods)</Label>
-          <Select value={termPeriods} onValueChange={setTermPeriods}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {[10, 15, 20, 25, 30].map((t) => (
-                <SelectItem key={t} value={t.toString()}>
-                  {t} periods
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <p className="text-xs text-muted-foreground">1 period = 1 minute (MVP testing)</p>
+          {/* Term */}
+          <div className="space-y-3">
+            <Label className="flex items-center gap-2 text-sm font-medium">
+              <Clock className="w-4 h-4 text-muted-foreground" />
+              Term Length
+            </Label>
+            <Select value={termPeriods} onValueChange={setTermPeriods}>
+              <SelectTrigger className="h-12 bg-muted/30 border-border hover:bg-muted/50 transition-colors">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {[10, 15, 20, 25, 30].map((t) => (
+                  <SelectItem key={t} value={t.toString()}>
+                    {t} periods
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">1 period = 1 minute (MVP testing)</p>
+          </div>
         </div>
 
         {/* Preview */}
         {preview && (
-          <div className="bg-muted/50 rounded-lg p-4 space-y-2">
-            <h4 className="font-semibold">Mortgage Preview</h4>
-            <div className="grid grid-cols-2 gap-2 text-sm">
-              <span className="text-muted-foreground">Down Payment:</span>
-              <span className="font-medium">${formatUSD(preview.downPayment)}</span>
-              <span className="text-muted-foreground">Loan Principal:</span>
-              <span className="font-medium">${formatUSD(preview.principal)}</span>
-              <span className="text-muted-foreground">Interest Rate:</span>
-              <span className="font-medium">{formatBps(preview.rateBps)}</span>
-              <span className="text-muted-foreground">Payment/Period:</span>
-              <span className="font-medium">${formatUSD(preview.paymentPerPeriod)}</span>
-              <span className="text-muted-foreground">Total Payment:</span>
-              <span className="font-medium">${formatUSD(preview.totalPayment)}</span>
-              <span className="text-muted-foreground">Total Interest:</span>
-              <span className="font-medium">${formatUSD(preview.totalInterest)}</span>
+          <div className="rounded-lg bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20 p-5 space-y-4">
+            <div className="flex items-center gap-2 text-sm font-semibold">
+              <Calculator className="w-4 h-4 text-primary" />
+              Mortgage Preview
+            </div>
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <div className="text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                  <DollarSign className="w-3 h-3" />
+                  Down Payment
+                </div>
+                <div className="text-xl font-bold text-primary">${formatUSD(preview.downPayment)}</div>
+              </div>
+              <div className="space-y-1">
+                <div className="text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                  <Banknote className="w-3 h-3" />
+                  Loan Principal
+                </div>
+                <div className="text-xl font-bold">${formatUSD(preview.principal)}</div>
+              </div>
+              <div className="space-y-1">
+                <div className="text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                  <Percent className="w-3 h-3" />
+                  Interest Rate
+                </div>
+                <div className="text-lg font-semibold">{formatBps(preview.rateBps)}</div>
+              </div>
+              <div className="space-y-1">
+                <div className="text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                  <Clock className="w-3 h-3" />
+                  Payment/Period
+                </div>
+                <div className="text-lg font-semibold">${formatUSD(preview.paymentPerPeriod)}</div>
+              </div>
+            </div>
+            <div className="pt-3 border-t border-primary/20 grid sm:grid-cols-2 gap-4">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Total Payment</span>
+                <span className="font-semibold">${formatUSD(preview.totalPayment)}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Total Interest</span>
+                <span className="font-semibold text-primary">${formatUSD(preview.totalInterest)}</span>
+              </div>
             </div>
           </div>
         )}
 
         {/* Balance info */}
         {balance !== null && (
-          <div className="text-sm">
-            <span className="text-muted-foreground">Your Balance: </span>
-            <span className={insufficientBalance ? "text-red-600 font-medium" : ""}>
-              ${formatUSD(balance)} mUSD
-            </span>
-            {insufficientBalance && (
-              <span className="text-red-600 ml-2">(Need more tokens - use Faucet)</span>
-            )}
+          <div className="rounded-lg bg-muted/50 p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Wallet className="w-4 h-4" />
+                Your Balance
+              </div>
+              <div className="flex items-center gap-2">
+                <span className={`font-semibold ${insufficientBalance ? "text-red-500" : "text-foreground"}`}>
+                  ${formatUSD(balance)} mUSD
+                </span>
+                {insufficientBalance && (
+                  <span className="text-xs text-red-500 bg-red-500/10 px-2 py-0.5 rounded">Insufficient</span>
+                )}
+              </div>
+            </div>
           </div>
         )}
 
         {/* Transaction status */}
         {txHash && (
-          <div className="text-sm text-green-600 bg-green-50 dark:bg-green-950/30 px-3 py-2 rounded">
-            <p className="font-medium">Mortgage created successfully!</p>
-            <p className="font-mono text-xs break-all mt-1">{txHash}</p>
+          <div className="rounded-lg border border-green-500/50 bg-green-500/10 p-4">
+            <div className="flex items-start gap-3">
+              <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
+              <div className="space-y-1 min-w-0">
+                <p className="font-semibold text-green-500">Mortgage created successfully!</p>
+                <p className="font-mono text-xs text-muted-foreground break-all">{txHash}</p>
+              </div>
+            </div>
           </div>
         )}
         {txError && (
-          <div className="text-sm text-red-600 bg-red-50 dark:bg-red-950/30 px-3 py-2 rounded">
-            <p className="font-medium">Transaction failed</p>
-            <p className="text-xs mt-1">{txError}</p>
+          <div className="rounded-lg border border-red-500/50 bg-red-500/10 p-4">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+              <div className="space-y-1 min-w-0">
+                <p className="font-semibold text-red-500">Transaction failed</p>
+                <p className="text-xs text-muted-foreground">{txError}</p>
+              </div>
+            </div>
           </div>
         )}
       </CardContent>
-      <CardFooter className="flex gap-2">
+      <CardFooter className="flex gap-3 pt-4 border-t border-border/50">
         {needsApproval && (
-          <Button onClick={approveTokens} disabled={isApproving || !isWhitelisted} variant="outline">
-            {isApproving ? "Approving..." : "Approve Tokens"}
+          <Button
+            onClick={approveTokens}
+            disabled={isApproving || !isWhitelisted}
+            variant="outline"
+            className="h-12 px-6 hover:shadow-md transition-all"
+          >
+            {isApproving ? (
+              <>
+                <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                Approving...
+              </>
+            ) : (
+              <>
+                <CheckCircle2 className="mr-2 h-4 w-4" />
+                Approve Tokens
+              </>
+            )}
           </Button>
         )}
         <Button
           onClick={createMortgage}
           disabled={isLoading || !preview || isWhitelisted !== true || insufficientBalance === true || needsApproval}
-          className="flex-1"
+          className="flex-1 h-12 text-base font-semibold transition-all hover:shadow-lg hover:shadow-primary/20"
+          size="lg"
         >
-          {isLoading ? "Creating..." : "Create Mortgage"}
+          {isLoading ? (
+            <>
+              <RefreshCw className="mr-2 h-5 w-5 animate-spin" />
+              Creating Mortgage...
+            </>
+          ) : (
+            <>
+              <Building2 className="mr-2 h-5 w-5" />
+              Create Mortgage
+            </>
+          )}
         </Button>
       </CardFooter>
     </Card>
@@ -593,26 +747,47 @@ function MakePaymentsForm() {
     }
   };
 
+  // Calculate progress percentage
+  const progressPercent = selectedPosition
+    ? Number(selectedPosition.paymentsCompleted) / Number(selectedPosition.termPeriods) * 100
+    : 0;
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Make Payments</CardTitle>
-        <CardDescription>Pay down your mortgage positions</CardDescription>
+    <Card className="shadow-xl border-border/50 transition-shadow hover:shadow-2xl">
+      <CardHeader className="space-y-4 pb-2">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+            <CreditCard className="w-6 h-6 text-primary" />
+          </div>
+          <div>
+            <CardTitle className="text-xl">Make Payments</CardTitle>
+            <CardDescription>Pay down your mortgage positions</CardDescription>
+          </div>
+        </div>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-6 pt-4">
         {positions.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground">
-            <p>You don't have any active mortgage positions.</p>
-            <p className="text-sm mt-2">Create a mortgage first.</p>
+          <div className="text-center py-12 space-y-4">
+            <div className="mx-auto w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center">
+              <FileText className="w-8 h-8 text-muted-foreground" />
+            </div>
+            <div className="space-y-2">
+              <p className="text-muted-foreground font-medium">No Active Positions</p>
+              <p className="text-sm text-muted-foreground">You don't have any active mortgage positions yet.</p>
+              <p className="text-sm text-muted-foreground">Create a mortgage to get started.</p>
+            </div>
           </div>
         ) : (
           <>
             {/* Position selection */}
-            <div className="space-y-2">
-              <Label>Mortgage Position</Label>
+            <div className="space-y-3">
+              <Label className="flex items-center gap-2 text-sm font-medium">
+                <FileText className="w-4 h-4 text-muted-foreground" />
+                Select Position
+              </Label>
               <Select value={selectedPositionId} onValueChange={setSelectedPositionId}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a position" />
+                <SelectTrigger className="h-12 bg-muted/30 border-border hover:bg-muted/50 transition-colors">
+                  <SelectValue placeholder="Choose a mortgage position" />
                 </SelectTrigger>
                 <SelectContent>
                   {positions.map((pos) => (
@@ -626,83 +801,177 @@ function MakePaymentsForm() {
 
             {/* Position details */}
             {selectedPosition && (
-              <div className="bg-muted/50 rounded-lg p-4 space-y-2">
-                <h4 className="font-semibold">Position Details</h4>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <span className="text-muted-foreground">Principal:</span>
-                  <span className="font-medium">${formatUSD(selectedPosition.principal)}</span>
-                  <span className="text-muted-foreground">Remaining:</span>
-                  <span className="font-medium">${formatUSD(selectedPosition.remainingPrincipal)}</span>
-                  <span className="text-muted-foreground">Payment Amount:</span>
-                  <span className="font-medium">${formatUSD(selectedPosition.paymentPerPeriod)}</span>
-                  <span className="text-muted-foreground">Progress:</span>
-                  <span className="font-medium">
-                    {Number(selectedPosition.paymentsCompleted)}/{Number(selectedPosition.termPeriods)} payments
+              <div className="rounded-lg bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20 p-5 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-sm font-semibold">
+                    <TrendingUp className="w-4 h-4 text-primary" />
+                    Position Details
+                  </div>
+                  <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full font-medium">
+                    #{selectedPosition.tokenId}
                   </span>
+                </div>
+
+                {/* Progress bar */}
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Progress</span>
+                    <span className="font-medium">
+                      {Number(selectedPosition.paymentsCompleted)}/{Number(selectedPosition.termPeriods)} payments
+                    </span>
+                  </div>
+                  <div className="h-2 bg-muted rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-primary to-primary/80 rounded-full transition-all duration-500"
+                      style={{ width: `${progressPercent}%` }}
+                    />
+                  </div>
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>{progressPercent.toFixed(0)}% complete</span>
+                    <span>{Number(selectedPosition.termPeriods - selectedPosition.paymentsCompleted)} remaining</span>
+                  </div>
+                </div>
+
+                <div className="grid sm:grid-cols-2 gap-4 pt-2">
+                  <div className="space-y-1">
+                    <div className="text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                      <Banknote className="w-3 h-3" />
+                      Original Principal
+                    </div>
+                    <div className="text-lg font-semibold">${formatUSD(selectedPosition.principal)}</div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                      <DollarSign className="w-3 h-3" />
+                      Remaining Balance
+                    </div>
+                    <div className="text-lg font-bold text-primary">${formatUSD(selectedPosition.remainingPrincipal)}</div>
+                  </div>
+                  <div className="space-y-1 sm:col-span-2">
+                    <div className="text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                      <Clock className="w-3 h-3" />
+                      Payment Amount
+                    </div>
+                    <div className="text-lg font-semibold">${formatUSD(selectedPosition.paymentPerPeriod)} <span className="text-sm font-normal text-muted-foreground">per period</span></div>
+                  </div>
                 </div>
               </div>
             )}
 
             {/* Number of payments */}
-            <div className="space-y-2">
-              <Label>Number of Payments</Label>
+            <div className="space-y-3">
+              <Label className="flex items-center gap-2 text-sm font-medium">
+                <Calculator className="w-4 h-4 text-muted-foreground" />
+                Number of Payments
+              </Label>
               <Input
                 type="number"
                 min="1"
                 max={selectedPosition ? Number(selectedPosition.termPeriods - selectedPosition.paymentsCompleted) : 30}
                 value={numPayments}
                 onChange={(e) => setNumPayments(e.target.value)}
+                className="h-12 bg-muted/30 border-border hover:bg-muted/50 transition-colors"
               />
               {selectedPosition && (
-                <p className="text-sm text-muted-foreground">
-                  Total: ${formatUSD(totalPaymentNeeded)}
-                  {parseInt(numPayments) > 1 && ` (${numPayments} x ${formatUSD(selectedPosition.paymentPerPeriod)})`}
-                </p>
+                <div className="rounded-lg bg-muted/50 p-3 flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Total Payment</span>
+                  <div className="text-right">
+                    <span className="font-semibold text-primary">${formatUSD(totalPaymentNeeded)}</span>
+                    {parseInt(numPayments) > 1 && (
+                      <span className="text-xs text-muted-foreground block">
+                        {numPayments} x ${formatUSD(selectedPosition.paymentPerPeriod)}
+                      </span>
+                    )}
+                  </div>
+                </div>
               )}
             </div>
 
             {/* Balance info */}
             {balance !== null && (
-              <div className="text-sm">
-                <span className="text-muted-foreground">Your Balance: </span>
-                <span className={insufficientBalance ? "text-red-600 font-medium" : ""}>
-                  ${formatUSD(balance)} mUSD
-                </span>
-                {insufficientBalance && (
-                  <span className="text-red-600 ml-2">(Insufficient - use Faucet)</span>
-                )}
+              <div className="rounded-lg bg-muted/50 p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Wallet className="w-4 h-4" />
+                    Your Balance
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className={`font-semibold ${insufficientBalance ? "text-red-500" : "text-foreground"}`}>
+                      ${formatUSD(balance)} mUSD
+                    </span>
+                    {insufficientBalance && (
+                      <span className="text-xs text-red-500 bg-red-500/10 px-2 py-0.5 rounded">Insufficient</span>
+                    )}
+                  </div>
+                </div>
               </div>
             )}
 
             {/* Transaction status */}
             {txHash && (
-              <div className="text-sm text-green-600 bg-green-50 dark:bg-green-950/30 px-3 py-2 rounded">
-                <p className="font-medium">Payment successful!</p>
-                <p className="font-mono text-xs break-all mt-1">{txHash}</p>
+              <div className="rounded-lg border border-green-500/50 bg-green-500/10 p-4">
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
+                  <div className="space-y-1 min-w-0">
+                    <p className="font-semibold text-green-500">Payment successful!</p>
+                    <p className="font-mono text-xs text-muted-foreground break-all">{txHash}</p>
+                  </div>
+                </div>
               </div>
             )}
             {txError && (
-              <div className="text-sm text-red-600 bg-red-50 dark:bg-red-950/30 px-3 py-2 rounded">
-                <p className="font-medium">Transaction failed</p>
-                <p className="text-xs mt-1">{txError}</p>
+              <div className="rounded-lg border border-red-500/50 bg-red-500/10 p-4">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+                  <div className="space-y-1 min-w-0">
+                    <p className="font-semibold text-red-500">Transaction failed</p>
+                    <p className="text-xs text-muted-foreground">{txError}</p>
+                  </div>
+                </div>
               </div>
             )}
           </>
         )}
       </CardContent>
       {positions.length > 0 && (
-        <CardFooter className="flex gap-2">
+        <CardFooter className="flex gap-3 pt-4 border-t border-border/50">
           {needsApproval && (
-            <Button onClick={approveTokens} disabled={isApproving} variant="outline">
-              {isApproving ? "Approving..." : "Approve Tokens"}
+            <Button
+              onClick={approveTokens}
+              disabled={isApproving}
+              variant="outline"
+              className="h-12 px-6 hover:shadow-md transition-all"
+            >
+              {isApproving ? (
+                <>
+                  <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                  Approving...
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 className="mr-2 h-4 w-4" />
+                  Approve Tokens
+                </>
+              )}
             </Button>
           )}
           <Button
             onClick={makePayment}
             disabled={isLoading || !selectedPositionId || insufficientBalance || needsApproval}
-            className="flex-1"
+            className="flex-1 h-12 text-base font-semibold transition-all hover:shadow-lg hover:shadow-primary/20"
+            size="lg"
           >
-            {isLoading ? "Processing..." : `Make ${numPayments} Payment${parseInt(numPayments) > 1 ? "s" : ""}`}
+            {isLoading ? (
+              <>
+                <RefreshCw className="mr-2 h-5 w-5 animate-spin" />
+                Processing...
+              </>
+            ) : (
+              <>
+                <CreditCard className="mr-2 h-5 w-5" />
+                Make {numPayments} Payment{parseInt(numPayments) > 1 ? "s" : ""}
+              </>
+            )}
           </Button>
         </CardFooter>
       )}
