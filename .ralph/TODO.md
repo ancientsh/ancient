@@ -4,7 +4,7 @@
 - [x] Update App.tsx with dark mode wrapper and polished navbar with backdrop-blur
 - [x] Add property images to public folder and create PropertyCard with image background and glassmorphism badges
 - [x] Install swiper and create PropertySwiper component for Dashboard
-- [ ] Update Dashboard.tsx to use PropertySwiper and styled mortgage position cards
+- [x] Update Dashboard.tsx to use PropertySwiper and styled mortgage position cards
 - [ ] Restyle Faucet.tsx with centered dark card styling
 - [ ] Restyle Mortgage.tsx with polished form cards and input styling
 
@@ -83,3 +83,22 @@ _Append progress and learnings here after each iteration_
   - `slidesPerView={1.2}` with `centeredSlides` creates a peek-ahead effect on desktop
   - Mobile card stack uses `perSlideOffset` and `perSlideRotate` for 3D effect
   - Need to handle potential undefined with `noUncheckedIndexedAccess` - use `?? fallback`
+
+## Update Dashboard.tsx to use PropertySwiper and styled mortgage position cards - Done
+- Replaced basic property grid with PropertySwiper component for property browsing
+- Created new `MortgagePositionCard` component with polished styling:
+  - Status badge with glassmorphism effect (Paid Off/Active/Closed states)
+  - Gradient progress bar with percentage and periods remaining
+  - Stats grid with uppercase labels and formatted values
+  - Details section with icons (TrendingUp, DollarSign, Clock, Calendar)
+  - Hover shadow transition: `hover:shadow-2xl`
+- Updated section headers with subtitle descriptions
+- Enhanced loading states with animated spinner icon (RefreshCw with animate-spin)
+- Styled empty states with dashed border card and centered icon/text
+- Added lucide-react icons: TrendingUp, Calendar, DollarSign, Clock, RefreshCw
+- Files changed: `src/pages/Dashboard.tsx`
+- **Learnings:**
+  - Removed unused import (MortgageFactoryAbi) - keep imports clean
+  - CardDescription needed to stay imported for error state fallback
+  - Using `bg-gradient-to-r from-primary to-primary/80` creates depth in progress bars
+  - Uppercase tracking-wider labels (`text-xs uppercase tracking-wider`) give a premium feel
