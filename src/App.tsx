@@ -144,9 +144,7 @@ function AppContent() {
 export function App() {
   return (
     <Web3Provider>
-      <div className="flex flex-col min-h-screen">
-        <AppContent />
-      </div>
+      <AppContent />
     </Web3Provider>
   );
 }
