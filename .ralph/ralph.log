@@ -4,3 +4,16 @@ Ralph Session: 2026-01-21T22:10:44.193Z
 [5:10:44 PM] Iteration 1 starting
 [5:13:01 PM] Task 1 is complete. I've fixed the scroll behavior by adding explicit `overflow-y: auto` to both `html` and `body` elements in `styles/globals.css`. This ensures that scrolling works with mouse wheel and trackpad gestures anywhere on the page, not just when the cursor is on the scrollbar.
 
+[5:13:01 PM] Committed: chore(ralph): iteration 1 progress
+[5:13:03 PM] Iteration 2 starting
+[5:18:34 PM] Task 2 is complete. I have:
+
+1. Replaced all Select dropdowns in the Mortgage page with Swiper-based selectors:
+   - Property selection now uses `PropertySwiperSelector` with card stack effect on mobile and horizontal slider on desktop
+   - Position selection for payments now uses `PositionSwiperSelector` with same UX pattern
+   - Term period selection now uses `TermSwiperSelector` with compact horizontal swiper
+
+2. Added corresponding CSS styles in `styles/globals.css`
+
+3. All TypeScript checks pass and the build completes successfully
+

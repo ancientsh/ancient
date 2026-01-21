@@ -1,6 +1,9 @@
 // Mortgage page - Create position and make payments
 import { useState, useEffect, useCallback } from "react";
 import { encodeFunctionData } from "viem";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { EffectCards, Navigation, Pagination } from "swiper/modules";
+import type { Swiper as SwiperType } from "swiper";
 import {
   Card,
   CardContent,
@@ -12,13 +15,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   useWeb3,
   formatUSD,
@@ -46,7 +42,16 @@ import {
   AlertTriangle,
   FileText,
   Banknote,
+  MapPin,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
+
+// Import Swiper styles
+import "swiper/css";
+import "swiper/css/effect-cards";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 interface Property {
   id: number;
@@ -167,6 +172,443 @@ export function Mortgage() {
 
       {activeTab === "create" && <CreateMortgageForm />}
       {activeTab === "pay" && <MakePaymentsForm />}
+    </div>
+  );
+}
+
+/**
+ * Swiper-based property selector for mortgage creation
+ */
+function PropertySwiperSelector({
+  properties,
+  selectedPropertyId,
+  onPropertySelect,
+}: {
+  properties: Property[];
+  selectedPropertyId: string;
+  onPropertySelect: (id: number) => void;
+}) {
+  const [swiperRef, setSwiperRef] = useState<SwiperType | null>(null);
+
+  // Find initial slide index based on selected property
+  const initialSlide = selectedPropertyId
+    ? properties.findIndex((p) => p.id.toString() === selectedPropertyId)
+    : 0;
+
+  const handleSlideChange = (swiper: SwiperType) => {
+    const property = properties[swiper.activeIndex];
+    if (property) {
+      onPropertySelect(property.id);
+    }
+  };
+
+  // Sync swiper position when selectedPropertyId changes externally
+  useEffect(() => {
+    if (swiperRef && selectedPropertyId) {
+      const index = properties.findIndex((p) => p.id.toString() === selectedPropertyId);
+      if (index !== -1 && swiperRef.activeIndex !== index) {
+        swiperRef.slideTo(index);
+      }
+    }
+  }, [selectedPropertyId, properties, swiperRef]);
+
+  // Auto-select first property if none selected
+  useEffect(() => {
+    if (!selectedPropertyId && properties.length > 0 && properties[0]) {
+      onPropertySelect(properties[0].id);
+    }
+  }, [properties, selectedPropertyId, onPropertySelect]);
+
+  return (
+    <div className="space-y-4">
+      {/* Mobile: Card Stack Effect */}
+      <div className="lg:hidden">
+        <Swiper
+          effect="cards"
+          grabCursor
+          modules={[EffectCards]}
+          className="mortgage-property-swiper"
+          cardsEffect={{
+            perSlideOffset: 6,
+            perSlideRotate: 1.5,
+            slideShadows: true,
+          }}
+          onSlideChange={handleSlideChange}
+          onSwiper={setSwiperRef}
+          initialSlide={initialSlide >= 0 ? initialSlide : 0}
+        >
+          {properties.map((property) => (
+            <SwiperSlide key={property.id}>
+              <PropertySelectorCard property={property} isSelected={property.id.toString() === selectedPropertyId} />
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </div>
+
+      {/* Desktop: Horizontal Slider with Navigation */}
+      <div className="hidden lg:block relative">
+        <Swiper
+          slidesPerView={1.5}
+          spaceBetween={16}
+          centeredSlides={true}
+          grabCursor
+          modules={[Navigation, Pagination]}
+          navigation={{
+            prevEl: ".property-swiper-prev",
+            nextEl: ".property-swiper-next",
+          }}
+          pagination={{ clickable: true }}
+          className="mortgage-property-swiper-horizontal"
+          onSlideChange={handleSlideChange}
+          onSwiper={setSwiperRef}
+          initialSlide={initialSlide >= 0 ? initialSlide : 0}
+        >
+          {properties.map((property) => (
+            <SwiperSlide key={property.id}>
+              <PropertySelectorCard property={property} isSelected={property.id.toString() === selectedPropertyId} />
+            </SwiperSlide>
+          ))}
+        </Swiper>
+        {/* Custom Navigation Buttons */}
+        <button className="property-swiper-prev absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-card border border-border shadow-md hover:bg-muted transition-colors disabled:opacity-50">
+          <ChevronLeft className="w-5 h-5 text-primary" />
+        </button>
+        <button className="property-swiper-next absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-card border border-border shadow-md hover:bg-muted transition-colors disabled:opacity-50">
+          <ChevronRight className="w-5 h-5 text-primary" />
+        </button>
+      </div>
+
+      {/* Slide counter */}
+      <div className="text-center text-sm text-muted-foreground">
+        {selectedPropertyId && (
+          <span>
+            Property {properties.findIndex((p) => p.id.toString() === selectedPropertyId) + 1} of {properties.length}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Individual property card for the swiper selector
+ */
+function PropertySelectorCard({ property, isSelected }: { property: Property; isSelected: boolean }) {
+  return (
+    <div
+      className={`rounded-xl border-2 p-4 transition-all ${
+        isSelected
+          ? "border-primary bg-primary/5 shadow-lg"
+          : "border-border bg-card hover:border-primary/50"
+      }`}
+    >
+      <div className="flex items-start gap-3">
+        <div className={`w-12 h-12 rounded-lg flex items-center justify-center shrink-0 ${
+          isSelected ? "bg-primary/20" : "bg-muted"
+        }`}>
+          <Building2 className={`w-6 h-6 ${isSelected ? "text-primary" : "text-muted-foreground"}`} />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between gap-2">
+            <span className={`font-semibold ${isSelected ? "text-primary" : "text-foreground"}`}>
+              Property #{property.id}
+            </span>
+            {isSelected && (
+              <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
+            )}
+          </div>
+          <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
+            <MapPin className="w-3 h-3 shrink-0" />
+            <span className="truncate">{property.location}</span>
+          </div>
+          <div className="mt-2 pt-2 border-t border-border/50">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-muted-foreground">Valuation</span>
+              <span className={`font-bold text-lg ${isSelected ? "text-primary" : "text-foreground"}`}>
+                ${formatUSD(property.currentValuation)}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Swiper-based position selector for mortgage payments
+ */
+function PositionSwiperSelector({
+  positions,
+  selectedPositionId,
+  onPositionSelect,
+}: {
+  positions: Position[];
+  selectedPositionId: string;
+  onPositionSelect: (id: number) => void;
+}) {
+  const [swiperRef, setSwiperRef] = useState<SwiperType | null>(null);
+
+  // Find initial slide index based on selected position
+  const initialSlide = selectedPositionId
+    ? positions.findIndex((p) => p.tokenId.toString() === selectedPositionId)
+    : 0;
+
+  const handleSlideChange = (swiper: SwiperType) => {
+    const position = positions[swiper.activeIndex];
+    if (position) {
+      onPositionSelect(position.tokenId);
+    }
+  };
+
+  // Sync swiper position when selectedPositionId changes externally
+  useEffect(() => {
+    if (swiperRef && selectedPositionId) {
+      const index = positions.findIndex((p) => p.tokenId.toString() === selectedPositionId);
+      if (index !== -1 && swiperRef.activeIndex !== index) {
+        swiperRef.slideTo(index);
+      }
+    }
+  }, [selectedPositionId, positions, swiperRef]);
+
+  // Auto-select first position if none selected
+  useEffect(() => {
+    if (!selectedPositionId && positions.length > 0 && positions[0]) {
+      onPositionSelect(positions[0].tokenId);
+    }
+  }, [positions, selectedPositionId, onPositionSelect]);
+
+  const selectedPosition = positions.find((p) => p.tokenId.toString() === selectedPositionId);
+  const progressPercent = selectedPosition
+    ? Number(selectedPosition.paymentsCompleted) / Number(selectedPosition.termPeriods) * 100
+    : 0;
+
+  return (
+    <div className="space-y-4">
+      {/* Mobile: Card Stack Effect */}
+      <div className="lg:hidden">
+        <Swiper
+          effect="cards"
+          grabCursor
+          modules={[EffectCards]}
+          className="mortgage-property-swiper"
+          cardsEffect={{
+            perSlideOffset: 6,
+            perSlideRotate: 1.5,
+            slideShadows: true,
+          }}
+          onSlideChange={handleSlideChange}
+          onSwiper={setSwiperRef}
+          initialSlide={initialSlide >= 0 ? initialSlide : 0}
+        >
+          {positions.map((position) => (
+            <SwiperSlide key={position.tokenId}>
+              <PositionSelectorCard
+                position={position}
+                isSelected={position.tokenId.toString() === selectedPositionId}
+              />
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </div>
+
+      {/* Desktop: Horizontal Slider with Navigation */}
+      <div className="hidden lg:block relative">
+        <Swiper
+          slidesPerView={1.5}
+          spaceBetween={16}
+          centeredSlides={true}
+          grabCursor
+          modules={[Navigation, Pagination]}
+          navigation={{
+            prevEl: ".position-swiper-prev",
+            nextEl: ".position-swiper-next",
+          }}
+          pagination={{ clickable: true }}
+          className="mortgage-property-swiper-horizontal"
+          onSlideChange={handleSlideChange}
+          onSwiper={setSwiperRef}
+          initialSlide={initialSlide >= 0 ? initialSlide : 0}
+        >
+          {positions.map((position) => (
+            <SwiperSlide key={position.tokenId}>
+              <PositionSelectorCard
+                position={position}
+                isSelected={position.tokenId.toString() === selectedPositionId}
+              />
+            </SwiperSlide>
+          ))}
+        </Swiper>
+        {/* Custom Navigation Buttons */}
+        <button className="position-swiper-prev absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-card border border-border shadow-md hover:bg-muted transition-colors disabled:opacity-50">
+          <ChevronLeft className="w-5 h-5 text-primary" />
+        </button>
+        <button className="position-swiper-next absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-card border border-border shadow-md hover:bg-muted transition-colors disabled:opacity-50">
+          <ChevronRight className="w-5 h-5 text-primary" />
+        </button>
+      </div>
+
+      {/* Slide counter */}
+      <div className="text-center text-sm text-muted-foreground">
+        {selectedPositionId && (
+          <span>
+            Position {positions.findIndex((p) => p.tokenId.toString() === selectedPositionId) + 1} of {positions.length}
+          </span>
+        )}
+      </div>
+
+      {/* Position details - shown below swiper */}
+      {selectedPosition && (
+        <div className="rounded-lg bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20 p-4 space-y-3">
+          {/* Progress bar */}
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Progress</span>
+              <span className="font-medium">
+                {Number(selectedPosition.paymentsCompleted)}/{Number(selectedPosition.termPeriods)} payments
+              </span>
+            </div>
+            <div className="h-2 bg-muted rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-primary to-primary/80 rounded-full transition-all duration-500"
+                style={{ width: `${progressPercent}%` }}
+              />
+            </div>
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>{progressPercent.toFixed(0)}% complete</span>
+              <span>{Number(selectedPosition.termPeriods - selectedPosition.paymentsCompleted)} remaining</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 pt-2">
+            <div className="space-y-1">
+              <div className="text-xs text-muted-foreground">Original</div>
+              <div className="font-semibold">${formatUSD(selectedPosition.principal)}</div>
+            </div>
+            <div className="space-y-1">
+              <div className="text-xs text-muted-foreground">Remaining</div>
+              <div className="font-bold text-primary">${formatUSD(selectedPosition.remainingPrincipal)}</div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Individual position card for the swiper selector
+ */
+function PositionSelectorCard({ position, isSelected }: { position: Position; isSelected: boolean }) {
+  const progressPercent = Number(position.paymentsCompleted) / Number(position.termPeriods) * 100;
+
+  return (
+    <div
+      className={`rounded-xl border-2 p-4 transition-all ${
+        isSelected
+          ? "border-primary bg-primary/5 shadow-lg"
+          : "border-border bg-card hover:border-primary/50"
+      }`}
+    >
+      <div className="flex items-start gap-3">
+        <div className={`w-12 h-12 rounded-lg flex items-center justify-center shrink-0 ${
+          isSelected ? "bg-primary/20" : "bg-muted"
+        }`}>
+          <FileText className={`w-6 h-6 ${isSelected ? "text-primary" : "text-muted-foreground"}`} />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between gap-2">
+            <span className={`font-semibold ${isSelected ? "text-primary" : "text-foreground"}`}>
+              Position #{position.tokenId}
+            </span>
+            {isSelected && (
+              <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
+            )}
+          </div>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
+            <span>{Number(position.paymentsCompleted)}/{Number(position.termPeriods)} payments</span>
+            <span className="text-xs">({progressPercent.toFixed(0)}%)</span>
+          </div>
+          <div className="mt-2 pt-2 border-t border-border/50">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-muted-foreground">Remaining</span>
+              <span className={`font-bold text-lg ${isSelected ? "text-primary" : "text-foreground"}`}>
+                ${formatUSD(position.remainingPrincipal)}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const TERM_OPTIONS = [10, 15, 20, 25, 30];
+
+/**
+ * Swiper-based term period selector
+ */
+function TermSwiperSelector({
+  termPeriods,
+  onTermChange,
+}: {
+  termPeriods: string;
+  onTermChange: (value: string) => void;
+}) {
+  const [swiperRef, setSwiperRef] = useState<SwiperType | null>(null);
+
+  const initialSlide = TERM_OPTIONS.findIndex((t) => t.toString() === termPeriods);
+
+  const handleSlideChange = (swiper: SwiperType) => {
+    const term = TERM_OPTIONS[swiper.activeIndex];
+    if (term !== undefined) {
+      onTermChange(term.toString());
+    }
+  };
+
+  // Sync swiper position when termPeriods changes externally
+  useEffect(() => {
+    if (swiperRef && termPeriods) {
+      const index = TERM_OPTIONS.findIndex((t) => t.toString() === termPeriods);
+      if (index !== -1 && swiperRef.activeIndex !== index) {
+        swiperRef.slideTo(index);
+      }
+    }
+  }, [termPeriods, swiperRef]);
+
+  return (
+    <div className="relative">
+      <Swiper
+        slidesPerView={3}
+        spaceBetween={8}
+        centeredSlides={true}
+        grabCursor
+        modules={[Pagination]}
+        pagination={{ clickable: true }}
+        className="term-swiper"
+        onSlideChange={handleSlideChange}
+        onSwiper={setSwiperRef}
+        initialSlide={initialSlide >= 0 ? initialSlide : 2}
+      >
+        {TERM_OPTIONS.map((term) => (
+          <SwiperSlide key={term}>
+            <div
+              className={`rounded-lg border-2 py-3 px-4 text-center transition-all cursor-pointer ${
+                term.toString() === termPeriods
+                  ? "border-primary bg-primary/10 shadow-md"
+                  : "border-border bg-card hover:border-primary/50"
+              }`}
+            >
+              <span className={`text-lg font-bold ${term.toString() === termPeriods ? "text-primary" : "text-foreground"}`}>
+                {term}
+              </span>
+              <span className={`text-sm ml-1 ${term.toString() === termPeriods ? "text-primary/80" : "text-muted-foreground"}`}>
+                periods
+              </span>
+            </div>
+          </SwiperSlide>
+        ))}
+      </Swiper>
     </div>
   );
 }
@@ -386,31 +828,22 @@ function CreateMortgageForm() {
           </div>
         )}
 
-        {/* Property selection */}
+        {/* Property selection with Swiper */}
         <div className="space-y-3">
           <Label className="flex items-center gap-2 text-sm font-medium">
             <Building2 className="w-4 h-4 text-muted-foreground" />
             Select Property
           </Label>
-          <Select value={selectedPropertyId} onValueChange={setSelectedPropertyId}>
-            <SelectTrigger className="h-12 bg-muted/30 border-border hover:bg-muted/50 transition-colors">
-              <SelectValue placeholder="Choose a property to finance" />
-            </SelectTrigger>
-            <SelectContent>
-              {properties.map((prop) => (
-                <SelectItem key={prop.id} value={prop.id.toString()}>
-                  #{prop.id}: ${formatUSD(prop.currentValuation)} - {prop.location.slice(0, 30)}...
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {selectedProperty && (
-            <div className="rounded-lg bg-primary/5 border border-primary/20 p-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Property Value</span>
-                <span className="font-semibold text-primary">${formatUSD(selectedProperty.currentValuation)}</span>
-              </div>
+          {properties.length === 0 ? (
+            <div className="rounded-lg bg-muted/30 border border-border p-6 text-center">
+              <p className="text-muted-foreground">No properties available</p>
             </div>
+          ) : (
+            <PropertySwiperSelector
+              properties={properties}
+              selectedPropertyId={selectedPropertyId}
+              onPropertySelect={(id) => setSelectedPropertyId(id.toString())}
+            />
           )}
         </div>
 
@@ -442,18 +875,10 @@ function CreateMortgageForm() {
               <Clock className="w-4 h-4 text-muted-foreground" />
               Term Length
             </Label>
-            <Select value={termPeriods} onValueChange={setTermPeriods}>
-              <SelectTrigger className="h-12 bg-muted/30 border-border hover:bg-muted/50 transition-colors">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {[10, 15, 20, 25, 30].map((t) => (
-                  <SelectItem key={t} value={t.toString()}>
-                    {t} periods
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <TermSwiperSelector
+              termPeriods={termPeriods}
+              onTermChange={setTermPeriods}
+            />
             <p className="text-xs text-muted-foreground">1 period = 1 minute (MVP testing)</p>
           </div>
         </div>
@@ -779,84 +1204,18 @@ function MakePaymentsForm() {
           </div>
         ) : (
           <>
-            {/* Position selection */}
+            {/* Position selection with Swiper */}
             <div className="space-y-3">
               <Label className="flex items-center gap-2 text-sm font-medium">
                 <FileText className="w-4 h-4 text-muted-foreground" />
                 Select Position
               </Label>
-              <Select value={selectedPositionId} onValueChange={setSelectedPositionId}>
-                <SelectTrigger className="h-12 bg-muted/30 border-border hover:bg-muted/50 transition-colors">
-                  <SelectValue placeholder="Choose a mortgage position" />
-                </SelectTrigger>
-                <SelectContent>
-                  {positions.map((pos) => (
-                    <SelectItem key={pos.tokenId} value={pos.tokenId.toString()}>
-                      #{pos.tokenId}: ${formatUSD(pos.remainingPrincipal)} remaining ({Number(pos.paymentsCompleted)}/{Number(pos.termPeriods)})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <PositionSwiperSelector
+                positions={positions}
+                selectedPositionId={selectedPositionId}
+                onPositionSelect={(id) => setSelectedPositionId(id.toString())}
+              />
             </div>
-
-            {/* Position details */}
-            {selectedPosition && (
-              <div className="rounded-lg bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20 p-5 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-sm font-semibold">
-                    <TrendingUp className="w-4 h-4 text-primary" />
-                    Position Details
-                  </div>
-                  <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full font-medium">
-                    #{selectedPosition.tokenId}
-                  </span>
-                </div>
-
-                {/* Progress bar */}
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Progress</span>
-                    <span className="font-medium">
-                      {Number(selectedPosition.paymentsCompleted)}/{Number(selectedPosition.termPeriods)} payments
-                    </span>
-                  </div>
-                  <div className="h-2 bg-muted rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-gradient-to-r from-primary to-primary/80 rounded-full transition-all duration-500"
-                      style={{ width: `${progressPercent}%` }}
-                    />
-                  </div>
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>{progressPercent.toFixed(0)}% complete</span>
-                    <span>{Number(selectedPosition.termPeriods - selectedPosition.paymentsCompleted)} remaining</span>
-                  </div>
-                </div>
-
-                <div className="grid sm:grid-cols-2 gap-4 pt-2">
-                  <div className="space-y-1">
-                    <div className="text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                      <Banknote className="w-3 h-3" />
-                      Original Principal
-                    </div>
-                    <div className="text-lg font-semibold">${formatUSD(selectedPosition.principal)}</div>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                      <DollarSign className="w-3 h-3" />
-                      Remaining Balance
-                    </div>
-                    <div className="text-lg font-bold text-primary">${formatUSD(selectedPosition.remainingPrincipal)}</div>
-                  </div>
-                  <div className="space-y-1 sm:col-span-2">
-                    <div className="text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                      <Clock className="w-3 h-3" />
-                      Payment Amount
-                    </div>
-                    <div className="text-lg font-semibold">${formatUSD(selectedPosition.paymentPerPeriod)} <span className="text-sm font-normal text-muted-foreground">per period</span></div>
-                  </div>
-                </div>
-              </div>
-            )}
 
             {/* Number of payments */}
             <div className="space-y-3">
