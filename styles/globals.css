@@ -8,9 +8,8 @@
 
 html {
   background-color: var(--color-background);
-  overflow-x: hidden;
-  overflow-y: auto;
   width: 100%;
+  height: 100%;
   scroll-behavior: auto;
   scroll-padding-top: 0;
 }
@@ -18,9 +17,10 @@ html {
 body {
   background-color: var(--color-background);
   color: var(--color-foreground);
-  overflow-x: hidden;
-  overflow-y: auto;
   width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: scroll;
   overscroll-behavior-y: none;
 }
 
