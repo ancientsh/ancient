@@ -337,13 +337,6 @@ function PropertySelectorCard({ property, isSelected }: { property: Property; is
         ${formatUSD(property.currentValuation)}
       </div>
 
-      {/* Selection indicator */}
-      {isSelected && (
-        <div className="absolute right-4 bottom-20 rounded-full bg-primary p-1.5 shadow-lg">
-          <CheckCircle2 className="w-5 h-5 text-primary-foreground" />
-        </div>
-      )}
-
       {/* Property Info Overlay */}
       <div className="absolute bottom-0 left-0 right-0 p-4">
         <div className={`rounded-xl border p-4 backdrop-blur-md ${

@@ -5,13 +5,13 @@ import { useEffect, useState } from "react";
 
 interface HeroSectionProps {
   onScrollToProperties?: () => void;
-  onJoinWaitlist?: () => void;
+  onLaunchApp?: () => void;
 }
 
 /**
  * @description Hero section component with CTA
  */
-export function HeroSection({ onScrollToProperties, onJoinWaitlist }: HeroSectionProps) {
+export function HeroSection({ onScrollToProperties, onLaunchApp }: HeroSectionProps) {
   const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
@@ -81,9 +81,9 @@ export function HeroSection({ onScrollToProperties, onJoinWaitlist }: HeroSectio
           <Button
             size="lg"
             className="h-11 w-full text-sm font-semibold sm:h-12 sm:text-base md:h-13 md:px-8 md:text-lg lg:h-14 lg:text-xl"
-            onClick={onJoinWaitlist}
+            onClick={onLaunchApp}
           >
-            Join Waitlist
+            Launch App
           </Button>
         </div>
 

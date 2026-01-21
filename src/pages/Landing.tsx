@@ -23,8 +23,7 @@ export function Landing({ onNavigateToMVP }: LandingProps) {
     }
   };
 
-  const handleJoinWaitlist = () => {
-    // For now, navigate to MVP to test the protocol
+  const handleLaunchApp = () => {
     onNavigateToMVP?.();
   };
 
@@ -39,7 +38,7 @@ export function Landing({ onNavigateToMVP }: LandingProps) {
         {/* Hero Section */}
         <HeroSection
           onScrollToProperties={scrollToProperties}
-          onJoinWaitlist={handleJoinWaitlist}
+          onLaunchApp={handleLaunchApp}
         />
 
         {/* Property Listings */}
