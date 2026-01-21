@@ -78,16 +78,18 @@ contract Deploy is Script {
         MortgagePositionNFT positionNFT = new MortgagePositionNFT();
         console.log("MortgagePositionNFT deployed at:", address(positionNFT));
 
-        // 6. Deploy MortgageFactory (treasury = deployer for simplicity)
+        // 6. Deploy MortgageFactory (treasury = account 9 to avoid self-transfer when testing with account 0)
+        address treasury = 0xa0Ee7A142d267C1f36714E4a8F75612F20a79720; // Anvil account 9
         MortgageFactory factory = new MortgageFactory(
             address(mockUSD),
             address(propertyOracle),
             address(rateFormula),
             address(whitelistRegistry),
             address(positionNFT),
-            deployer // Treasury receives all payments
+            treasury
         );
         console.log("MortgageFactory deployed at:", address(factory));
+        console.log("Treasury address:", treasury);
 
         // ============ Configure Permissions ============
 
@@ -152,7 +154,7 @@ contract Deploy is Script {
         console.log("");
         console.log("Configuration:");
         console.log("  Base Interest Rate: ", BASE_RATE_BPS, "bps (5%)");
-        console.log("  Treasury:           ", deployer);
+        console.log("  Treasury:           ", treasury);
         console.log("  Properties Registered: 4");
         console.log("  Metadata URI:        ", METADATA_BASE_URI);
         console.log("");

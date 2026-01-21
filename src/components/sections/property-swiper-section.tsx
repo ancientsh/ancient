@@ -8,6 +8,7 @@ import { MapPin, TrendingUp, Users, RefreshCw } from "lucide-react";
 import { formatMultiplier, type LandingProperty } from "@/lib/constants";
 import { PrettyAmount } from "@/components/ui/pretty-amount";
 import { useWeb3, PropertyOracleAbi, getContractAddresses } from "@/contracts";
+import { PropertyCard } from "@/components/properties/PropertyCard";
 
 // Import Swiper styles
 import "swiper/css";
@@ -111,7 +112,16 @@ export function PropertySwiperSection({ onPropertySelect }: PropertySwiperSectio
             >
               {properties.map((property) => (
                 <SwiperSlide key={property.id}>
-                  <LandingPropertyCard property={property} />
+                  <PropertyCard
+                    metadata={{
+                      id: property.id,
+                      name: property.name,
+                      location: property.location,
+                      imageUrl: property.imageUrl,
+                      availability: property.availability,
+                    }}
+                    variant="minimal"
+                  />
                 </SwiperSlide>
               ))}
             </Swiper>
@@ -132,7 +142,16 @@ export function PropertySwiperSection({ onPropertySelect }: PropertySwiperSectio
             >
               {properties.map((property) => (
                 <SwiperSlide key={property.id}>
-                  <LandingPropertyCard property={property} />
+                  <PropertyCard
+                    metadata={{
+                      id: property.id,
+                      name: property.name,
+                      location: property.location,
+                      imageUrl: property.imageUrl,
+                      availability: property.availability,
+                    }}
+                    variant="minimal"
+                  />
                 </SwiperSlide>
               ))}
             </Swiper>
@@ -148,31 +167,6 @@ export function PropertySwiperSection({ onPropertySelect }: PropertySwiperSectio
         </div>
       </div>
     </Section>
-  );
-}
-
-/**
- * Property card showing image and sold badge
- */
-function LandingPropertyCard({ property }: { property: LandingProperty }) {
-  const { name, imageUrl, availability } = property;
-
-  return (
-    <Card className="group relative aspect-[4/5] w-full cursor-pointer overflow-hidden border-0 shadow-xl transition-all hover:shadow-2xl">
-      {/* Property Image */}
-      <img
-        src={imageUrl}
-        alt={name}
-        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-      />
-
-      {/* Sold Badge - only show if availability data is present */}
-      {availability && (
-        <div className="absolute right-2 sm:right-4 top-2 sm:top-4 rounded-lg border border-primary/60 bg-white/90 px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-semibold text-primary backdrop-blur-sm shadow-lg">
-          {availability.sold}/{availability.total} sold
-        </div>
-      )}
-    </Card>
   );
 }
 

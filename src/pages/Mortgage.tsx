@@ -28,6 +28,7 @@ import {
   anvilChain,
 } from "../contracts";
 import { PrettyAmount } from "@/components/ui/pretty-amount";
+import { PropertyCard, type PropertyMetadata } from "@/components/properties/PropertyCard";
 import {
   Building2,
   Calculator,
@@ -36,16 +37,14 @@ import {
   RefreshCw,
   AlertCircle,
   CheckCircle2,
-  TrendingUp,
   DollarSign,
   Clock,
   Percent,
   AlertTriangle,
   FileText,
-  Banknote,
-  MapPin,
   ChevronLeft,
   ChevronRight,
+  Banknote,
 } from "lucide-react";
 
 // Import Swiper styles
@@ -61,12 +60,6 @@ interface Property {
   isActive: boolean;
 }
 
-interface PropertyMetadata {
-  id: number;
-  name: string;
-  location: string;
-  imageUrl: string;
-}
 
 interface MortgagePreview {
   principal: bigint;
@@ -249,7 +242,7 @@ function PropertySwiperSelector({
         >
           {properties.map((property) => (
             <SwiperSlide key={property.id}>
-              <PropertySelectorCard property={property} isSelected={property.id.toString() === selectedPropertyId} metadata={propertyMetadata.get(property.id)} />
+              <PropertyCard property={property} isSelected={property.id.toString() === selectedPropertyId} metadata={propertyMetadata.get(property.id)} />
             </SwiperSlide>
           ))}
         </Swiper>
@@ -275,7 +268,7 @@ function PropertySwiperSelector({
         >
           {properties.map((property) => (
             <SwiperSlide key={property.id}>
-              <PropertySelectorCard property={property} isSelected={property.id.toString() === selectedPropertyId} metadata={propertyMetadata.get(property.id)} />
+              <PropertyCard property={property} isSelected={property.id.toString() === selectedPropertyId} metadata={propertyMetadata.get(property.id)} />
             </SwiperSlide>
           ))}
         </Swiper>
@@ -301,73 +294,18 @@ function PropertySwiperSelector({
 }
 
 /**
- * Individual property card for the swiper selector - matches PropertyCard design
- */
-function PropertySelectorCard({ property, isSelected, metadata }: { property: Property; isSelected: boolean; metadata?: PropertyMetadata }) {
-  const imageUrl = metadata?.imageUrl ?? "/public/tulum.jpeg";
-  const propertyName = metadata?.name ?? `Property #${property.id}`;
-
-  return (
-    <div
-      className={`group relative aspect-[4/5] w-full h-full overflow-hidden rounded-xl border-2 shadow-xl transition-all ${
-        isSelected
-          ? "border-primary shadow-2xl ring-2 ring-primary/30"
-          : "border-transparent hover:border-primary/50"
-      }`}
-    >
-      {/* Property Image */}
-      <img
-        src={imageUrl}
-        alt={propertyName}
-        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-      />
-
-      {/* Gradient overlay for text readability */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-
-      {/* Status Badge - glassmorphism style */}
-      <div className={`absolute right-2 sm:right-4 top-2 sm:top-4 rounded-lg border px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-semibold backdrop-blur-sm shadow-lg ${
-        isSelected
-          ? "border-primary bg-primary/90 text-primary-foreground"
-          : "border-primary/60 bg-white/90 text-primary"
-      }`}>
-        {property.isActive ? "Available" : "Sold"}
-      </div>
-
-      {/* Value Badge - glassmorphism style */}
-      <div className="absolute left-2 sm:left-4 top-2 sm:top-4 rounded-lg border border-white/30 bg-black/40 px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-semibold text-white backdrop-blur-sm shadow-lg">
-        ${formatUSD(property.currentValuation)}
-      </div>
-
-      {/* Property Info Overlay */}
-      <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-4">
-        <div className={`rounded-xl border p-2 sm:p-4 backdrop-blur-md ${
-          isSelected
-            ? "border-primary/40 bg-primary/20"
-            : "border-white/20 bg-black/50"
-        }`}>
-          <h3 className="mb-0.5 sm:mb-1 text-sm sm:text-lg font-bold text-white line-clamp-1">{propertyName}</h3>
-          <p className="text-xs sm:text-sm text-white/80 line-clamp-1 flex items-center gap-1">
-            <MapPin className="w-2.5 h-2.5 sm:w-3 sm:h-3 shrink-0" />
-            {property.location}
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/**
  * Swiper-based position selector for mortgage payments
  */
 function PositionSwiperSelector({
   positions,
   selectedPositionId,
   onPositionSelect,
+  propertyMetadata,
 }: {
   positions: Position[];
   selectedPositionId: string;
   onPositionSelect: (id: number) => void;
+  propertyMetadata: Map<number, PropertyMetadata>;
 }) {
   const [swiperRef, setSwiperRef] = useState<SwiperType | null>(null);
 
@@ -425,9 +363,10 @@ function PositionSwiperSelector({
         >
           {positions.map((position) => (
             <SwiperSlide key={position.tokenId}>
-              <PositionSelectorCard
+              <PropertyCard
                 position={position}
                 isSelected={position.tokenId.toString() === selectedPositionId}
+                metadata={propertyMetadata.get(Number(position.propertyId))}
               />
             </SwiperSlide>
           ))}
@@ -454,9 +393,10 @@ function PositionSwiperSelector({
         >
           {positions.map((position) => (
             <SwiperSlide key={position.tokenId}>
-              <PositionSelectorCard
+              <PropertyCard
                 position={position}
                 isSelected={position.tokenId.toString() === selectedPositionId}
+                metadata={propertyMetadata.get(Number(position.propertyId))}
               />
             </SwiperSlide>
           ))}
@@ -514,53 +454,6 @@ function PositionSwiperSelector({
           </div>
         </div>
       )}
-    </div>
-  );
-}
-
-/**
- * Individual position card for the swiper selector
- */
-function PositionSelectorCard({ position, isSelected }: { position: Position; isSelected: boolean }) {
-  const progressPercent = Number(position.paymentsCompleted) / Number(position.termPeriods) * 100;
-
-  return (
-    <div
-      className={`rounded-xl border-2 p-4 transition-all ${
-        isSelected
-          ? "border-primary bg-primary/5 shadow-lg"
-          : "border-border bg-card hover:border-primary/50"
-      }`}
-    >
-      <div className="flex items-start gap-3">
-        <div className={`w-12 h-12 rounded-lg flex items-center justify-center shrink-0 ${
-          isSelected ? "bg-primary/20" : "bg-muted"
-        }`}>
-          <FileText className={`w-6 h-6 ${isSelected ? "text-primary" : "text-muted-foreground"}`} />
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between gap-2">
-            <span className={`font-semibold ${isSelected ? "text-primary" : "text-foreground"}`}>
-              Position #{position.tokenId}
-            </span>
-            {isSelected && (
-              <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
-            )}
-          </div>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
-            <span>{Number(position.paymentsCompleted)}/{Number(position.termPeriods)} payments</span>
-            <span className="text-xs">(<PrettyAmount amountFormatted={progressPercent} variant="percentage" size="xs" normalPrecision={0} />)</span>
-          </div>
-          <div className="mt-2 pt-2 border-t border-border/50">
-            <div className="flex items-center justify-between">
-              <span className="text-xs text-muted-foreground">Remaining</span>
-              <span className={`font-bold text-lg ${isSelected ? "text-primary" : "text-foreground"}`}>
-                $<PrettyAmount amountFormatted={formatUSD(position.remainingPrincipal)} size="lg" />
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
@@ -1058,6 +951,7 @@ function MakePaymentsForm() {
   const addresses = getContractAddresses();
 
   const [positions, setPositions] = useState<Position[]>([]);
+  const [propertyMetadata, setPropertyMetadata] = useState<Map<number, PropertyMetadata>>(new Map());
   const [selectedPositionId, setSelectedPositionId] = useState<string>("");
   const [numPayments, setNumPayments] = useState("1");
   const [allowance, setAllowance] = useState<bigint | null>(null);
@@ -1067,6 +961,30 @@ function MakePaymentsForm() {
   const [isApproving, setIsApproving] = useState(false);
   const [txHash, setTxHash] = useState<string | null>(null);
   const [txError, setTxError] = useState<string | null>(null);
+
+  // Fetch property metadata from contract
+  const fetchPropertyMetadata = useCallback(async () => {
+    if (!publicClient) return;
+    try {
+      // Get metadataURI from first property (all share same URI)
+      const property = await publicClient.readContract({
+        address: addresses.propertyOracle,
+        abi: PropertyOracleAbi,
+        functionName: "getProperty",
+        args: [BigInt(0)],
+      }) as { metadataURI: string };
+
+      if (property.metadataURI) {
+        const res = await fetch(property.metadataURI);
+        const data: PropertyMetadata[] = await res.json();
+        const metadataMap = new Map<number, PropertyMetadata>();
+        data.forEach((prop) => metadataMap.set(prop.id, prop));
+        setPropertyMetadata(metadataMap);
+      }
+    } catch (err) {
+      console.error("Failed to fetch property metadata:", err);
+    }
+  }, [publicClient, addresses.propertyOracle]);
 
   // Fetch user's positions
   const fetchPositions = useCallback(async () => {
@@ -1130,9 +1048,10 @@ function MakePaymentsForm() {
   }, [publicClient, address, addresses.mockUSD, addresses.mortgageFactory]);
 
   useEffect(() => {
+    fetchPropertyMetadata();
     fetchPositions();
     fetchBalanceAndAllowance();
-  }, [fetchPositions, fetchBalanceAndAllowance]);
+  }, [fetchPropertyMetadata, fetchPositions, fetchBalanceAndAllowance]);
 
   const selectedPosition = positions.find(p => p.tokenId.toString() === selectedPositionId);
   const totalPaymentNeeded = selectedPosition ? selectedPosition.paymentPerPeriod * BigInt(numPayments) : 0n;
@@ -1246,6 +1165,7 @@ function MakePaymentsForm() {
                 positions={positions}
                 selectedPositionId={selectedPositionId}
                 onPositionSelect={(id) => setSelectedPositionId(id.toString())}
+                propertyMetadata={propertyMetadata}
               />
             </div>
 

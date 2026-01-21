@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useWeb3, formatUSD, MockUSDAbi, getContractAddresses, anvilChain } from "../contracts";
+import { PrettyAmount } from "@/components/ui/pretty-amount";
 import { Coins, Wallet, RefreshCw, CheckCircle2, AlertCircle, Droplets } from "lucide-react";
 
 export function Faucet() {
@@ -186,7 +187,7 @@ export function Faucet() {
               Current Balance
             </div>
             <p className="text-4xl font-bold text-primary">
-              {balance !== null ? `$${formatUSD(balance)}` : "Loading..."}
+              {balance !== null ? <>$<PrettyAmount amountFormatted={formatUSD(balance)} size="2xl" /></> : "Loading..."}
             </p>
             <p className="text-sm text-muted-foreground">mUSD</p>
           </div>
@@ -196,7 +197,7 @@ export function Faucet() {
             <div className="flex justify-between items-center py-3 border-y border-border/50">
               <span className="text-sm text-muted-foreground">Amount per claim</span>
               <span className="font-semibold text-primary">
-                {faucetAmount ? `$${formatUSD(faucetAmount)}` : "10,000"} mUSD
+                {faucetAmount ? <>$<PrettyAmount amountFormatted={formatUSD(faucetAmount)} size="sm" /></> : "$10,000"} mUSD
               </span>
             </div>
 
