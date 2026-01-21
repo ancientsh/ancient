@@ -6,12 +6,12 @@ export function Footer() {
 
   return (
     <footer className="w-full border-t border-border bg-card/50 backdrop-blur-sm">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-12">
-        <div className="grid gap-8 md:grid-cols-4">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:py-12 sm:px-6 lg:px-12">
+        <div className="grid gap-6 sm:gap-8 grid-cols-2 sm:grid-cols-2 md:grid-cols-4">
           {/* Brand */}
-          <div className="md:col-span-2">
-            <span className="mb-4 text-xl font-bold block">Ancient</span>
-            <p className="mb-4 max-w-md text-sm text-muted-foreground">
+          <div className="col-span-2">
+            <span className="mb-3 sm:mb-4 text-lg sm:text-xl font-bold block">Ancient</span>
+            <p className="mb-4 max-w-md text-xs sm:text-sm text-muted-foreground">
               The world's first decentralized nation for digital nomads. Own
               property abroad with blockchain-secured mortgages.
             </p>
@@ -19,8 +19,8 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="mb-4 text-sm font-semibold">Quick Links</h3>
-            <ul className="space-y-2 text-sm">
+            <h3 className="mb-3 sm:mb-4 text-xs sm:text-sm font-semibold">Quick Links</h3>
+            <ul className="space-y-2 text-xs sm:text-sm">
               <li>
                 <a
                   href="#properties"
@@ -42,8 +42,8 @@ export function Footer() {
 
           {/* Legal */}
           <div>
-            <h3 className="mb-4 text-sm font-semibold">Legal</h3>
-            <ul className="space-y-2 text-sm">
+            <h3 className="mb-3 sm:mb-4 text-xs sm:text-sm font-semibold">Legal</h3>
+            <ul className="space-y-2 text-xs sm:text-sm">
               <li>
                 <a
                   href="#"
@@ -64,7 +64,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 border-t border-border pt-8 text-center text-sm text-muted-foreground">
+        <div className="mt-6 sm:mt-8 border-t border-border pt-6 sm:pt-8 text-center text-xs sm:text-sm text-muted-foreground">
           <p>&copy; {currentYear} Ancient Holdings. All rights reserved.</p>
         </div>
       </div>

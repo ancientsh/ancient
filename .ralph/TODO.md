@@ -3,7 +3,7 @@
 - [x] Fix scrolling issue - check for overflow:hidden blocking scroll on html/body
 - [x] Fix theme inconsistency - components hardcoded to dark while page might be light
 - [x] Match landing page to reference design - implement hero, property swiper, sections
-- [ ] Ensure responsive design across all breakpoints
+- [x] Ensure responsive design across all breakpoints
 
 ---
 
@@ -57,3 +57,26 @@ _Append progress and learnings here after each iteration_
   - The Swiper library works the same way in both environments with the same CSS imports
   - The landing page structure: Hero -> Property Swiper -> About -> Comparison -> Journey -> Benefits -> Footer
   - The app now has two modes: Landing (marketing) and MVP (protocol testing) with seamless navigation between them
+
+## Ensure responsive design across all breakpoints - Done
+- Added mobile-first responsive padding (`px-4 sm:px-6 lg:px-12`) to all section components
+- Updated typography scales with smaller base sizes on mobile (`text-2xl sm:text-3xl md:text-4xl lg:text-5xl` pattern)
+- Made navigation bar more compact on mobile with smaller heights, font sizes, and button padding
+- Updated card grids to use 2 columns on mobile where appropriate (e.g., Journey section, Footer)
+- Scaled down icons, badges, and interactive elements for mobile touch targets
+- Made PropertySwiperSection details card responsive with smaller fonts and spacing on mobile
+- Updated footer to properly stack on mobile with `grid-cols-2` base layout
+- Files changed:
+  - Modified: src/components/sections/about-section.tsx
+  - Modified: src/components/sections/comparison-section.tsx
+  - Modified: src/components/sections/journey-section.tsx
+  - Modified: src/components/sections/benefits-section.tsx
+  - Modified: src/components/sections/property-swiper-section.tsx
+  - Modified: src/components/sections/footer.tsx
+  - Modified: src/App.tsx (Navigation component)
+- **Learnings:**
+  - Tailwind's responsive prefixes (sm:, md:, lg:) should be applied mobile-first
+  - Touch targets need to be at least 44x44px on mobile - use h-10/h-11 for buttons
+  - The reference uses consistent responsive patterns: smaller sizes at base, scaling up with breakpoints
+  - Navigation elements need careful balancing on mobile - account selector needs truncated addresses
+  - Card grids work better as 2-col on mobile rather than single column for density

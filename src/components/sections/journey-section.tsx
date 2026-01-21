@@ -34,29 +34,29 @@ export function JourneySection() {
   ];
 
   return (
-    <Section className="flex h-max-content flex-col items-center justify-center">
-      <div className="mx-auto w-full max-w-6xl space-y-8">
+    <Section className="flex h-max-content flex-col items-center justify-center px-4 sm:px-6 lg:px-12">
+      <div className="mx-auto w-full max-w-6xl space-y-6 sm:space-y-8">
         <div className="text-center">
-          <h2 className="mb-2 text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl">
+          <h2 className="mb-2 text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl lg:text-5xl">
             Your Journey to Ownership
           </h2>
-          <p className="text-lg text-muted-foreground md:text-xl">
+          <p className="text-base text-muted-foreground sm:text-lg md:text-xl">
             Four simple steps to building wealth
           </p>
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:gap-6 grid-cols-2 lg:grid-cols-4">
           {steps.map((step) => (
             <Card key={step.number} className="relative overflow-hidden">
-              <CardContent className="pt-6">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                  <step.icon className="h-6 w-6 text-primary" />
+              <CardContent className="pt-4 sm:pt-6 px-3 sm:px-6 pb-4 sm:pb-6">
+                <div className="mb-3 sm:mb-4 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-primary/10">
+                  <step.icon className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
                 </div>
-                <div className="absolute right-4 top-4 text-6xl font-bold text-primary/10">
+                <div className="absolute right-2 sm:right-4 top-2 sm:top-4 text-4xl sm:text-6xl font-bold text-primary/10">
                   {step.number}
                 </div>
-                <h3 className="mb-2 text-xl font-bold">{step.title}</h3>
-                <p className="text-sm text-muted-foreground">
+                <h3 className="mb-1 sm:mb-2 text-lg sm:text-xl font-bold">{step.title}</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   {step.description}
                 </p>
               </CardContent>
