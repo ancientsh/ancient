@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { MapPin, TrendingUp, Building2 } from "lucide-react";
 import { formatUSD } from "@/contracts";
 import { PrettyDate } from "@/components/ui/pretty-date";
+import { PrettyAmount } from "@/components/ui/pretty-amount";
 
 // Import Swiper styles
 import "swiper/css";
@@ -155,20 +156,20 @@ function PropertyDetailsCard({
           <div>
             <p className="text-sm text-muted-foreground">Current Value</p>
             <p className="text-2xl font-bold">
-              ${formatUSD(property.currentValuation)}
+              $<PrettyAmount amountFormatted={formatUSD(property.currentValuation)} size="2xl" />
             </p>
           </div>
           <div>
             <p className="text-sm text-muted-foreground">Original Value</p>
             <p className="text-2xl font-bold">
-              ${formatUSD(property.originalValuation)}
+              $<PrettyAmount amountFormatted={formatUSD(property.originalValuation)} size="2xl" />
             </p>
           </div>
           <div>
             <p className="text-sm text-muted-foreground">Value Change</p>
             <p className={`flex items-center gap-1 text-2xl font-bold ${changePercent >= 0 ? "text-primary" : "text-destructive"}`}>
               <TrendingUp className={`h-5 w-5 ${changePercent < 0 ? "rotate-180" : ""}`} />
-              {changePercent >= 0 ? "+" : ""}{changePercent.toFixed(2)}%
+              {changePercent >= 0 ? "+" : ""}<PrettyAmount amountFormatted={changePercent} variant="percentage" size="2xl" />
             </p>
           </div>
           <div>

@@ -5,7 +5,8 @@ import { Section } from "@/components/ui/section";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, TrendingUp, Users } from "lucide-react";
-import { MOCK_PROPERTIES, formatCurrency, formatMultiplier, type LandingProperty } from "@/lib/constants";
+import { MOCK_PROPERTIES, formatMultiplier, type LandingProperty } from "@/lib/constants";
+import { PrettyAmount } from "@/components/ui/pretty-amount";
 
 // Import Swiper styles
 import "swiper/css";
@@ -150,20 +151,20 @@ function LandingPropertyDetailsCard({
           <div>
             <p className="text-xs sm:text-sm text-muted-foreground">List Price</p>
             <p className="text-lg sm:text-2xl font-bold">
-              {formatCurrency(networkInvestment.listPrice)}
+              $<PrettyAmount amountFormatted={networkInvestment.listPrice} size="2xl" />
             </p>
           </div>
           <div>
             <p className="text-xs sm:text-sm text-muted-foreground">Citizenship Cost</p>
             <p className="text-lg sm:text-2xl font-bold">
-              {formatCurrency(networkInvestment.citizenshipCost)}
+              $<PrettyAmount amountFormatted={networkInvestment.citizenshipCost} size="2xl" />
             </p>
           </div>
           <div>
             <p className="text-xs sm:text-sm text-muted-foreground">Monthly Yield</p>
             <p className="flex items-center gap-1 text-lg sm:text-2xl font-bold">
               <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-              {formatCurrency(networkInvestment.monthlyNetworkYield)}
+              $<PrettyAmount amountFormatted={networkInvestment.monthlyNetworkYield} size="2xl" />
             </p>
           </div>
           <div>

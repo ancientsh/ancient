@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { PropertySwiper } from "@/components/properties";
 import { TrendingUp, Calendar, DollarSign, Clock, RefreshCw } from "lucide-react";
 import { PrettyDate } from "@/components/ui/pretty-date";
+import { PrettyAmount } from "@/components/ui/pretty-amount";
 import {
   useWeb3,
   formatUSD,
@@ -338,11 +339,11 @@ function MortgagePositionCard({ position }: { position: Position }) {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <p className="text-xs text-muted-foreground uppercase tracking-wider">Principal</p>
-            <p className="text-lg font-bold">${formatUSD(position.principal)}</p>
+            <p className="text-lg font-bold">$<PrettyAmount amountFormatted={formatUSD(position.principal)} size="lg" /></p>
           </div>
           <div>
             <p className="text-xs text-muted-foreground uppercase tracking-wider">Remaining</p>
-            <p className="text-lg font-bold text-primary">${formatUSD(position.remainingPrincipal)}</p>
+            <p className="text-lg font-bold text-primary">$<PrettyAmount amountFormatted={formatUSD(position.remainingPrincipal)} size="lg" /></p>
           </div>
         </div>
 
@@ -364,7 +365,7 @@ function MortgagePositionCard({ position }: { position: Position }) {
           </div>
 
           <div className="flex items-center justify-between text-xs text-muted-foreground">
-            <span>{progress.toFixed(1)}% complete</span>
+            <span><PrettyAmount amountFormatted={progress} variant="percentage" size="xs" normalPrecision={1} /> complete</span>
             <span className="flex items-center gap-1">
               <Clock className="h-3 w-3" />
               {periodsRemaining} periods left
@@ -386,7 +387,7 @@ function MortgagePositionCard({ position }: { position: Position }) {
               <DollarSign className="h-3.5 w-3.5" />
               Payment/Period
             </span>
-            <span className="font-medium">${formatUSD(position.paymentPerPeriod)}</span>
+            <span className="font-medium">$<PrettyAmount amountFormatted={formatUSD(position.paymentPerPeriod)} size="sm" /></span>
           </div>
         </div>
 
@@ -397,7 +398,7 @@ function MortgagePositionCard({ position }: { position: Position }) {
             Started: <PrettyDate date={Number(position.createdAt) * 1000} format="date" size="xs" />
           </span>
           <span className="font-medium text-foreground">
-            Total Paid: ${formatUSD(position.totalPaid)}
+            Total Paid: $<PrettyAmount amountFormatted={formatUSD(position.totalPaid)} size="xs" />
           </span>
         </div>
       </CardContent>

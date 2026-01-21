@@ -27,6 +27,7 @@ import {
   getContractAddresses,
   anvilChain,
 } from "../contracts";
+import { PrettyAmount } from "@/components/ui/pretty-amount";
 import {
   Building2,
   Calculator,
@@ -325,7 +326,7 @@ function PropertySelectorCard({ property, isSelected }: { property: Property; is
             <div className="flex items-center justify-between">
               <span className="text-xs text-muted-foreground">Valuation</span>
               <span className={`font-bold text-lg ${isSelected ? "text-primary" : "text-foreground"}`}>
-                ${formatUSD(property.currentValuation)}
+                $<PrettyAmount amountFormatted={formatUSD(property.currentValuation)} size="lg" />
               </span>
             </div>
           </div>
@@ -475,7 +476,7 @@ function PositionSwiperSelector({
               />
             </div>
             <div className="flex justify-between text-xs text-muted-foreground">
-              <span>{progressPercent.toFixed(0)}% complete</span>
+              <span><PrettyAmount amountFormatted={progressPercent} variant="percentage" size="xs" normalPrecision={0} /> complete</span>
               <span>{Number(selectedPosition.termPeriods - selectedPosition.paymentsCompleted)} remaining</span>
             </div>
           </div>
@@ -483,11 +484,11 @@ function PositionSwiperSelector({
           <div className="grid grid-cols-2 gap-3 pt-2">
             <div className="space-y-1">
               <div className="text-xs text-muted-foreground">Original</div>
-              <div className="font-semibold">${formatUSD(selectedPosition.principal)}</div>
+              <div className="font-semibold">$<PrettyAmount amountFormatted={formatUSD(selectedPosition.principal)} size="base" /></div>
             </div>
             <div className="space-y-1">
               <div className="text-xs text-muted-foreground">Remaining</div>
-              <div className="font-bold text-primary">${formatUSD(selectedPosition.remainingPrincipal)}</div>
+              <div className="font-bold text-primary">$<PrettyAmount amountFormatted={formatUSD(selectedPosition.remainingPrincipal)} size="base" /></div>
             </div>
           </div>
         </div>
@@ -527,13 +528,13 @@ function PositionSelectorCard({ position, isSelected }: { position: Position; is
           </div>
           <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
             <span>{Number(position.paymentsCompleted)}/{Number(position.termPeriods)} payments</span>
-            <span className="text-xs">({progressPercent.toFixed(0)}%)</span>
+            <span className="text-xs">(<PrettyAmount amountFormatted={progressPercent} variant="percentage" size="xs" normalPrecision={0} />)</span>
           </div>
           <div className="mt-2 pt-2 border-t border-border/50">
             <div className="flex items-center justify-between">
               <span className="text-xs text-muted-foreground">Remaining</span>
               <span className={`font-bold text-lg ${isSelected ? "text-primary" : "text-foreground"}`}>
-                ${formatUSD(position.remainingPrincipal)}
+                $<PrettyAmount amountFormatted={formatUSD(position.remainingPrincipal)} size="lg" />
               </span>
             </div>
           </div>
@@ -896,14 +897,14 @@ function CreateMortgageForm() {
                   <DollarSign className="w-3 h-3" />
                   Down Payment
                 </div>
-                <div className="text-xl font-bold text-primary">${formatUSD(preview.downPayment)}</div>
+                <div className="text-xl font-bold text-primary">$<PrettyAmount amountFormatted={formatUSD(preview.downPayment)} size="xl" /></div>
               </div>
               <div className="space-y-1">
                 <div className="text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                   <Banknote className="w-3 h-3" />
                   Loan Principal
                 </div>
-                <div className="text-xl font-bold">${formatUSD(preview.principal)}</div>
+                <div className="text-xl font-bold">$<PrettyAmount amountFormatted={formatUSD(preview.principal)} size="xl" /></div>
               </div>
               <div className="space-y-1">
                 <div className="text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
@@ -917,17 +918,17 @@ function CreateMortgageForm() {
                   <Clock className="w-3 h-3" />
                   Payment/Period
                 </div>
-                <div className="text-lg font-semibold">${formatUSD(preview.paymentPerPeriod)}</div>
+                <div className="text-lg font-semibold">$<PrettyAmount amountFormatted={formatUSD(preview.paymentPerPeriod)} size="lg" /></div>
               </div>
             </div>
             <div className="pt-3 border-t border-primary/20 grid sm:grid-cols-2 gap-4">
               <div className="flex justify-between items-center">
                 <span className="text-sm text-muted-foreground">Total Payment</span>
-                <span className="font-semibold">${formatUSD(preview.totalPayment)}</span>
+                <span className="font-semibold">$<PrettyAmount amountFormatted={formatUSD(preview.totalPayment)} size="sm" /></span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-muted-foreground">Total Interest</span>
-                <span className="font-semibold text-primary">${formatUSD(preview.totalInterest)}</span>
+                <span className="font-semibold text-primary">$<PrettyAmount amountFormatted={formatUSD(preview.totalInterest)} size="sm" /></span>
               </div>
             </div>
           </div>
@@ -943,7 +944,7 @@ function CreateMortgageForm() {
               </div>
               <div className="flex items-center gap-2">
                 <span className={`font-semibold ${insufficientBalance ? "text-red-500" : "text-foreground"}`}>
-                  ${formatUSD(balance)} mUSD
+                  $<PrettyAmount amountFormatted={formatUSD(balance)} size="sm" /> mUSD
                 </span>
                 {insufficientBalance && (
                   <span className="text-xs text-red-500 bg-red-500/10 px-2 py-0.5 rounded">Insufficient</span>
@@ -1235,10 +1236,10 @@ function MakePaymentsForm() {
                 <div className="rounded-lg bg-muted/50 p-3 flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Total Payment</span>
                   <div className="text-right">
-                    <span className="font-semibold text-primary">${formatUSD(totalPaymentNeeded)}</span>
+                    <span className="font-semibold text-primary">$<PrettyAmount amountFormatted={formatUSD(totalPaymentNeeded)} size="sm" /></span>
                     {parseInt(numPayments) > 1 && (
                       <span className="text-xs text-muted-foreground block">
-                        {numPayments} x ${formatUSD(selectedPosition.paymentPerPeriod)}
+                        {numPayments} x $<PrettyAmount amountFormatted={formatUSD(selectedPosition.paymentPerPeriod)} size="xs" />
                       </span>
                     )}
                   </div>
@@ -1256,7 +1257,7 @@ function MakePaymentsForm() {
                   </div>
                   <div className="flex items-center gap-2">
                     <span className={`font-semibold ${insufficientBalance ? "text-red-500" : "text-foreground"}`}>
-                      ${formatUSD(balance)} mUSD
+                      $<PrettyAmount amountFormatted={formatUSD(balance)} size="sm" /> mUSD
                     </span>
                     {insufficientBalance && (
                       <span className="text-xs text-red-500 bg-red-500/10 px-2 py-0.5 rounded">Insufficient</span>

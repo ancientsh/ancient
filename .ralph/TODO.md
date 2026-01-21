@@ -3,7 +3,7 @@
 - [x] Task 1: Fix scroll behavior - scroll should work anywhere on the page, not just on scrollbar
 - [x] Task 2: Change mortgage selection UI from select to swiper component
 - [x] Task 3: Use prettyDate for dates
-- [ ] Task 4: Use prettyAmount for amounts
+- [x] Task 4: Use prettyAmount for amounts
 
 ---
 
@@ -52,3 +52,34 @@ _Append progress and learnings here after each iteration_
   - The gist reference provided a full-featured React component with countdown/relative time support
   - Timestamps from blockchain (Unix seconds) need to be multiplied by 1000 for JavaScript Date (milliseconds)
   - The `cn()` utility from lib/utils is used for merging Tailwind classes conditionally
+
+## Task 4: Use prettyAmount for amounts - Done
+- Created new `PrettyAmount` component in `src/components/ui/pretty-amount.tsx`
+- Component features:
+  - Supports multiple sizes: xs, sm, base, lg, xl, 2xl
+  - Abbreviates large numbers (K, M, B, T suffixes)
+  - Handles tiny numbers with subscript zero notation (0.0₅123)
+  - Supports percentage variant with % symbol
+  - Optional USD display (inline or below)
+  - Optional symbol display
+- Updated `src/components/properties/PropertySwiper.tsx`:
+  - Current Value and Original Value use PrettyAmount
+  - Value Change percentage uses PrettyAmount with variant="percentage"
+- Updated `src/pages/Dashboard.tsx`:
+  - Principal, Remaining, Payment/Period, and Total Paid use PrettyAmount
+  - Progress percentage uses PrettyAmount with variant="percentage"
+- Updated `src/pages/Mortgage.tsx`:
+  - Property valuation in PropertySelectorCard
+  - Position remaining and progress percentages in PositionSelectorCard
+  - Preview section: Down Payment, Principal, Payment/Period, Total Payment, Total Interest
+  - Balance displays in both CreateMortgageForm and MakePaymentsForm
+  - Total payment and per-payment amounts in MakePaymentsForm
+- Updated `src/components/sections/property-swiper-section.tsx`:
+  - List Price, Citizenship Cost, and Monthly Yield use PrettyAmount
+  - Removed unused `formatCurrency` import
+- Files changed: `src/components/ui/pretty-amount.tsx` (new), `src/components/properties/PropertySwiper.tsx`, `src/pages/Dashboard.tsx`, `src/pages/Mortgage.tsx`, `src/components/sections/property-swiper-section.tsx`
+- **Learnings:**
+  - The gist reference provides sophisticated number formatting with abbreviation and tiny number handling
+  - TypeScript strictness requires explicit null checks for regex match groups (`match[1]`)
+  - The component works well with `formatUSD` from contracts which returns pre-formatted strings
+  - Using PrettyAmount for percentages provides consistent styling with the % symbol
