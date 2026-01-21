@@ -30,3 +30,18 @@ I completed the task: **Update App.tsx with dark mode wrapper and polished navba
 
 The build compiles successfully and the UI now matches the reference design's polished navbar style.
 
+[4:24:01 PM] Committed: chore(ralph): iteration 2 progress
+[4:24:03 PM] Iteration 3 starting
+[4:26:39 PM] I've completed the task: **Add property images to public folder and create PropertyCard with image background and glassmorphism badges**.
+
+Summary of changes:
+- Created `/public` folder with 4 property images from the reference demo
+- Updated `src/index.ts` to serve static assets from `/public/*` route
+- Created `src/components/properties/PropertyCard.tsx` with:
+  - Full-bleed background image with 4:5 aspect ratio
+  - Hover scale effect on image
+  - Gradient overlay for text readability
+  - Glassmorphism badges for status (top-right) and value (top-left)
+  - Info overlay at bottom with property name and location
+- Created `src/components/properties/index.ts` for clean exports
+

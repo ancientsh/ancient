@@ -2,7 +2,7 @@
 
 - [x] Update globals.css with dark theme, gold/amber primary color, and swiper styles from reference
 - [x] Update App.tsx with dark mode wrapper and polished navbar with backdrop-blur
-- [ ] Add property images to public folder and create PropertyCard with image background and glassmorphism badges
+- [x] Add property images to public folder and create PropertyCard with image background and glassmorphism badges
 - [ ] Install swiper and create PropertySwiper component for Dashboard
 - [ ] Update Dashboard.tsx to use PropertySwiper and styled mortgage position cards
 - [ ] Restyle Faucet.tsx with centered dark card styling
@@ -42,3 +42,22 @@ _Append progress and learnings here after each iteration_
   - Fixed navbar requires padding-top on main content equal to navbar height
   - Using `bg-card/95` with `backdrop-blur-sm` creates a nice frosted glass effect
   - Tailwind opacity modifiers (e.g., `/95`, `/50`) work with CSS variables
+
+## Add property images and PropertyCard component - Done
+- Created `public/` folder with 4 property images copied from reference demo:
+  - `tulum.jpeg`, `mexico_beachfront.jpg`, `a-frame.jpeg`, `tony-stark.jpeg`
+- Updated `src/index.ts` to serve static assets from `/public/*` route
+- Created `src/components/properties/PropertyCard.tsx` with:
+  - Full-bleed background image with aspect ratio `aspect-[4/5]`
+  - Hover scale effect on image: `group-hover:scale-105`
+  - Gradient overlay for text readability: `bg-gradient-to-t from-black/70`
+  - Glassmorphism status badge (top-right): `bg-white/90 backdrop-blur-sm border-primary/60`
+  - Glassmorphism value badge (top-left): `bg-black/40 backdrop-blur-sm border-white/30`
+  - Info overlay at bottom with glassmorphism card: `bg-black/50 backdrop-blur-md`
+- Created `src/components/properties/index.ts` for exports
+- Files changed: `src/index.ts`, `src/components/properties/PropertyCard.tsx`, `src/components/properties/index.ts`, `public/` folder
+- **Learnings:**
+  - Bun.serve() needs explicit static file handling - added route `/public/*` with `Bun.file()`
+  - Glassmorphism effect combines: semi-transparent bg + backdrop-blur + subtle border
+  - Property images cycle based on ID using modulo: `propertyImages[id % propertyImages.length]`
+  - Card shadows transition: `shadow-xl` -> `hover:shadow-2xl` for depth effect

@@ -1,8 +1,22 @@
-import { serve } from "bun";
+import { serve, file } from "bun";
 import index from "./index.html";
+import { join } from "path";
+
+const publicDir = join(import.meta.dir, "..", "public");
 
 const server = serve({
   routes: {
+    // Serve static assets from public folder
+    "/public/*": async (req) => {
+      const url = new URL(req.url);
+      const filePath = join(publicDir, url.pathname.replace("/public/", ""));
+      const asset = file(filePath);
+      if (await asset.exists()) {
+        return new Response(asset);
+      }
+      return new Response("Not found", { status: 404 });
+    },
+
     // Serve index.html for all unmatched routes.
     "/*": index,
 
