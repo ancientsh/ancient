@@ -3,7 +3,7 @@
 - [x] Update globals.css with dark theme, gold/amber primary color, and swiper styles from reference
 - [x] Update App.tsx with dark mode wrapper and polished navbar with backdrop-blur
 - [x] Add property images to public folder and create PropertyCard with image background and glassmorphism badges
-- [ ] Install swiper and create PropertySwiper component for Dashboard
+- [x] Install swiper and create PropertySwiper component for Dashboard
 - [ ] Update Dashboard.tsx to use PropertySwiper and styled mortgage position cards
 - [ ] Restyle Faucet.tsx with centered dark card styling
 - [ ] Restyle Mortgage.tsx with polished form cards and input styling
@@ -61,3 +61,25 @@ _Append progress and learnings here after each iteration_
   - Glassmorphism effect combines: semi-transparent bg + backdrop-blur + subtle border
   - Property images cycle based on ID using modulo: `propertyImages[id % propertyImages.length]`
   - Card shadows transition: `shadow-xl` -> `hover:shadow-2xl` for depth effect
+
+## Install swiper and create PropertySwiper component - Done
+- Installed `swiper@12.0.3` package via `bun add swiper`
+- Created `src/components/properties/PropertySwiper.tsx` with:
+  - Mobile: Card stack effect using `EffectCards` module
+  - Desktop: Horizontal slider with `Navigation` and `Pagination` modules
+  - Responsive layout: `flex-col` on mobile, `flex-row` on desktop
+  - Active property details card showing stats alongside swiper
+- PropertyDetailsCard component shows:
+  - Current/original valuation with formatting
+  - Value change percentage with trend icon
+  - Registration date
+  - Status indicator
+  - "Apply for Mortgage" CTA button
+- Imported Swiper CSS modules: `swiper/css`, `effect-cards`, `navigation`, `pagination`
+- Updated `src/components/properties/index.ts` to export PropertySwiper
+- Files changed: `package.json`, `src/components/properties/PropertySwiper.tsx`, `src/components/properties/index.ts`
+- **Learnings:**
+  - Swiper modules (EffectCards, Navigation, Pagination) must be imported and passed to `modules` prop
+  - `slidesPerView={1.2}` with `centeredSlides` creates a peek-ahead effect on desktop
+  - Mobile card stack uses `perSlideOffset` and `perSlideRotate` for 3D effect
+  - Need to handle potential undefined with `noUncheckedIndexedAccess` - use `?? fallback`

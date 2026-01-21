@@ -45,3 +45,18 @@ Summary of changes:
   - Info overlay at bottom with property name and location
 - Created `src/components/properties/index.ts` for clean exports
 
+[4:26:39 PM] Committed: chore(ralph): iteration 3 progress
+[4:26:41 PM] Iteration 4 starting
+[4:29:12 PM] ## Task Complete
+
+Installed swiper package and created the `PropertySwiper` component for the Dashboard:
+
+- **Installed**: `swiper@12.0.3` via `bun add swiper`
+- **Created**: `src/components/properties/PropertySwiper.tsx`
+  - Mobile: Card stack effect with `EffectCards` module
+  - Desktop: Horizontal slider with navigation arrows and pagination dots
+  - Property details card alongside swiper showing valuation stats
+  - "Apply for Mortgage" CTA button
+- **Updated**: `src/components/properties/index.ts` to export the new component
+- **Verified**: No TypeScript errors in `src/` directory
+
