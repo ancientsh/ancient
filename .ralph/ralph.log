@@ -9,3 +9,13 @@ Ralph Session: 2026-01-21T21:45:01.371Z
 
 There are still pending tasks in the TODO file. Stopping here as per instructions - one task per iteration.
 
+[4:48:10 PM] Committed: chore(ralph): iteration 1 progress
+[4:48:12 PM] Iteration 2 starting
+[4:50:01 PM] Task completed. I fixed the theme inconsistency by:
+
+1. **Removed hardcoded dark class** from `src/App.tsx` - The wrapper div no longer forces `className="dark"`, allowing the app to use light theme by default (matching the reference demo)
+
+2. **Updated html background color** in `styles/globals.css` - Changed from hardcoded dark color `hsl(222.2 84% 4.9%)` to `var(--color-background)` so it respects the current theme
+
+The build passes and the app will now display in light theme, with components using the proper CSS variable-based theming system.
+

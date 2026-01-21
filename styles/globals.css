@@ -7,7 +7,7 @@
 @custom-variant dark (&:is(.dark *));
 
 html {
-  background-color: hsl(222.2 84% 4.9%);
+  background-color: var(--color-background);
   overflow-x: hidden;
   width: 100%;
   scroll-behavior: auto;
