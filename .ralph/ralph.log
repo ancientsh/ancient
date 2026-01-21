@@ -19,3 +19,17 @@ There are still pending tasks in the TODO file. Stopping here as per instruction
 
 The build passes and the app will now display in light theme, with components using the proper CSS variable-based theming system.
 
+[4:50:01 PM] Committed: chore(ralph): iteration 2 progress
+[4:50:03 PM] Iteration 3 starting
+[4:56:31 PM] I have completed the task "Match landing page to reference design - implement hero, property swiper, sections". The landing page now matches the reference with:
+
+1. **HeroSection** - Full-height hero with parallax background image, headline "Welcome to the Borderless Nation", CTA button, and animated scroll indicator
+2. **PropertySwiperSection** - Property swiper with mobile card stack effect and desktop horizontal slider, showing property details
+3. **AboutSection** - About Ancient section with description
+4. **ComparisonSection** - Math comparison of renting vs owning with Traditional Path and Ancient Path cards
+5. **JourneySection** - 4-step journey to ownership (Discover, Reserve, Relax, Earn)
+6. **BenefitsSection** - Early access benefits (12% discount, governance, Founder NFT)
+7. **Footer** - Full footer with brand, quick links, and legal sections
+
+The app now defaults to the landing page with a "Launch App" button to access the MVP functionality.
+

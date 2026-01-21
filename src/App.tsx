@@ -3,6 +3,7 @@ import { Web3Provider, useWeb3, useAnvilAccounts } from "./contracts";
 import { Faucet } from "./pages/Faucet";
 import { Dashboard } from "./pages/Dashboard";
 import { Mortgage } from "./pages/Mortgage";
+import { Landing } from "./pages/Landing";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -13,7 +14,7 @@ import {
 } from "@/components/ui/select";
 import "./index.css";
 
-type Page = "faucet" | "dashboard" | "mortgage";
+type Page = "landing" | "faucet" | "dashboard" | "mortgage";
 
 function Navigation({ currentPage, setPage }: { currentPage: Page; setPage: (p: Page) => void }) {
   const { address, accountIndex, switchAccount, isConnected } = useWeb3();
@@ -24,44 +25,61 @@ function Navigation({ currentPage, setPage }: { currentPage: Page; setPage: (p: 
       <div className="flex h-16 w-full items-center justify-between px-4 lg:px-12">
         {/* Logo */}
         <div className="flex items-center gap-3">
-          <span className="text-xl font-bold text-foreground transition-colors hover:text-primary cursor-pointer">
+          <button
+            onClick={() => setPage("landing")}
+            className="text-xl font-bold text-foreground transition-colors hover:text-primary cursor-pointer"
+          >
             Ancient
-          </span>
-          <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full font-medium">
-            MVP
-          </span>
+          </button>
+          {currentPage !== "landing" && (
+            <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full font-medium">
+              MVP
+            </span>
+          )}
         </div>
 
         {/* Navigation Links */}
         <div className="flex items-center gap-2">
-          <Button
-            variant={currentPage === "faucet" ? "default" : "ghost"}
-            size="sm"
-            onClick={() => setPage("faucet")}
-            className="text-foreground"
-          >
-            Faucet
-          </Button>
-          <Button
-            variant={currentPage === "dashboard" ? "default" : "ghost"}
-            size="sm"
-            onClick={() => setPage("dashboard")}
-            className="text-foreground"
-          >
-            Dashboard
-          </Button>
-          <Button
-            variant={currentPage === "mortgage" ? "default" : "ghost"}
-            size="sm"
-            onClick={() => setPage("mortgage")}
-            className="text-foreground"
-          >
-            Mortgage
-          </Button>
+          {currentPage === "landing" ? (
+            <Button
+              variant="default"
+              size="sm"
+              onClick={() => setPage("faucet")}
+            >
+              Launch App
+            </Button>
+          ) : (
+            <>
+              <Button
+                variant={currentPage === "faucet" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setPage("faucet")}
+                className="text-foreground"
+              >
+                Faucet
+              </Button>
+              <Button
+                variant={currentPage === "dashboard" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setPage("dashboard")}
+                className="text-foreground"
+              >
+                Dashboard
+              </Button>
+              <Button
+                variant={currentPage === "mortgage" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setPage("mortgage")}
+                className="text-foreground"
+              >
+                Mortgage
+              </Button>
+            </>
+          )}
         </div>
 
-        {/* Account Selector */}
-        {isConnected && (
+        {/* Account Selector - only show in MVP pages */}
+        {isConnected && currentPage !== "landing" && (
           <div className="flex items-center gap-3">
             <span className="text-xs text-muted-foreground hidden sm:inline">Account:</span>
             <Select
@@ -89,7 +107,16 @@ function Navigation({ currentPage, setPage }: { currentPage: Page; setPage: (p: 
 }
 
 function AppContent() {
-  const [currentPage, setPage] = useState<Page>("faucet");
+  const [currentPage, setPage] = useState<Page>("landing");
+
+  if (currentPage === "landing") {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navigation currentPage={currentPage} setPage={setPage} />
+        <Landing onNavigateToMVP={() => setPage("faucet")} />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
