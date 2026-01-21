@@ -1,6 +1,9 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* Exclude reference/documentation folders from content scanning */
+@source not "../.ralph";
+
 @custom-variant dark (&:is(.dark *));
 
 html {

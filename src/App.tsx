@@ -117,7 +117,7 @@ export function App() {
   return (
     <Web3Provider>
       {/* Dark mode wrapper */}
-      <div className="dark">
+      <div className="dark flex flex-col min-h-screen">
         <AppContent />
       </div>
     </Web3Provider>
