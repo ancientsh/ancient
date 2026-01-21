@@ -16,26 +16,46 @@ Contracts are complete. Now upgrade the frontend UI to match the beautiful desig
 - Web3Provider context already set up
 
 ## Frontend Upgrade Task
-Restyle the existing pages (`src/pages/`, `src/App.tsx`) using UI patterns from the reference:
+Transform the basic UI into a polished MVP that looks like the reference demo.
 
-### Reference Location
-`.ralph/refs/ancient-demo/` contains the prettier UI to emulate:
-- Dark theme with oklch colors (see `app/globals.css`)
-- shadcn/ui components (see `src/components/ui/`)
-- Modern card designs, glassmorphism effects
-- Responsive layouts, smooth transitions
+### Visual Requirements
 
-### Key Patterns to Apply
-1. **Styling**: Copy the CSS variables and theme from `refs/ancient-demo/app/globals.css` into `styles/globals.css`
-2. **Components**: Use the card, button, section patterns from `refs/ancient-demo/src/components/ui/`
-3. **Layout**: Navbar with backdrop blur, proper spacing, dark mode by default
-4. **Cards**: Property and position cards should look like `refs/ancient-demo/src/components/properties/property-card.tsx`
+**1. Property Images**
+- Add placeholder property images to `public/` (use Unsplash real estate photos or similar)
+- Each property card should display a full-bleed image with overlay text
+- Use aspect-ratio cards like `aspect-[4/5]` for consistent sizing
+
+**2. Swiper Carousel**
+- Install `swiper` package
+- Implement property swiper like `refs/ancient-demo/src/components/properties/property-swiper.tsx`
+- Add navigation arrows and pagination dots styled with primary color
+- Smooth slide transitions, responsive breakpoints
+
+**3. Dark Theme**
+- Copy the dark theme CSS variables from `refs/ancient-demo/app/globals.css`
+- Apply `.dark` class to root or use dark mode by default
+- Use the gold/amber primary color (`oklch(0.7686 0.1647 70.0804)`)
+
+**4. Card Styling**
+- Property cards: Image background, glassmorphism badges, hover scale effects
+- Mortgage position cards: Dark cards with progress bars, status badges
+- Use `shadow-xl`, `hover:shadow-2xl` transitions
+
+**5. Navbar**
+- Fixed position with `backdrop-blur-sm`
+- Semi-transparent background `bg-card/95`
+- Clean logo + navigation links + account selector
+
+**6. Polish**
+- Smooth hover transitions on all interactive elements
+- Proper spacing with container and consistent padding
+- Loading states and empty states styled nicely
 
 ### Pages to Restyle
-- `src/App.tsx` - Navigation bar styling
-- `src/pages/Faucet.tsx` - Token claim UI
-- `src/pages/Dashboard.tsx` - Properties and mortgage positions display
-- `src/pages/Mortgage.tsx` - Create mortgage and payment forms
+- `src/App.tsx` - Dark theme wrapper, polished navbar
+- `src/pages/Dashboard.tsx` - Property swiper, styled mortgage position cards
+- `src/pages/Faucet.tsx` - Centered card with nice styling
+- `src/pages/Mortgage.tsx` - Form cards with proper input styling
 
 ### Keep Working
 - All contract interactions (viem calls)
