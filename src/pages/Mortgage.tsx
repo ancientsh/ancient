@@ -291,45 +291,71 @@ function PropertySwiperSelector({
   );
 }
 
+// Property images matching PropertyCard
+const propertyImages = [
+  "/public/tulum.jpeg",
+  "/public/mexico_beachfront.jpg",
+  "/public/a-frame.jpeg",
+  "/public/tony-stark.jpeg",
+];
+
 /**
- * Individual property card for the swiper selector
+ * Individual property card for the swiper selector - matches PropertyCard design
  */
 function PropertySelectorCard({ property, isSelected }: { property: Property; isSelected: boolean }) {
+  const imageUrl = propertyImages[property.id % propertyImages.length];
+
   return (
     <div
-      className={`rounded-xl border-2 p-4 transition-all ${
+      className={`group relative aspect-[4/5] w-full overflow-hidden rounded-xl border-2 shadow-xl transition-all ${
         isSelected
-          ? "border-primary bg-primary/5 shadow-lg"
-          : "border-border bg-card hover:border-primary/50"
+          ? "border-primary shadow-2xl ring-2 ring-primary/30"
+          : "border-transparent hover:border-primary/50"
       }`}
     >
-      <div className="flex items-start gap-3">
-        <div className={`w-12 h-12 rounded-lg flex items-center justify-center shrink-0 ${
-          isSelected ? "bg-primary/20" : "bg-muted"
-        }`}>
-          <Building2 className={`w-6 h-6 ${isSelected ? "text-primary" : "text-muted-foreground"}`} />
+      {/* Property Image */}
+      <img
+        src={imageUrl}
+        alt={`Property #${property.id}`}
+        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+      />
+
+      {/* Gradient overlay for text readability */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+
+      {/* Status Badge - glassmorphism style */}
+      <div className={`absolute right-4 top-4 rounded-lg border px-3 py-1.5 text-sm font-semibold backdrop-blur-sm shadow-lg ${
+        isSelected
+          ? "border-primary bg-primary/90 text-primary-foreground"
+          : "border-primary/60 bg-white/90 text-primary"
+      }`}>
+        {property.isActive ? "Available" : "Sold"}
+      </div>
+
+      {/* Value Badge - glassmorphism style */}
+      <div className="absolute left-4 top-4 rounded-lg border border-white/30 bg-black/40 px-3 py-1.5 text-sm font-semibold text-white backdrop-blur-sm shadow-lg">
+        ${formatUSD(property.currentValuation)}
+      </div>
+
+      {/* Selection indicator */}
+      {isSelected && (
+        <div className="absolute right-4 bottom-20 rounded-full bg-primary p-1.5 shadow-lg">
+          <CheckCircle2 className="w-5 h-5 text-primary-foreground" />
         </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between gap-2">
-            <span className={`font-semibold ${isSelected ? "text-primary" : "text-foreground"}`}>
-              Property #{property.id}
-            </span>
-            {isSelected && (
-              <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
-            )}
-          </div>
-          <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
+      )}
+
+      {/* Property Info Overlay */}
+      <div className="absolute bottom-0 left-0 right-0 p-4">
+        <div className={`rounded-xl border p-4 backdrop-blur-md ${
+          isSelected
+            ? "border-primary/40 bg-primary/20"
+            : "border-white/20 bg-black/50"
+        }`}>
+          <h3 className="mb-1 text-lg font-bold text-white">Property #{property.id}</h3>
+          <p className="text-sm text-white/80 line-clamp-2 flex items-center gap-1">
             <MapPin className="w-3 h-3 shrink-0" />
-            <span className="truncate">{property.location}</span>
-          </div>
-          <div className="mt-2 pt-2 border-t border-border/50">
-            <div className="flex items-center justify-between">
-              <span className="text-xs text-muted-foreground">Valuation</span>
-              <span className={`font-bold text-lg ${isSelected ? "text-primary" : "text-foreground"}`}>
-                $<PrettyAmount amountFormatted={formatUSD(property.currentValuation)} size="lg" />
-              </span>
-            </div>
-          </div>
+            {property.location}
+          </p>
         </div>
       </div>
     </div>
@@ -861,13 +887,36 @@ function CreateMortgageForm() {
                 type="number"
                 min="20"
                 max="80"
+                step="1"
                 value={downPaymentPercent}
-                onChange={(e) => setDownPaymentPercent(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  // Allow empty string for typing, but clamp on blur
+                  if (value === "") {
+                    setDownPaymentPercent(value);
+                    return;
+                  }
+                  const numValue = parseFloat(value);
+                  if (!isNaN(numValue)) {
+                    // Clamp value between 20 and 80
+                    const clampedValue = Math.min(80, Math.max(20, numValue));
+                    setDownPaymentPercent(clampedValue.toString());
+                  }
+                }}
+                onBlur={() => {
+                  // Ensure valid value on blur
+                  const numValue = parseFloat(downPaymentPercent);
+                  if (isNaN(numValue) || numValue < 20) {
+                    setDownPaymentPercent("20");
+                  } else if (numValue > 80) {
+                    setDownPaymentPercent("80");
+                  }
+                }}
                 className="h-12 bg-muted/30 border-border pr-8 hover:bg-muted/50 transition-colors"
               />
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">%</span>
             </div>
-            <p className="text-xs text-muted-foreground">Minimum 20%</p>
+            <p className="text-xs text-muted-foreground">20% - 80%</p>
           </div>
 
           {/* Term */}
@@ -1229,7 +1278,27 @@ function MakePaymentsForm() {
                 min="1"
                 max={selectedPosition ? Number(selectedPosition.termPeriods - selectedPosition.paymentsCompleted) : 30}
                 value={numPayments}
-                onChange={(e) => setNumPayments(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === "") {
+                    setNumPayments(value);
+                    return;
+                  }
+                  const numValue = parseInt(value, 10);
+                  const maxPayments = selectedPosition
+                    ? Number(selectedPosition.termPeriods - selectedPosition.paymentsCompleted)
+                    : 30;
+                  if (!isNaN(numValue)) {
+                    const clampedValue = Math.min(maxPayments, Math.max(1, numValue));
+                    setNumPayments(clampedValue.toString());
+                  }
+                }}
+                onBlur={() => {
+                  const numValue = parseInt(numPayments, 10);
+                  if (isNaN(numValue) || numValue < 1) {
+                    setNumPayments("1");
+                  }
+                }}
                 className="h-12 bg-muted/30 border-border hover:bg-muted/50 transition-colors"
               />
               {selectedPosition && (

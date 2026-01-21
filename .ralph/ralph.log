@@ -10,3 +10,23 @@ Ralph Session: 2026-01-21T22:30:13.558Z
 
 There are still pending tasks marked [ ] in the TODO file, so I'm stopping here as per the instructions.
 
+[5:32:39 PM] Committed: chore(ralph): iteration 1 progress
+[5:32:41 PM] Iteration 2 starting
+[5:35:22 PM] Task 2 is complete. I have:
+
+1. **Redesigned PropertySelectorCard** to match the PropertyCard design from the dashboard:
+   - Same image-based design with property images cycling based on ID
+   - Same aspect ratio (4/5) with hover scale effect
+   - Glassmorphism badges for status and value
+   - Gradient overlay for text readability
+   - Property info overlay at bottom with ID and location
+   - Selection state with ring highlight and modified badge colors
+
+2. **Fixed config selection bugs**:
+   - Down payment input now clamps values between 20-80% in real-time
+   - Added onBlur handlers to reset invalid/empty values
+   - Number of payments input also has proper validation
+   - Updated helper text to show the valid range
+
+TypeScript checks pass with no errors.
+
