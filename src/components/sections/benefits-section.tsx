@@ -28,7 +28,7 @@ export function BenefitsSection() {
   ];
 
   return (
-    <Section className="flex h-max-content flex-col items-center justify-center px-4 sm:px-6 lg:px-12">
+    <Section className="flex flex-col items-center justify-center px-4 sm:px-6 lg:px-12">
       <div className="mx-auto w-full max-w-6xl space-y-6 sm:space-y-8">
         <div className="text-center">
           <h2 className="mb-2 text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl lg:text-5xl">

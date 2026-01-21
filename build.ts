@@ -33,7 +33,7 @@ Example:
   process.exit(0);
 }
 
-const toCamelCase = (str: string): string => str.replace(/-([a-z])/g, g => g[1].toUpperCase());
+const toCamelCase = (str: string): string => str.replace(/-([a-z])/g, (_, letter: string) => letter.toUpperCase());
 
 const parseValue = (value: string): any => {
   if (value === "true") return true;
@@ -47,8 +47,8 @@ const parseValue = (value: string): any => {
   return value;
 };
 
-function parseArgs(): Partial<Bun.BuildConfig> {
-  const config: Partial<Bun.BuildConfig> = {};
+function parseArgs(): Record<string, unknown> {
+  const config: Record<string, unknown> = {};
   const args = process.argv.slice(2);
 
   for (let i = 0; i < args.length; i++) {
@@ -82,8 +82,11 @@ function parseArgs(): Partial<Bun.BuildConfig> {
 
     if (key.includes(".")) {
       const [parentKey, childKey] = key.split(".");
-      config[parentKey] = config[parentKey] || {};
-      config[parentKey][childKey] = parseValue(value);
+      if (parentKey && childKey) {
+        const existing = config[parentKey];
+        config[parentKey] = typeof existing === "object" && existing !== null ? existing : {};
+        (config[parentKey] as Record<string, unknown>)[childKey] = parseValue(value);
+      }
     } else {
       config[key] = parseValue(value);
     }
@@ -108,7 +111,7 @@ const formatFileSize = (bytes: number): string => {
 console.log("\n🚀 Starting build process...\n");
 
 const cliConfig = parseArgs();
-const outdir = cliConfig.outdir || path.join(process.cwd(), "dist");
+const outdir = (typeof cliConfig.outdir === "string" ? cliConfig.outdir : null) || path.join(process.cwd(), "dist");
 
 if (existsSync(outdir)) {
   console.log(`🗑️ Cleaning previous build at ${outdir}`);

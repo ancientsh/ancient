@@ -1,7 +1,3 @@
-i cant scroll the page
+run app fix all issues
 
-when the app is light theme the componenst are dark
-
-the landing page doesnt match the reference
-
-app should be responsive
+fix scrolling issue and validate it works

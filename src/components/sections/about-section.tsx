@@ -5,7 +5,7 @@ import { Section } from "@/components/ui/section";
  */
 export function AboutSection() {
   return (
-    <Section className="flex h-max-content flex-col items-center justify-center text-center px-4 sm:px-6 lg:px-12">
+    <Section className="flex flex-col items-center justify-center text-center px-4 sm:px-6 lg:px-12">
       <div className="mx-auto max-w-3xl space-y-3 sm:space-y-4">
         <h2 className="text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl lg:text-5xl">
           About Ancient
