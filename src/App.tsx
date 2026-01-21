@@ -20,20 +20,25 @@ function Navigation({ currentPage, setPage }: { currentPage: Page; setPage: (p: 
   const accounts = useAnvilAccounts();
 
   return (
-    <nav className="bg-card border-b sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-        {/* Logo/Title */}
-        <div className="flex items-center gap-2">
-          <span className="text-xl font-bold">Ancient Protocol</span>
-          <span className="text-xs bg-muted px-2 py-0.5 rounded">MVP</span>
+    <nav className="fixed top-0 z-50 w-full border-b border-border bg-card/95 backdrop-blur-sm">
+      <div className="flex h-16 w-full items-center justify-between px-4 lg:px-12">
+        {/* Logo */}
+        <div className="flex items-center gap-3">
+          <span className="text-xl font-bold text-foreground transition-colors hover:text-primary cursor-pointer">
+            Ancient
+          </span>
+          <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full font-medium">
+            MVP
+          </span>
         </div>
 
         {/* Navigation Links */}
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
           <Button
             variant={currentPage === "faucet" ? "default" : "ghost"}
             size="sm"
             onClick={() => setPage("faucet")}
+            className="text-foreground"
           >
             Faucet
           </Button>
@@ -41,6 +46,7 @@ function Navigation({ currentPage, setPage }: { currentPage: Page; setPage: (p: 
             variant={currentPage === "dashboard" ? "default" : "ghost"}
             size="sm"
             onClick={() => setPage("dashboard")}
+            className="text-foreground"
           >
             Dashboard
           </Button>
@@ -48,6 +54,7 @@ function Navigation({ currentPage, setPage }: { currentPage: Page; setPage: (p: 
             variant={currentPage === "mortgage" ? "default" : "ghost"}
             size="sm"
             onClick={() => setPage("mortgage")}
+            className="text-foreground"
           >
             Mortgage
           </Button>
@@ -55,18 +62,18 @@ function Navigation({ currentPage, setPage }: { currentPage: Page; setPage: (p: 
 
         {/* Account Selector */}
         {isConnected && (
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground">Account:</span>
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-muted-foreground hidden sm:inline">Account:</span>
             <Select
               value={accountIndex.toString()}
               onValueChange={(v) => switchAccount(parseInt(v))}
             >
-              <SelectTrigger className="w-[180px] h-8 text-xs font-mono">
+              <SelectTrigger className="w-[160px] h-9 text-xs font-mono bg-muted/50 border-border hover:bg-muted transition-colors">
                 <SelectValue>
                   {address?.slice(0, 6)}...{address?.slice(-4)}
                 </SelectValue>
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-card border-border">
                 {accounts.map(({ address: addr, index }) => (
                   <SelectItem key={index} value={index.toString()} className="text-xs font-mono">
                     #{index}: {addr.slice(0, 6)}...{addr.slice(-4)}
@@ -88,14 +95,19 @@ function AppContent() {
     <div className="min-h-screen flex flex-col">
       <Navigation currentPage={currentPage} setPage={setPage} />
 
-      <main className="flex-1 container mx-auto p-8">
-        {currentPage === "faucet" && <Faucet />}
-        {currentPage === "dashboard" && <Dashboard />}
-        {currentPage === "mortgage" && <Mortgage />}
+      {/* Main content with top padding to account for fixed navbar */}
+      <main className="flex-1 pt-16">
+        <div className="container mx-auto px-4 py-8 lg:px-12">
+          {currentPage === "faucet" && <Faucet />}
+          {currentPage === "dashboard" && <Dashboard />}
+          {currentPage === "mortgage" && <Mortgage />}
+        </div>
       </main>
 
-      <footer className="border-t py-4 text-center text-sm text-muted-foreground">
-        Ancient Protocol MVP - Local Anvil Chain
+      <footer className="border-t border-border py-6 text-center text-sm text-muted-foreground bg-card/50">
+        <div className="container mx-auto px-4">
+          Ancient Protocol MVP — Local Anvil Chain
+        </div>
       </footer>
     </div>
   );
@@ -104,7 +116,10 @@ function AppContent() {
 export function App() {
   return (
     <Web3Provider>
-      <AppContent />
+      {/* Dark mode wrapper */}
+      <div className="dark">
+        <AppContent />
+      </div>
     </Web3Provider>
   );
 }

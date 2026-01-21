@@ -10,3 +10,23 @@ Ralph Session: 2026-01-21T21:18:58.530Z
 
 There are still tasks marked `[ ]` (pending), so I'm ending this iteration as instructed.
 
+[4:21:30 PM] Committed: chore(ralph): iteration 1 progress
+[4:21:32 PM] Iteration 2 starting
+[4:24:01 PM] ## Summary
+
+I completed the task: **Update App.tsx with dark mode wrapper and polished navbar with backdrop-blur**
+
+### Changes made to `src/App.tsx`:
+- Added `.dark` class wrapper around the app content to enable dark theme
+- Updated the Navigation component:
+  - Changed from sticky to fixed positioning (`fixed top-0 z-50 w-full`)
+  - Added semi-transparent background with blur effect (`bg-card/95 backdrop-blur-sm`)
+  - Updated to use consistent height (`h-16`) and responsive padding
+  - Added hover effects and transitions to the logo
+  - Styled MVP badge with primary color
+  - Enhanced account selector with muted background and hover states
+- Added `pt-16` padding to main content to compensate for fixed navbar
+- Improved footer styling with subtle card background
+
+The build compiles successfully and the UI now matches the reference design's polished navbar style.
+
