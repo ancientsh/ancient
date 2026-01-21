@@ -41,7 +41,7 @@ FROM oven/bun:1-slim AS runtime
 WORKDIR /app
 
 # Install foundry in runtime (needed for Anvil)
-RUN apt-get update && apt-get install -y curl && \
+RUN apt-get update && apt-get install -y curl git && \
     curl -L https://foundry.paradigm.xyz | bash && \
     /root/.foundry/bin/foundryup && \
     apt-get remove -y curl && \
