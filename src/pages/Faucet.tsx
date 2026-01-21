@@ -197,7 +197,7 @@ export function Faucet() {
             <div className="flex justify-between items-center py-3 border-y border-border/50">
               <span className="text-sm text-muted-foreground">Amount per claim</span>
               <span className="font-semibold text-primary">
-                {faucetAmount ? <>$<PrettyAmount amountFormatted={formatUSD(faucetAmount)} size="sm" /></> : "$10,000"} mUSD
+                {faucetAmount !== null ? <>$<PrettyAmount amountFormatted={formatUSD(faucetAmount)} size="sm" /> mUSD</> : "Loading..."}
               </span>
             </div>
 

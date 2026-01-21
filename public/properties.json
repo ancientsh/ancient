@@ -2,10 +2,8 @@
   {
     "id": 0,
     "name": "Art Deco Loft",
-    "location": "Mazunte, Mexico",
     "imageUrl": "/public/tulum.jpeg",
     "networkInvestment": {
-      "listPrice": 129000,
       "citizenshipCost": 29670,
       "monthlyNetworkYield": 764,
       "tenYearVillageValue": 245745,
@@ -16,10 +14,8 @@
   {
     "id": 1,
     "name": "Beachfront Paradise",
-    "location": "Tulum, Mexico",
     "imageUrl": "/public/mexico_beachfront.jpg",
     "networkInvestment": {
-      "listPrice": 225000,
       "citizenshipCost": 45000,
       "monthlyNetworkYield": 1350,
       "tenYearVillageValue": 427500,
@@ -30,10 +26,8 @@
   {
     "id": 2,
     "name": "Ocean Bungalow",
-    "location": "Bahia, Brazil",
     "imageUrl": "/public/a-frame.jpeg",
     "networkInvestment": {
-      "listPrice": 95000,
       "citizenshipCost": 19000,
       "monthlyNetworkYield": 580,
       "tenYearVillageValue": 181000,
@@ -44,10 +38,8 @@
   {
     "id": 3,
     "name": "Hillside Villa",
-    "location": "Sacred Valley, Peru",
     "imageUrl": "/public/tony-stark.jpeg",
     "networkInvestment": {
-      "listPrice": 185000,
       "citizenshipCost": 37000,
       "monthlyNetworkYield": 1120,
       "tenYearVillageValue": 352000,

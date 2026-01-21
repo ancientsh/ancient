@@ -1,14 +1,14 @@
 /**
- * @description Property data type for landing page
- * availability is optional as it may come from contracts
+ * @description Property metadata type for landing page
+ * Contract is SOT for: location, currentValuation, isActive
+ * JSON metadata provides: name, imageUrl, networkInvestment (except listPrice), availability
  */
 export interface LandingProperty {
   id: number;
   name: string;
-  location: string;
+  location?: string; // Comes from contract, optional in JSON
   imageUrl: string;
   networkInvestment: {
-    listPrice: number;
     citizenshipCost: number;
     monthlyNetworkYield: number;
     tenYearVillageValue: number;

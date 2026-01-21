@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { MapPin, TrendingUp, Users, RefreshCw } from "lucide-react";
 import { formatMultiplier, type LandingProperty } from "@/lib/constants";
 import { PrettyAmount } from "@/components/ui/pretty-amount";
-import { useWeb3, PropertyOracleAbi, getContractAddresses } from "@/contracts";
+import { useWeb3, PropertyOracleAbi, getContractAddresses, formatUSD } from "@/contracts";
 import { PropertyCard } from "@/components/properties/PropertyCard";
 
 // Import Swiper styles
@@ -15,6 +15,12 @@ import "swiper/css";
 import "swiper/css/effect-cards";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+
+// Extended property with contract data - location is required (from contract)
+interface PropertyWithContractData extends Omit<LandingProperty, 'location'> {
+  location: string; // Always from contract
+  currentValuation: bigint;
+}
 
 interface PropertySwiperSectionProps {
   onPropertySelect?: (property: LandingProperty) => void;
@@ -27,7 +33,7 @@ export function PropertySwiperSection({ onPropertySelect }: PropertySwiperSectio
   const { publicClient } = useWeb3();
   const addresses = getContractAddresses();
   const [activeIndex, setActiveIndex] = useState(0);
-  const [properties, setProperties] = useState<LandingProperty[]>([]);
+  const [properties, setProperties] = useState<PropertyWithContractData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchProperties = useCallback(async () => {
@@ -37,19 +43,79 @@ export function PropertySwiperSection({ onPropertySelect }: PropertySwiperSectio
     }
 
     try {
-      // Get the first property to retrieve the metadataURI
-      const property = await publicClient.readContract({
+      // Get total number of properties from contract
+      const totalCount = await publicClient.readContract({
         address: addresses.propertyOracle,
         abi: PropertyOracleAbi,
-        functionName: "getProperty",
-        args: [BigInt(0)],
-      }) as { metadataURI: string };
+        functionName: "totalProperties",
+      }) as bigint;
 
-      if (property.metadataURI) {
-        // Fetch metadata from the URI stored in contract
-        const res = await fetch(property.metadataURI);
-        const data: LandingProperty[] = await res.json();
-        setProperties(data);
+      // Fetch all properties from contract
+      const contractProperties: Array<{
+        id: number;
+        location: string;
+        currentValuation: bigint;
+        isActive: boolean;
+        metadataURI: string;
+      }> = [];
+
+      let metadataUri: string | null = null;
+
+      for (let i = 0; i < Number(totalCount); i++) {
+        const property = await publicClient.readContract({
+          address: addresses.propertyOracle,
+          abi: PropertyOracleAbi,
+          functionName: "getProperty",
+          args: [BigInt(i)],
+        }) as { location: string; currentValuation: bigint; isActive: boolean; metadataURI: string };
+
+        contractProperties.push({
+          id: i,
+          location: property.location,
+          currentValuation: property.currentValuation,
+          isActive: property.isActive,
+          metadataURI: property.metadataURI,
+        });
+
+        // Get metadataURI from first property (all share same URI)
+        if (!metadataUri && property.metadataURI) {
+          metadataUri = property.metadataURI;
+        }
+      }
+
+      // Fetch metadata JSON
+      if (metadataUri) {
+        const res = await fetch(metadataUri);
+        const metadataList: LandingProperty[] = await res.json();
+
+        // Create a map for quick lookup
+        const metadataMap = new Map<number, LandingProperty>();
+        metadataList.forEach((m) => metadataMap.set(m.id, m));
+
+        // Merge contract data with metadata - contract is SOT for valuation and location
+        const mergedProperties: PropertyWithContractData[] = contractProperties
+          .filter((p) => p.isActive)
+          .map((contractProp) => {
+            const metadata = metadataMap.get(contractProp.id);
+            return {
+              id: contractProp.id,
+              name: metadata?.name ?? `Property #${contractProp.id}`,
+              location: contractProp.location, // Use contract location as SOT
+              imageUrl: metadata?.imageUrl ?? "/public/tulum.jpeg",
+              currentValuation: contractProp.currentValuation, // From contract
+              networkInvestment: metadata?.networkInvestment ?? {
+                listPrice: 0,
+                citizenshipCost: 0,
+                monthlyNetworkYield: 0,
+                tenYearVillageValue: 0,
+                totalTenYearReturn: 0,
+                access: "Entire Ancient archipelago",
+              },
+              availability: metadata?.availability,
+            };
+          });
+
+        setProperties(mergedProperties);
       }
     } catch (err) {
       console.error("Failed to fetch properties from contract:", err);
@@ -172,15 +238,16 @@ export function PropertySwiperSection({ onPropertySelect }: PropertySwiperSectio
 
 /**
  * Property details card shown alongside the swiper
+ * Uses contract's currentValuation as source of truth for list price
  */
 function LandingPropertyDetailsCard({
   property,
   onSelect,
 }: {
-  property: LandingProperty;
+  property: PropertyWithContractData;
   onSelect?: (property: LandingProperty) => void;
 }) {
-  const { name, location, networkInvestment } = property;
+  const { name, location, networkInvestment, currentValuation } = property;
 
   return (
     <Card className="w-full">
@@ -198,7 +265,7 @@ function LandingPropertyDetailsCard({
           <div>
             <p className="text-xs sm:text-sm text-muted-foreground">List Price</p>
             <p className="text-lg sm:text-2xl font-bold">
-              $<PrettyAmount amountFormatted={networkInvestment.listPrice} size="2xl" />
+              $<PrettyAmount amountFormatted={formatUSD(currentValuation)} size="2xl" />
             </p>
           </div>
           <div>
