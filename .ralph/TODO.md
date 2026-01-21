@@ -5,7 +5,7 @@
 - [x] Add property images to public folder and create PropertyCard with image background and glassmorphism badges
 - [x] Install swiper and create PropertySwiper component for Dashboard
 - [x] Update Dashboard.tsx to use PropertySwiper and styled mortgage position cards
-- [ ] Restyle Faucet.tsx with centered dark card styling
+- [x] Restyle Faucet.tsx with centered dark card styling
 - [ ] Restyle Mortgage.tsx with polished form cards and input styling
 
 ---
@@ -102,3 +102,26 @@ _Append progress and learnings here after each iteration_
   - CardDescription needed to stay imported for error state fallback
   - Using `bg-gradient-to-r from-primary to-primary/80` creates depth in progress bars
   - Uppercase tracking-wider labels (`text-xs uppercase tracking-wider`) give a premium feel
+
+## Restyle Faucet.tsx with centered dark card styling - Done
+- Completely restyled Faucet page with centered card layout for all states (loading, error, main)
+- Added visual hierarchy with icon-in-circle headers:
+  - Loading: RefreshCw spinning icon with primary background
+  - Error: AlertCircle icon with destructive background
+  - Main: Droplets icon with primary background
+- Enhanced balance display with gradient border card: `bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20`
+- Improved account info section with muted background card and proper labels
+- Styled claim button with hover shadow effect: `hover:shadow-lg hover:shadow-primary/20`
+- Updated transaction feedback alerts:
+  - Success: Green border/bg with CheckCircle2 icon
+  - Error: Red border/bg with AlertCircle icon
+- Added proper spacing and vertical centering: `min-h-[60vh] flex items-center justify-center`
+- Improved code blocks in error state with `bg-background border border-border` styling
+- Added lucide-react icons: Coins, Wallet, RefreshCw, CheckCircle2, AlertCircle, Droplets
+- Files changed: `src/pages/Faucet.tsx`
+- **Learnings:**
+  - Vertical centering with `min-h-[60vh]` allows content to breathe while staying centered
+  - Icon-in-circle pattern (`w-16 h-16 rounded-full bg-primary/10`) creates visual focus
+  - Gradient backgrounds for balance card create premium feel without being too flashy
+  - Using opacity variants on primary color (`primary/5`, `/10`, `/20`) creates subtle depth
+  - Transaction feedback with icon + text in flex layout improves readability
