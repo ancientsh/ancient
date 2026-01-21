@@ -2,7 +2,7 @@
 
 - [x] Task 1: Fix scroll behavior - scroll should work anywhere on the page, not just on scrollbar
 - [x] Task 2: Change mortgage selection UI from select to swiper component
-- [ ] Task 3: Use prettyDate for dates
+- [x] Task 3: Use prettyDate for dates
 - [ ] Task 4: Use prettyAmount for amounts
 
 ---
@@ -36,3 +36,19 @@ _Append progress and learnings here after each iteration_
   - Auto-selecting first item on mount requires checking array bounds (`positions[0]` guard)
   - Using `onSwiper` callback to get the Swiper instance allows programmatic control via `slideTo()`
   - Custom navigation buttons work well with Swiper's `navigation.prevEl/nextEl` options
+
+## Task 3: Use prettyDate for dates - Done
+- Created new `PrettyDate` component in `src/components/ui/pretty-date.tsx`
+- Component supports multiple formats: `date`, `time`, `datetime`, `countdown`, `relative`
+- Features include customizable sizes (xs to 2xl), real-time countdown updates, and configurable labels
+- Updated `src/pages/Dashboard.tsx`:
+  - Imported PrettyDate component
+  - Replaced `new Date(...).toLocaleDateString()` with `<PrettyDate date={...} format="date" size="xs" />`
+- Updated `src/components/properties/PropertySwiper.tsx`:
+  - Imported PrettyDate component
+  - Replaced `registeredDate` variable and usage with inline `<PrettyDate date={...} format="date" size="xl" className="font-bold" />`
+- Files changed: `src/components/ui/pretty-date.tsx` (new), `src/pages/Dashboard.tsx`, `src/components/properties/PropertySwiper.tsx`
+- **Learnings:**
+  - The gist reference provided a full-featured React component with countdown/relative time support
+  - Timestamps from blockchain (Unix seconds) need to be multiplied by 1000 for JavaScript Date (milliseconds)
+  - The `cn()` utility from lib/utils is used for merging Tailwind classes conditionally

@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { MapPin, TrendingUp, Building2 } from "lucide-react";
 import { formatUSD } from "@/contracts";
+import { PrettyDate } from "@/components/ui/pretty-date";
 
 // Import Swiper styles
 import "swiper/css";
@@ -133,7 +134,6 @@ function PropertyDetailsCard({
   property: PropertyData;
   onSelect?: (property: PropertyData) => void;
 }) {
-  const registeredDate = new Date(Number(property.registeredAt) * 1000).toLocaleDateString();
   const valuationChange = property.currentValuation - property.originalValuation;
   const changePercent = property.originalValuation > 0n
     ? Number((valuationChange * 10000n) / property.originalValuation) / 100
@@ -173,9 +173,7 @@ function PropertyDetailsCard({
           </div>
           <div>
             <p className="text-sm text-muted-foreground">Registered</p>
-            <p className="text-xl font-bold">
-              {registeredDate}
-            </p>
+            <PrettyDate date={Number(property.registeredAt) * 1000} format="date" size="xl" className="font-bold" />
           </div>
         </div>
 

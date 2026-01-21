@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { PropertySwiper } from "@/components/properties";
 import { TrendingUp, Calendar, DollarSign, Clock, RefreshCw } from "lucide-react";
+import { PrettyDate } from "@/components/ui/pretty-date";
 import {
   useWeb3,
   formatUSD,
@@ -310,7 +311,6 @@ export function Dashboard() {
  * Styled mortgage position card with progress bar, status badges, and hover effects
  */
 function MortgagePositionCard({ position }: { position: Position }) {
-  const createdDate = new Date(Number(position.createdAt) * 1000).toLocaleDateString();
   const progress = Number(position.paymentsCompleted) / Number(position.termPeriods) * 100;
   const isPaidOff = position.remainingPrincipal === 0n || position.paymentsCompleted >= position.termPeriods;
   const periodsRemaining = Number(position.termPeriods) - Number(position.paymentsCompleted);
@@ -394,7 +394,7 @@ function MortgagePositionCard({ position }: { position: Position }) {
         <div className="flex items-center justify-between border-t pt-3 text-xs text-muted-foreground">
           <span className="flex items-center gap-1">
             <Calendar className="h-3 w-3" />
-            Started: {createdDate}
+            Started: <PrettyDate date={Number(position.createdAt) * 1000} format="date" size="xs" />
           </span>
           <span className="font-medium text-foreground">
             Total Paid: ${formatUSD(position.totalPaid)}
