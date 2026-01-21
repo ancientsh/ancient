@@ -20,6 +20,4 @@ remappings = [
 # Local Anvil chain config
 [rpc_endpoints]
 anvil = "http://127.0.0.1:8545"
-
-[etherscan]
-unknown_chain = { key = "", chain = 31337, url = "http://localhost:8545" }
+localhost = "http://127.0.0.1:8545"
