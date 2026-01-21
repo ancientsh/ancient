@@ -7,9 +7,13 @@
     "dev": "bun scripts/dev.ts",
     "dev:frontend": "bun --hot src/index.ts",
     "dev:anvil": "anvil",
-    "deploy": "cd contracts && forge script script/Deploy.s.sol --rpc-url http://localhost:8545 --broadcast --chain-id 31337",
+    "deploy:contracts": "cd contracts && forge script script/Deploy.s.sol --rpc-url http://localhost:8545 --broadcast --chain-id 31337",
     "start": "NODE_ENV=production bun src/index.ts",
-    "build": "bun run build.ts"
+    "build": "bun run build.ts",
+    "fly:deploy": "flyctl deploy --ha=false",
+    "fly:logs": "flyctl logs",
+    "fly:status": "flyctl status",
+    "fly:ssh": "flyctl ssh console"
   },
   "dependencies": {
     "@radix-ui/react-label": "^2.1.7",

@@ -26,7 +26,12 @@ export const LOCAL_ADDRESSES: ContractAddresses = {
 
 // Chain configuration
 export const ANVIL_CHAIN_ID = 31337;
-export const ANVIL_RPC_URL = "http://localhost:8545";
+
+// RPC URL configuration - uses environment variable or defaults to localhost
+// In production (Fly.io), this points to the internal RPC proxy
+export const ANVIL_RPC_URL = typeof window !== "undefined"
+  ? (import.meta.env?.VITE_RPC_URL || window.location.origin + "/rpc")
+  : (process.env.RPC_URL || "http://localhost:8545");
 
 // Default Anvil accounts (first 10 accounts with 10000 ETH each)
 export const ANVIL_ACCOUNTS = [
