@@ -61,6 +61,13 @@ interface Property {
   isActive: boolean;
 }
 
+interface PropertyMetadata {
+  id: number;
+  name: string;
+  location: string;
+  imageUrl: string;
+}
+
 interface MortgagePreview {
   principal: bigint;
   downPayment: bigint;
@@ -138,36 +145,36 @@ export function Mortgage() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto space-y-8 px-4 py-8">
+    <div className="max-w-3xl mx-auto space-y-6 sm:space-y-8 px-3 sm:px-4 py-4 sm:py-8">
       {/* Header */}
-      <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold">Mortgage Portal</h1>
-        <p className="text-muted-foreground">Create new mortgages or make payments on existing positions</p>
+      <div className="text-center space-y-1 sm:space-y-2">
+        <h1 className="text-2xl sm:text-3xl font-bold">Mortgage Portal</h1>
+        <p className="text-sm sm:text-base text-muted-foreground">Create mortgages or make payments</p>
       </div>
 
       {/* Tab navigation */}
-      <div className="flex gap-2 p-1 bg-muted/50 rounded-lg">
+      <div className="flex gap-1 sm:gap-2 p-1 bg-muted/50 rounded-lg">
         <button
           onClick={() => setActiveTab("create")}
-          className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-md text-sm font-medium transition-all ${
+          className={`flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-2.5 sm:py-3 rounded-md text-xs sm:text-sm font-medium transition-all ${
             activeTab === "create"
               ? "bg-card text-foreground shadow-md"
               : "text-muted-foreground hover:text-foreground hover:bg-card/50"
           }`}
         >
-          <Building2 className="w-4 h-4" />
-          Create Mortgage
+          <Building2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+          <span className="hidden xs:inline">Create</span> Mortgage
         </button>
         <button
           onClick={() => setActiveTab("pay")}
-          className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-md text-sm font-medium transition-all ${
+          className={`flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-2.5 sm:py-3 rounded-md text-xs sm:text-sm font-medium transition-all ${
             activeTab === "pay"
               ? "bg-card text-foreground shadow-md"
               : "text-muted-foreground hover:text-foreground hover:bg-card/50"
           }`}
         >
-          <CreditCard className="w-4 h-4" />
-          Make Payments
+          <CreditCard className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+          <span className="hidden xs:inline">Make</span> Payments
         </button>
       </div>
 
@@ -184,10 +191,12 @@ function PropertySwiperSelector({
   properties,
   selectedPropertyId,
   onPropertySelect,
+  propertyMetadata,
 }: {
   properties: Property[];
   selectedPropertyId: string;
   onPropertySelect: (id: number) => void;
+  propertyMetadata: Map<number, PropertyMetadata>;
 }) {
   const [swiperRef, setSwiperRef] = useState<SwiperType | null>(null);
 
@@ -240,7 +249,7 @@ function PropertySwiperSelector({
         >
           {properties.map((property) => (
             <SwiperSlide key={property.id}>
-              <PropertySelectorCard property={property} isSelected={property.id.toString() === selectedPropertyId} />
+              <PropertySelectorCard property={property} isSelected={property.id.toString() === selectedPropertyId} metadata={propertyMetadata.get(property.id)} />
             </SwiperSlide>
           ))}
         </Swiper>
@@ -266,7 +275,7 @@ function PropertySwiperSelector({
         >
           {properties.map((property) => (
             <SwiperSlide key={property.id}>
-              <PropertySelectorCard property={property} isSelected={property.id.toString() === selectedPropertyId} />
+              <PropertySelectorCard property={property} isSelected={property.id.toString() === selectedPropertyId} metadata={propertyMetadata.get(property.id)} />
             </SwiperSlide>
           ))}
         </Swiper>
@@ -291,23 +300,16 @@ function PropertySwiperSelector({
   );
 }
 
-// Property images matching PropertyCard
-const propertyImages = [
-  "/public/tulum.jpeg",
-  "/public/mexico_beachfront.jpg",
-  "/public/a-frame.jpeg",
-  "/public/tony-stark.jpeg",
-];
-
 /**
  * Individual property card for the swiper selector - matches PropertyCard design
  */
-function PropertySelectorCard({ property, isSelected }: { property: Property; isSelected: boolean }) {
-  const imageUrl = propertyImages[property.id % propertyImages.length];
+function PropertySelectorCard({ property, isSelected, metadata }: { property: Property; isSelected: boolean; metadata?: PropertyMetadata }) {
+  const imageUrl = metadata?.imageUrl ?? "/public/tulum.jpeg";
+  const propertyName = metadata?.name ?? `Property #${property.id}`;
 
   return (
     <div
-      className={`group relative aspect-[4/5] w-full overflow-hidden rounded-xl border-2 shadow-xl transition-all ${
+      className={`group relative aspect-[4/5] w-full h-full overflow-hidden rounded-xl border-2 shadow-xl transition-all ${
         isSelected
           ? "border-primary shadow-2xl ring-2 ring-primary/30"
           : "border-transparent hover:border-primary/50"
@@ -316,7 +318,7 @@ function PropertySelectorCard({ property, isSelected }: { property: Property; is
       {/* Property Image */}
       <img
         src={imageUrl}
-        alt={`Property #${property.id}`}
+        alt={propertyName}
         className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
       />
 
@@ -324,7 +326,7 @@ function PropertySelectorCard({ property, isSelected }: { property: Property; is
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
 
       {/* Status Badge - glassmorphism style */}
-      <div className={`absolute right-4 top-4 rounded-lg border px-3 py-1.5 text-sm font-semibold backdrop-blur-sm shadow-lg ${
+      <div className={`absolute right-2 sm:right-4 top-2 sm:top-4 rounded-lg border px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-semibold backdrop-blur-sm shadow-lg ${
         isSelected
           ? "border-primary bg-primary/90 text-primary-foreground"
           : "border-primary/60 bg-white/90 text-primary"
@@ -333,20 +335,20 @@ function PropertySelectorCard({ property, isSelected }: { property: Property; is
       </div>
 
       {/* Value Badge - glassmorphism style */}
-      <div className="absolute left-4 top-4 rounded-lg border border-white/30 bg-black/40 px-3 py-1.5 text-sm font-semibold text-white backdrop-blur-sm shadow-lg">
+      <div className="absolute left-2 sm:left-4 top-2 sm:top-4 rounded-lg border border-white/30 bg-black/40 px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-semibold text-white backdrop-blur-sm shadow-lg">
         ${formatUSD(property.currentValuation)}
       </div>
 
       {/* Property Info Overlay */}
-      <div className="absolute bottom-0 left-0 right-0 p-4">
-        <div className={`rounded-xl border p-4 backdrop-blur-md ${
+      <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-4">
+        <div className={`rounded-xl border p-2 sm:p-4 backdrop-blur-md ${
           isSelected
             ? "border-primary/40 bg-primary/20"
             : "border-white/20 bg-black/50"
         }`}>
-          <h3 className="mb-1 text-lg font-bold text-white">Property #{property.id}</h3>
-          <p className="text-sm text-white/80 line-clamp-2 flex items-center gap-1">
-            <MapPin className="w-3 h-3 shrink-0" />
+          <h3 className="mb-0.5 sm:mb-1 text-sm sm:text-lg font-bold text-white line-clamp-1">{propertyName}</h3>
+          <p className="text-xs sm:text-sm text-white/80 line-clamp-1 flex items-center gap-1">
+            <MapPin className="w-2.5 h-2.5 sm:w-3 sm:h-3 shrink-0" />
             {property.location}
           </p>
         </div>
@@ -566,69 +568,33 @@ function PositionSelectorCard({ position, isSelected }: { position: Position; is
 const TERM_OPTIONS = [10, 15, 20, 25, 30];
 
 /**
- * Swiper-based term period selector
+ * Button-based term period selector
  */
-function TermSwiperSelector({
+function TermSelector({
   termPeriods,
   onTermChange,
 }: {
   termPeriods: string;
   onTermChange: (value: string) => void;
 }) {
-  const [swiperRef, setSwiperRef] = useState<SwiperType | null>(null);
-
-  const initialSlide = TERM_OPTIONS.findIndex((t) => t.toString() === termPeriods);
-
-  const handleSlideChange = (swiper: SwiperType) => {
-    const term = TERM_OPTIONS[swiper.activeIndex];
-    if (term !== undefined) {
-      onTermChange(term.toString());
-    }
-  };
-
-  // Sync swiper position when termPeriods changes externally
-  useEffect(() => {
-    if (swiperRef && termPeriods) {
-      const index = TERM_OPTIONS.findIndex((t) => t.toString() === termPeriods);
-      if (index !== -1 && swiperRef.activeIndex !== index) {
-        swiperRef.slideTo(index);
-      }
-    }
-  }, [termPeriods, swiperRef]);
-
   return (
-    <div className="relative">
-      <Swiper
-        slidesPerView={3}
-        spaceBetween={8}
-        centeredSlides={true}
-        grabCursor
-        modules={[Pagination]}
-        pagination={{ clickable: true }}
-        className="term-swiper"
-        onSlideChange={handleSlideChange}
-        onSwiper={setSwiperRef}
-        initialSlide={initialSlide >= 0 ? initialSlide : 2}
-      >
-        {TERM_OPTIONS.map((term) => (
-          <SwiperSlide key={term}>
-            <div
-              className={`rounded-lg border-2 py-3 px-4 text-center transition-all cursor-pointer ${
-                term.toString() === termPeriods
-                  ? "border-primary bg-primary/10 shadow-md"
-                  : "border-border bg-card hover:border-primary/50"
-              }`}
-            >
-              <span className={`text-lg font-bold ${term.toString() === termPeriods ? "text-primary" : "text-foreground"}`}>
-                {term}
-              </span>
-              <span className={`text-sm ml-1 ${term.toString() === termPeriods ? "text-primary/80" : "text-muted-foreground"}`}>
-                periods
-              </span>
-            </div>
-          </SwiperSlide>
-        ))}
-      </Swiper>
+    <div className="grid grid-cols-5 gap-2">
+      {TERM_OPTIONS.map((term) => (
+        <button
+          key={term}
+          type="button"
+          onClick={() => onTermChange(term.toString())}
+          className={`rounded-lg border-2 py-2.5 px-2 text-center transition-all ${
+            term.toString() === termPeriods
+              ? "border-primary bg-primary/10 shadow-md"
+              : "border-border bg-card hover:border-primary/50"
+          }`}
+        >
+          <span className={`text-base sm:text-lg font-bold block ${term.toString() === termPeriods ? "text-primary" : "text-foreground"}`}>
+            {term}
+          </span>
+        </button>
+      ))}
     </div>
   );
 }
@@ -638,6 +604,7 @@ function CreateMortgageForm() {
   const addresses = getContractAddresses();
 
   const [properties, setProperties] = useState<Property[]>([]);
+  const [propertyMetadata, setPropertyMetadata] = useState<Map<number, PropertyMetadata>>(new Map());
   const [selectedPropertyId, setSelectedPropertyId] = useState<string>("");
   const [downPaymentPercent, setDownPaymentPercent] = useState("20");
   const [termPeriods, setTermPeriods] = useState("15");
@@ -651,7 +618,7 @@ function CreateMortgageForm() {
   const [txHash, setTxHash] = useState<string | null>(null);
   const [txError, setTxError] = useState<string | null>(null);
 
-  // Fetch properties
+  // Fetch properties and metadata from contract
   const fetchProperties = useCallback(async () => {
     if (!publicClient) return;
     try {
@@ -662,18 +629,39 @@ function CreateMortgageForm() {
       }) as bigint;
 
       const props: Property[] = [];
+      let metadataUri: string | null = null;
+
       for (let i = 0; i < Number(totalCount); i++) {
         const property = await publicClient.readContract({
           address: addresses.propertyOracle,
           abi: PropertyOracleAbi,
           functionName: "getProperty",
           args: [BigInt(i)],
-        }) as { location: string; currentValuation: bigint; isActive: boolean };
+        }) as { location: string; currentValuation: bigint; isActive: boolean; metadataURI: string };
+
         if (property.isActive) {
-          props.push({ id: i, ...property });
+          props.push({ id: i, location: property.location, currentValuation: property.currentValuation, isActive: property.isActive });
+        }
+
+        // Get metadataURI from first property (all share same URI)
+        if (!metadataUri && property.metadataURI) {
+          metadataUri = property.metadataURI;
         }
       }
       setProperties(props);
+
+      // Fetch metadata from the URI stored in contract
+      if (metadataUri) {
+        try {
+          const res = await fetch(metadataUri);
+          const data: PropertyMetadata[] = await res.json();
+          const metadataMap = new Map<number, PropertyMetadata>();
+          data.forEach((prop) => metadataMap.set(prop.id, prop));
+          setPropertyMetadata(metadataMap);
+        } catch (err) {
+          console.error("Failed to fetch property metadata from URI:", err);
+        }
+      }
     } catch (err) {
       console.error("Failed to fetch properties:", err);
     }
@@ -863,6 +851,7 @@ function CreateMortgageForm() {
               properties={properties}
               selectedPropertyId={selectedPropertyId}
               onPropertySelect={(id) => setSelectedPropertyId(id.toString())}
+              propertyMetadata={propertyMetadata}
             />
           )}
         </div>
@@ -918,7 +907,7 @@ function CreateMortgageForm() {
               <Clock className="w-4 h-4 text-muted-foreground" />
               Term Length
             </Label>
-            <TermSwiperSelector
+            <TermSelector
               termPeriods={termPeriods}
               onTermChange={setTermPeriods}
             />
@@ -1020,13 +1009,13 @@ function CreateMortgageForm() {
           </div>
         )}
       </CardContent>
-      <CardFooter className="flex gap-3 pt-4 border-t border-border/50">
+      <CardFooter className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-border/50">
         {needsApproval && (
           <Button
             onClick={approveTokens}
             disabled={isApproving || !isWhitelisted}
             variant="outline"
-            className="h-12 px-6 hover:shadow-md transition-all"
+            className="w-full sm:w-auto h-11 sm:h-12 px-4 sm:px-6 text-sm sm:text-base hover:shadow-md transition-all"
           >
             {isApproving ? (
               <>
@@ -1044,17 +1033,17 @@ function CreateMortgageForm() {
         <Button
           onClick={createMortgage}
           disabled={isLoading || !preview || isWhitelisted !== true || insufficientBalance === true || needsApproval}
-          className="flex-1 h-12 text-base font-semibold transition-all hover:shadow-lg hover:shadow-primary/20"
+          className="w-full sm:flex-1 h-11 sm:h-12 text-sm sm:text-base font-semibold transition-all hover:shadow-lg hover:shadow-primary/20"
           size="lg"
         >
           {isLoading ? (
             <>
-              <RefreshCw className="mr-2 h-5 w-5 animate-spin" />
-              Creating Mortgage...
+              <RefreshCw className="mr-2 h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
+              Creating...
             </>
           ) : (
             <>
-              <Building2 className="mr-2 h-5 w-5" />
+              <Building2 className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
               Create Mortgage
             </>
           )}
@@ -1356,13 +1345,13 @@ function MakePaymentsForm() {
         )}
       </CardContent>
       {positions.length > 0 && (
-        <CardFooter className="flex gap-3 pt-4 border-t border-border/50">
+        <CardFooter className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-border/50">
           {needsApproval && (
             <Button
               onClick={approveTokens}
               disabled={isApproving}
               variant="outline"
-              className="h-12 px-6 hover:shadow-md transition-all"
+              className="w-full sm:w-auto h-11 sm:h-12 px-4 sm:px-6 text-sm sm:text-base hover:shadow-md transition-all"
             >
               {isApproving ? (
                 <>
@@ -1380,17 +1369,17 @@ function MakePaymentsForm() {
           <Button
             onClick={makePayment}
             disabled={isLoading || !selectedPositionId || insufficientBalance || needsApproval}
-            className="flex-1 h-12 text-base font-semibold transition-all hover:shadow-lg hover:shadow-primary/20"
+            className="w-full sm:flex-1 h-11 sm:h-12 text-sm sm:text-base font-semibold transition-all hover:shadow-lg hover:shadow-primary/20"
             size="lg"
           >
             {isLoading ? (
               <>
-                <RefreshCw className="mr-2 h-5 w-5 animate-spin" />
+                <RefreshCw className="mr-2 h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
                 Processing...
               </>
             ) : (
               <>
-                <CreditCard className="mr-2 h-5 w-5" />
+                <CreditCard className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                 Make {numPayments} Payment{parseInt(numPayments) > 1 ? "s" : ""}
               </>
             )}

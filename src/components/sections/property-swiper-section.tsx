@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCards, Navigation, Pagination } from "swiper/modules";
 import { Section } from "@/components/ui/section";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MapPin, TrendingUp, Users } from "lucide-react";
-import { MOCK_PROPERTIES, formatMultiplier, type LandingProperty } from "@/lib/constants";
+import { MapPin, TrendingUp, Users, RefreshCw } from "lucide-react";
+import { formatMultiplier, type LandingProperty } from "@/lib/constants";
 import { PrettyAmount } from "@/components/ui/pretty-amount";
+import { useWeb3, PropertyOracleAbi, getContractAddresses } from "@/contracts";
 
 // Import Swiper styles
 import "swiper/css";
@@ -22,14 +23,64 @@ interface PropertySwiperSectionProps {
  * @description Swiper component for property listings on landing page
  */
 export function PropertySwiperSection({ onPropertySelect }: PropertySwiperSectionProps) {
+  const { publicClient } = useWeb3();
+  const addresses = getContractAddresses();
   const [activeIndex, setActiveIndex] = useState(0);
-  const properties = MOCK_PROPERTIES;
+  const [properties, setProperties] = useState<LandingProperty[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchProperties = useCallback(async () => {
+    if (!publicClient) {
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      // Get the first property to retrieve the metadataURI
+      const property = await publicClient.readContract({
+        address: addresses.propertyOracle,
+        abi: PropertyOracleAbi,
+        functionName: "getProperty",
+        args: [BigInt(0)],
+      }) as { metadataURI: string };
+
+      if (property.metadataURI) {
+        // Fetch metadata from the URI stored in contract
+        const res = await fetch(property.metadataURI);
+        const data: LandingProperty[] = await res.json();
+        setProperties(data);
+      }
+    } catch (err) {
+      console.error("Failed to fetch properties from contract:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [publicClient, addresses.propertyOracle]);
+
+  useEffect(() => {
+    fetchProperties();
+  }, [fetchProperties]);
 
   const handleSlideChange = (swiper: any) => {
     setActiveIndex(swiper.activeIndex);
   };
 
   const activeProperty = properties[activeIndex] ?? properties[0];
+
+  if (isLoading) {
+    return (
+      <Section
+        id="properties"
+        fullHeight
+        className="property-swiper-section flex flex-col items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-12"
+      >
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <RefreshCw className="h-5 w-5 animate-spin" />
+          <span>Loading properties...</span>
+        </div>
+      </Section>
+    );
+  }
 
   if (!activeProperty) {
     return null;
@@ -115,10 +166,12 @@ function LandingPropertyCard({ property }: { property: LandingProperty }) {
         className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
       />
 
-      {/* Sold Badge */}
-      <div className="absolute right-2 sm:right-4 top-2 sm:top-4 rounded-lg border border-primary/60 bg-white/90 px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-semibold text-primary backdrop-blur-sm shadow-lg">
-        {availability.sold}/{availability.total} sold
-      </div>
+      {/* Sold Badge - only show if availability data is present */}
+      {availability && (
+        <div className="absolute right-2 sm:right-4 top-2 sm:top-4 rounded-lg border border-primary/60 bg-white/90 px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-semibold text-primary backdrop-blur-sm shadow-lg">
+          {availability.sold}/{availability.total} sold
+        </div>
+      )}
     </Card>
   );
 }

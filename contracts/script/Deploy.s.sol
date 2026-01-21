@@ -31,9 +31,14 @@ contract Deploy is Script {
     uint256 constant BASE_RATE_BPS = 500;
 
     // Sample property valuations (6 decimals like MockUSD)
-    uint256 constant PROPERTY_1_VALUE = 500_000 * 1e6;  // $500,000
-    uint256 constant PROPERTY_2_VALUE = 750_000 * 1e6;  // $750,000
-    uint256 constant PROPERTY_3_VALUE = 1_000_000 * 1e6; // $1,000,000
+    // These match the properties in public/properties.json
+    uint256 constant PROPERTY_0_VALUE = 129_000 * 1e6;  // $129,000 - Art Deco Loft
+    uint256 constant PROPERTY_1_VALUE = 225_000 * 1e6;  // $225,000 - Beachfront Paradise
+    uint256 constant PROPERTY_2_VALUE = 95_000 * 1e6;   // $95,000 - Ocean Bungalow
+    uint256 constant PROPERTY_3_VALUE = 185_000 * 1e6;  // $185,000 - Hillside Villa
+
+    // Base URI for property metadata (served from /public/properties.json)
+    string constant METADATA_BASE_URI = "/public/properties.json";
 
     function run() external {
         // Get deployer private key from environment or use default Anvil account 0
@@ -92,28 +97,37 @@ contract Deploy is Script {
         console.log("MortgageFactory granted admin on MortgagePositionNFT");
 
         // ============ Register Sample Properties ============
+        // Properties match public/properties.json for consistent metadata
 
-        // Property 1: Small House - $500,000
+        // Property 0: Art Deco Loft - $129,000
+        uint256 prop0 = propertyOracle.registerProperty(
+            "Mazunte, Mexico",
+            PROPERTY_0_VALUE,
+            METADATA_BASE_URI
+        );
+        console.log("Property 0 registered with ID:", prop0);
+
+        // Property 1: Beachfront Paradise - $225,000
         uint256 prop1 = propertyOracle.registerProperty(
-            "123 Main Street, Springfield, IL 62701",
+            "Tulum, Mexico",
             PROPERTY_1_VALUE,
-            "ipfs://QmSampleProperty1Metadata"
+            METADATA_BASE_URI
         );
         console.log("Property 1 registered with ID:", prop1);
 
-        // Property 2: Medium House - $750,000
+        // Property 2: Ocean Bungalow - $95,000
         uint256 prop2 = propertyOracle.registerProperty(
-            "456 Oak Avenue, Chicago, IL 60601",
+            "Bahia, Brazil",
             PROPERTY_2_VALUE,
-            "ipfs://QmSampleProperty2Metadata"
+            METADATA_BASE_URI
         );
         console.log("Property 2 registered with ID:", prop2);
 
-        // Property 3: Large House - $1,000,000
+        // Property 3: Hillside Villa - $185,000
         uint256 prop3 = propertyOracle.registerProperty(
-            "789 Lake Drive, Naperville, IL 60540",
+            "Sacred Valley, Peru",
             PROPERTY_3_VALUE,
-            "ipfs://QmSampleProperty3Metadata"
+            METADATA_BASE_URI
         );
         console.log("Property 3 registered with ID:", prop3);
 
@@ -139,12 +153,14 @@ contract Deploy is Script {
         console.log("Configuration:");
         console.log("  Base Interest Rate: ", BASE_RATE_BPS, "bps (5%)");
         console.log("  Treasury:           ", deployer);
-        console.log("  Properties Registered: 3");
+        console.log("  Properties Registered: 4");
+        console.log("  Metadata URI:        ", METADATA_BASE_URI);
         console.log("");
-        console.log("Sample Properties:");
-        console.log("  ID 0: $500,000 - 123 Main Street");
-        console.log("  ID 1: $750,000 - 456 Oak Avenue");
-        console.log("  ID 2: $1,000,000 - 789 Lake Drive");
+        console.log("Sample Properties (matching public/properties.json):");
+        console.log("  ID 0: $129,000 - Art Deco Loft, Mazunte, Mexico");
+        console.log("  ID 1: $225,000 - Beachfront Paradise, Tulum, Mexico");
+        console.log("  ID 2: $95,000 - Ocean Bungalow, Bahia, Brazil");
+        console.log("  ID 3: $185,000 - Hillside Villa, Sacred Valley, Peru");
         console.log("=========================================\n");
     }
 }

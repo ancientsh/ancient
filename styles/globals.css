@@ -104,8 +104,8 @@ body {
 /* Mortgage Property Swiper - Compact for form use */
 .mortgage-property-swiper {
   width: 100%;
-  min-height: 160px;
-  padding: 10px 0 40px;
+  height: 320px;
+  padding: 10px 0 30px;
 }
 
 .mortgage-property-swiper .swiper-slide {
@@ -113,8 +113,8 @@ body {
   align-items: center;
   justify-content: center;
   border-radius: 12px;
-  height: auto;
-  width: 100%;
+  height: 280px;
+  width: 220px;
 }
 
 .mortgage-property-swiper-horizontal {
@@ -132,23 +132,6 @@ body {
 }
 
 .mortgage-property-swiper-horizontal .swiper-slide-active {
-  opacity: 1;
-  transform: scale(1);
-}
-
-/* Term Swiper - Compact horizontal selector */
-.term-swiper {
-  width: 100%;
-  padding: 5px 0 30px;
-}
-
-.term-swiper .swiper-slide {
-  opacity: 0.5;
-  transform: scale(0.9);
-  transition: all 0.2s ease;
-}
-
-.term-swiper .swiper-slide-active {
   opacity: 1;
   transform: scale(1);
 }
