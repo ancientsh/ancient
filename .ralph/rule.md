@@ -1,7 +1,3 @@
-fix scroll only possible while hovering the navbar or scrollbar, scroll should work on page content too
+your goal is to install liquidcn and replace our ui element usage with liquidcn components
 
-mortgage tab: cards should have the same structure as the property cards in the dashboard, some config selections on page are buggy identified and fix them
-
-we dont support whitelist for this app yet make those launch cta s
-
-run typecheks
+liquidcn exports: liquidcn | liquidcn/client
