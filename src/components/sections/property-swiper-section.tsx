@@ -2,11 +2,9 @@ import { useState, useEffect, useCallback } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCards, Navigation, Pagination } from "swiper/modules";
 import { Section } from "@/components/ui/section";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, Button, PrettyAmount } from "liquidcn";
 import { MapPin, TrendingUp, Users, RefreshCw } from "lucide-react";
 import { formatMultiplier, type LandingProperty } from "@/lib/constants";
-import { PrettyAmount } from "@/components/ui/pretty-amount";
 import { useWeb3, PropertyOracleAbi, getContractAddresses, formatUSD } from "@/contracts";
 import { PropertyCard } from "@/components/properties/PropertyCard";
 

@@ -1,7 +1,6 @@
 import { MapPin } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import { Card, PrettyAmount } from "liquidcn";
 import { formatUSD } from "@/contracts";
-import { PrettyAmount } from "@/components/ui/pretty-amount";
 
 export interface PropertyMetadata {
   id: number;

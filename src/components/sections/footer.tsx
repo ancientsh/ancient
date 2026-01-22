@@ -1,73 +1,21 @@
+import { Footer as LiquidFooter } from "liquidcn";
+import { Github, Twitter } from "lucide-react";
+
+const footerLinks = [
+  { name: "GitHub", href: "https://github.com/ancientsh", icon: Github, showLabel: false },
+  { name: "Twitter", href: "https://x.com/ancientsh", icon: Twitter, showLabel: false },
+];
+
 /**
- * @description Footer component
+ * @description Footer component using liquidcn
  */
 export function Footer() {
-  const currentYear = new Date().getFullYear();
-
   return (
-    <footer className="w-full border-t border-border bg-card/50 backdrop-blur-sm">
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:py-12 sm:px-6 lg:px-12">
-        <div className="grid gap-6 sm:gap-8 grid-cols-2 sm:grid-cols-2 md:grid-cols-4">
-          {/* Brand */}
-          <div className="col-span-2">
-            <span className="mb-3 sm:mb-4 text-lg sm:text-xl font-bold block">Ancient</span>
-            <p className="mb-4 max-w-md text-xs sm:text-sm text-muted-foreground">
-              The world's first decentralized nation for digital nomads. Own
-              property abroad with blockchain-secured mortgages.
-            </p>
-          </div>
-
-          {/* Quick Links */}
-          <div>
-            <h3 className="mb-3 sm:mb-4 text-xs sm:text-sm font-semibold">Quick Links</h3>
-            <ul className="space-y-2 text-xs sm:text-sm">
-              <li>
-                <a
-                  href="#properties"
-                  className="text-muted-foreground transition-colors hover:text-primary"
-                >
-                  Properties
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-muted-foreground transition-colors hover:text-primary"
-                >
-                  Portfolio
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Legal */}
-          <div>
-            <h3 className="mb-3 sm:mb-4 text-xs sm:text-sm font-semibold">Legal</h3>
-            <ul className="space-y-2 text-xs sm:text-sm">
-              <li>
-                <a
-                  href="#"
-                  className="text-muted-foreground transition-colors hover:text-primary"
-                >
-                  Terms of Service
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-muted-foreground transition-colors hover:text-primary"
-                >
-                  Privacy Policy
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="mt-6 sm:mt-8 border-t border-border pt-6 sm:pt-8 text-center text-xs sm:text-sm text-muted-foreground">
-          <p>&copy; {currentYear} Ancient Holdings. All rights reserved.</p>
-        </div>
-      </div>
-    </footer>
+    <LiquidFooter
+      links={footerLinks}
+      builtByText="Built by"
+      builtByBrand="Ancient"
+      showLogo={true}
+    />
   );
 }

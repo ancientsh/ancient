@@ -1,5 +1,5 @@
 import { ChevronDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "liquidcn";
 import { Section } from "@/components/ui/section";
 import { useEffect, useState } from "react";
 
@@ -29,14 +29,14 @@ export function HeroSection({ onScrollToProperties, onLaunchApp }: HeroSectionPr
       fullHeight
       variant="hero"
       background="transparent"
-      className="relative flex flex-col items-center justify-center overflow-hidden"
+      className="relative flex flex-col items-center justify-center overflow-hidden rounded-xl sm:rounded-2xl"
     >
       {/* Background Image with Parallax */}
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none rounded-xl sm:rounded-2xl">
         <div
-          className="absolute inset-0 transition-transform duration-100 ease-out"
+          className="absolute -top-20 -bottom-20 left-0 right-0 transition-transform duration-100 ease-out"
           style={{
-            transform: `translateY(${scrollY * 0.5}px) scale(${1 + scrollY * 0.0002})`,
+            transform: `translateY(${scrollY * 0.5}px)`,
           }}
         >
           <img

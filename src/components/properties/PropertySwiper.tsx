@@ -7,12 +7,12 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+  Button,
+  PrettyAmount,
+} from "liquidcn";
+import { PrettyDate } from "liquidcn/client";
 import { MapPin, TrendingUp, Building2 } from "lucide-react";
 import { formatUSD } from "@/contracts";
-import { PrettyDate } from "@/components/ui/pretty-date";
-import { PrettyAmount } from "@/components/ui/pretty-amount";
 
 // Import Swiper styles
 import "swiper/css";

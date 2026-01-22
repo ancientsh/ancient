@@ -11,10 +11,11 @@ import {
   CardHeader,
   CardTitle,
   CardFooter,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+  Button,
+  Input,
+  PrettyAmount,
+} from "liquidcn";
+import { Label } from "liquidcn/client";
 import {
   useWeb3,
   formatUSD,
@@ -27,7 +28,6 @@ import {
   getContractAddresses,
   anvilChain,
 } from "../contracts";
-import { PrettyAmount } from "@/components/ui/pretty-amount";
 import { PropertyCard, type PropertyMetadata } from "@/components/properties/PropertyCard";
 import {
   Building2,

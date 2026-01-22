@@ -1,5 +1,5 @@
 import { Section } from "@/components/ui/section";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "liquidcn";
 import { TrendingDown, TrendingUp } from "lucide-react";
 
 /**

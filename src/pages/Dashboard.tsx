@@ -6,12 +6,12 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+  Button,
+  PrettyAmount,
+} from "liquidcn";
+import { PrettyDate } from "liquidcn/client";
 import { PropertySwiper } from "@/components/properties";
 import { TrendingUp, Calendar, DollarSign, Clock, RefreshCw } from "lucide-react";
-import { PrettyDate } from "@/components/ui/pretty-date";
-import { PrettyAmount } from "@/components/ui/pretty-amount";
 import {
   useWeb3,
   formatUSD,

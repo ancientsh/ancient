@@ -7,10 +7,10 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+  Button,
+  PrettyAmount,
+} from "liquidcn";
 import { useWeb3, formatUSD, MockUSDAbi, getContractAddresses, anvilChain } from "../contracts";
-import { PrettyAmount } from "@/components/ui/pretty-amount";
 import { Coins, Wallet, RefreshCw, CheckCircle2, AlertCircle, Droplets } from "lucide-react";
 
 export function Faucet() {

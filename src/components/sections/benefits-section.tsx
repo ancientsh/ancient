@@ -1,5 +1,5 @@
 import { Section } from "@/components/ui/section";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "liquidcn";
 import { Percent, Landmark, Award } from "lucide-react";
 
 /**

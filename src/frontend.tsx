@@ -9,6 +9,8 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./App";
 
+import "liquidcn/styles.css";
+
 const elem = document.getElementById("root")!;
 const app = (
   <StrictMode>
