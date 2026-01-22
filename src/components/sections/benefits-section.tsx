@@ -39,6 +39,7 @@ export function BenefitsSection() {
         <div className="grid gap-4 sm:gap-6 sm:grid-cols-2 md:grid-cols-3">
           {benefits.map((benefit, index) => (
             <Card
+              isGlass
               key={index}
               className="border-2 border-primary/20 transition-all hover:border-primary"
             >

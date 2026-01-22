@@ -47,7 +47,7 @@ export function JourneySection() {
 
         <div className="grid gap-4 sm:gap-6 grid-cols-2 lg:grid-cols-4">
           {steps.map((step) => (
-            <Card key={step.number} className="relative overflow-hidden">
+            <Card isGlass key={step.number} className="relative overflow-hidden">
               <CardContent className="pt-4 sm:pt-6 px-3 sm:px-6 pb-4 sm:pb-6">
                 <div className="mb-3 sm:mb-4 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-primary/10">
                   <step.icon className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />

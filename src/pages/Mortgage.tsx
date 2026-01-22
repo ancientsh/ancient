@@ -88,7 +88,7 @@ export function Mortgage() {
   if (isConnecting) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center px-4">
-        <Card className="w-full max-w-md shadow-xl border-border/50">
+        <Card isGlass className="w-full max-w-md shadow-xl border-border/50">
           <CardHeader className="text-center space-y-4 pb-2">
             <div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
               <RefreshCw className="w-8 h-8 text-primary animate-spin" />
@@ -106,7 +106,7 @@ export function Mortgage() {
   if (error || !isConnected) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center px-4">
-        <Card className="w-full max-w-md shadow-xl border-border/50">
+        <Card isGlass className="w-full max-w-md shadow-xl border-border/50">
           <CardHeader className="text-center space-y-4 pb-2">
             <div className="mx-auto w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center">
               <AlertCircle className="w-8 h-8 text-destructive" />
@@ -703,7 +703,7 @@ function CreateMortgageForm() {
   const insufficientBalance = !!(preview && balance !== null && balance < preview.downPayment);
 
   return (
-    <Card className="shadow-xl border-border/50 transition-shadow hover:shadow-2xl">
+    <Card isGlass className="shadow-xl border-border/50 transition-shadow hover:shadow-2xl">
       <CardHeader className="space-y-4 pb-2">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
@@ -1129,7 +1129,7 @@ function MakePaymentsForm() {
     : 0;
 
   return (
-    <Card className="shadow-xl border-border/50 transition-shadow hover:shadow-2xl">
+    <Card isGlass className="shadow-xl border-border/50 transition-shadow hover:shadow-2xl">
       <CardHeader className="space-y-4 pb-2">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">

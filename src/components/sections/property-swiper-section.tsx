@@ -248,7 +248,7 @@ function LandingPropertyDetailsCard({
   const { name, location, networkInvestment, currentValuation } = property;
 
   return (
-    <Card className="w-full">
+    <Card isGlass className="w-full">
       <CardHeader className="pb-2 sm:pb-4">
         <CardTitle className="text-xl sm:text-2xl">{name}</CardTitle>
         <div className="flex items-center gap-2 text-sm sm:text-base text-muted-foreground">

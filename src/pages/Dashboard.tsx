@@ -10,7 +10,7 @@ import {
   PrettyAmount,
 } from "liquidcn";
 import { PrettyDate } from "liquidcn/client";
-import { PropertySwiper } from "@/components/properties";
+import { PropertySwiper, type PropertyMetadata } from "@/components/properties";
 import { TrendingUp, Calendar, DollarSign, Clock, RefreshCw } from "lucide-react";
 import {
   useWeb3,
@@ -49,6 +49,7 @@ interface Position {
 export function Dashboard() {
   const { isConnected, isConnecting, error, address, publicClient } = useWeb3();
   const [properties, setProperties] = useState<Property[]>([]);
+  const [propertyMetadata, setPropertyMetadata] = useState<Map<number, PropertyMetadata>>(new Map());
   const [positions, setPositions] = useState<Position[]>([]);
   const [isLoadingProperties, setIsLoadingProperties] = useState(false);
   const [isLoadingPositions, setIsLoadingPositions] = useState(false);
@@ -68,6 +69,8 @@ export function Dashboard() {
       }) as bigint;
 
       const props: Property[] = [];
+      let metadataUri: string | null = null;
+
       for (let i = 0; i < Number(totalCount); i++) {
         try {
           const property = await publicClient.readContract({
@@ -93,11 +96,29 @@ export function Dashboard() {
             isActive: property.isActive,
             metadataURI: property.metadataURI,
           });
+
+          // Get metadataURI from first property (all share same URI)
+          if (!metadataUri && property.metadataURI) {
+            metadataUri = property.metadataURI;
+          }
         } catch {
           // Property might not exist
         }
       }
       setProperties(props);
+
+      // Fetch metadata from the URI stored in contract
+      if (metadataUri) {
+        try {
+          const res = await fetch(metadataUri);
+          const data: PropertyMetadata[] = await res.json();
+          const metadataMap = new Map<number, PropertyMetadata>();
+          data.forEach((prop) => metadataMap.set(prop.id, prop));
+          setPropertyMetadata(metadataMap);
+        } catch (err) {
+          console.error("Failed to fetch property metadata from URI:", err);
+        }
+      }
     } catch (err) {
       console.error("Failed to fetch properties:", err);
     } finally {
@@ -183,7 +204,7 @@ export function Dashboard() {
 
   if (error || !isConnected) {
     return (
-      <Card className="max-w-md mx-auto">
+      <Card isGlass className="max-w-md mx-auto">
         <CardHeader>
           <CardTitle>Dashboard</CardTitle>
           <CardDescription className="text-destructive">
@@ -234,7 +255,7 @@ export function Dashboard() {
             </div>
           </div>
         ) : positions.length === 0 ? (
-          <Card className="border-dashed">
+          <Card isGlass className="border-dashed">
             <CardContent className="py-12 text-center">
               <div className="flex flex-col items-center gap-4">
                 <div className="rounded-full bg-muted p-4">
@@ -285,7 +306,7 @@ export function Dashboard() {
             </div>
           </div>
         ) : properties.length === 0 ? (
-          <Card className="border-dashed">
+          <Card isGlass className="border-dashed">
             <CardContent className="py-12 text-center">
               <div className="flex flex-col items-center gap-4">
                 <div className="rounded-full bg-muted p-4">
@@ -301,7 +322,7 @@ export function Dashboard() {
             </CardContent>
           </Card>
         ) : (
-          <PropertySwiper properties={properties.filter(p => p.isActive)} />
+          <PropertySwiper properties={properties.filter(p => p.isActive)} propertyMetadata={propertyMetadata} />
         )}
       </section>
     </div>
@@ -317,7 +338,7 @@ function MortgagePositionCard({ position }: { position: Position }) {
   const periodsRemaining = Number(position.termPeriods) - Number(position.paymentsCompleted);
 
   return (
-    <Card className={`group relative overflow-hidden transition-all duration-300 hover:shadow-2xl ${!position.isActive ? "opacity-60" : ""}`}>
+    <Card isGlass className={`group relative overflow-hidden transition-all duration-300 hover:shadow-2xl ${!position.isActive ? "opacity-60" : ""}`}>
       {/* Status Badge */}
       <div className={`absolute right-4 top-4 z-10 rounded-full px-3 py-1 text-xs font-semibold shadow-lg ${
         isPaidOff

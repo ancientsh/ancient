@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCards, Navigation, Pagination } from "swiper/modules";
-import { PropertyCard } from "./PropertyCard";
+import { PropertyCard, type PropertyMetadata } from "./PropertyCard";
 import {
   Card,
   CardContent,
@@ -32,6 +32,7 @@ interface PropertyData {
 
 interface PropertySwiperProps {
   properties: PropertyData[];
+  propertyMetadata?: Map<number, PropertyMetadata>;
   onPropertySelect?: (property: PropertyData) => void;
 }
 
@@ -40,7 +41,7 @@ interface PropertySwiperProps {
  * Mobile: Card stack effect
  * Desktop: Horizontal slider with navigation
  */
-export function PropertySwiper({ properties, onPropertySelect }: PropertySwiperProps) {
+export function PropertySwiper({ properties, propertyMetadata, onPropertySelect }: PropertySwiperProps) {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const handleSlideChange = (swiper: any) => {
@@ -86,7 +87,7 @@ export function PropertySwiper({ properties, onPropertySelect }: PropertySwiperP
           >
             {properties.map((property) => (
               <SwiperSlide key={property.id}>
-                <PropertyCard property={property} />
+                <PropertyCard property={property} metadata={propertyMetadata?.get(property.id)} />
               </SwiperSlide>
             ))}
           </Swiper>
@@ -107,7 +108,7 @@ export function PropertySwiper({ properties, onPropertySelect }: PropertySwiperP
           >
             {properties.map((property) => (
               <SwiperSlide key={property.id}>
-                <PropertyCard property={property} />
+                <PropertyCard property={property} metadata={propertyMetadata?.get(property.id)} />
               </SwiperSlide>
             ))}
           </Swiper>
@@ -141,7 +142,7 @@ function PropertyDetailsCard({
     : 0;
 
   return (
-    <Card className="w-full">
+    <Card isGlass className="w-full">
       <CardHeader>
         <CardTitle className="text-2xl">Property #{property.id}</CardTitle>
         <div className="flex items-center gap-2 text-muted-foreground">

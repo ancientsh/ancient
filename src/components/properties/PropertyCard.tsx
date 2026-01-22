@@ -76,7 +76,7 @@ export function PropertyCard({
 
         {/* Sold Badge - only show if availability data is present */}
         {metadata?.availability && (
-          <div className="absolute right-2 sm:right-4 top-2 sm:top-4 rounded-lg border border-primary/60 bg-white/90 px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-semibold text-primary backdrop-blur-sm shadow-lg">
+          <div className="absolute right-2 sm:right-4 top-2 sm:top-4 rounded-lg border border-primary bg-primary px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-semibold text-primary-foreground backdrop-blur-sm shadow-lg">
             {metadata.availability.sold}/{metadata.availability.total} sold
           </div>
         )}
@@ -121,13 +121,7 @@ export function PropertyCard({
         )}
 
         {/* Status Badge */}
-        <div
-          className={`rounded-lg border px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-semibold backdrop-blur-sm shadow-lg ${
-            isSelected
-              ? "border-primary bg-primary/90 text-primary-foreground"
-              : "border-primary/60 bg-white/90 text-primary"
-          }`}
-        >
+        <div className="rounded-lg border border-primary bg-primary px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-semibold text-primary-foreground backdrop-blur-sm shadow-lg">
           {property?.isActive !== false ? "Available" : "Sold"}
         </div>
       </div>

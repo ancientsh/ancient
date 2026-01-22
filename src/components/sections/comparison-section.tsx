@@ -20,7 +20,7 @@ export function ComparisonSection() {
 
         <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
           {/* Traditional Path */}
-          <Card className="border-2 border-destructive/20">
+          <Card isGlass className="border-2 border-destructive/20">
             <CardHeader className="pb-2 sm:pb-4">
               <CardTitle className="flex items-center gap-2 text-xl sm:text-2xl">
                 <TrendingDown className="h-5 w-5 sm:h-6 sm:w-6 text-destructive" />
@@ -50,7 +50,7 @@ export function ComparisonSection() {
           </Card>
 
           {/* Ancient Path */}
-          <Card className="border-2 border-primary">
+          <Card isGlass className="border-2 border-primary">
             <CardHeader className="pb-2 sm:pb-4">
               <CardTitle className="flex items-center gap-2 text-xl sm:text-2xl">
                 <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
