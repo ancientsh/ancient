@@ -1,8 +1,12 @@
 import { serve, file } from "bun";
-import index from "./index.html";
 import { join } from "path";
 
+const isProduction = process.env.NODE_ENV === "production";
 const publicDir = join(import.meta.dir, "..", "public");
+const distDir = join(import.meta.dir, "..", "dist");
+
+// In production, serve pre-built files from dist; in dev, use Bun's HTML bundling
+const index = isProduction ? file(join(distDir, "index.html")) : (await import("./index.html")).default;
 
 // RPC Proxy configuration
 const ANVIL_URL = process.env.ANVIL_URL || "http://127.0.0.1:8545";
@@ -89,6 +93,17 @@ const server = serve({
     "/public/*": async (req) => {
       const url = new URL(req.url);
       const filePath = join(publicDir, url.pathname.replace("/public/", ""));
+      const asset = file(filePath);
+      if (await asset.exists()) {
+        return new Response(asset);
+      }
+      return new Response("Not found", { status: 404 });
+    },
+
+    // Serve built assets from dist folder (JS chunks, sourcemaps, etc.)
+    "/dist/*": async (req) => {
+      const url = new URL(req.url);
+      const filePath = join(distDir, url.pathname.replace("/dist/", ""));
       const asset = file(filePath);
       if (await asset.exists()) {
         return new Response(asset);
