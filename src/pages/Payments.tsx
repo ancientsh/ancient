@@ -1129,184 +1129,183 @@ function MakePaymentsForm() {
     : 0;
 
   return (
-    <Card isGlass className="shadow-xl border-border/50 transition-shadow hover:shadow-2xl">
-      <CardHeader className="space-y-4 pb-2">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-            <CreditCard className="w-6 h-6 text-primary" />
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center gap-3">
+        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+          <CreditCard className="w-6 h-6 text-primary" />
+        </div>
+        <div>
+          <h2 className="text-xl font-semibold">Make Payments</h2>
+          <p className="text-sm text-muted-foreground">Pay down your mortgage positions</p>
+        </div>
+      </div>
+
+      {/* Content */}
+      {positions.length === 0 ? (
+        <div className="text-center py-12 space-y-4">
+          <div className="mx-auto w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center">
+            <FileText className="w-8 h-8 text-muted-foreground" />
           </div>
-          <div>
-            <CardTitle className="text-xl">Make Payments</CardTitle>
-            <CardDescription>Pay down your mortgage positions</CardDescription>
+          <div className="space-y-2">
+            <p className="text-muted-foreground font-medium">No Active Positions</p>
+            <p className="text-sm text-muted-foreground">You don't have any active mortgage positions yet.</p>
+            <p className="text-sm text-muted-foreground">Create a mortgage to get started.</p>
           </div>
         </div>
-      </CardHeader>
-      <CardContent className="space-y-6 pt-4">
-        {positions.length === 0 ? (
-          <div className="text-center py-12 space-y-4">
-            <div className="mx-auto w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center">
-              <FileText className="w-8 h-8 text-muted-foreground" />
-            </div>
-            <div className="space-y-2">
-              <p className="text-muted-foreground font-medium">No Active Positions</p>
-              <p className="text-sm text-muted-foreground">You don't have any active mortgage positions yet.</p>
-              <p className="text-sm text-muted-foreground">Create a mortgage to get started.</p>
-            </div>
+      ) : (
+        <>
+          {/* Position selection with Swiper */}
+          <div className="space-y-3">
+            <Label className="flex items-center gap-2 text-sm font-medium">
+              <FileText className="w-4 h-4 text-muted-foreground" />
+              Select Position
+            </Label>
+            <PositionSwiperSelector
+              positions={positions}
+              selectedPositionId={selectedPositionId}
+              onPositionSelect={(id) => setSelectedPositionId(id.toString())}
+              propertyMetadata={propertyMetadata}
+            />
           </div>
-        ) : (
-          <>
-            {/* Position selection with Swiper */}
-            <div className="space-y-3">
-              <Label className="flex items-center gap-2 text-sm font-medium">
-                <FileText className="w-4 h-4 text-muted-foreground" />
-                Select Position
-              </Label>
-              <PositionSwiperSelector
-                positions={positions}
-                selectedPositionId={selectedPositionId}
-                onPositionSelect={(id) => setSelectedPositionId(id.toString())}
-                propertyMetadata={propertyMetadata}
-              />
-            </div>
 
-            {/* Number of payments */}
-            <div className="space-y-3">
-              <Label className="flex items-center gap-2 text-sm font-medium">
-                <Calculator className="w-4 h-4 text-muted-foreground" />
-                Number of Payments
-              </Label>
-              <Input
-                type="number"
-                min="1"
-                max={selectedPosition ? Number(selectedPosition.termPeriods - selectedPosition.paymentsCompleted) : 30}
-                value={numPayments}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (value === "") {
-                    setNumPayments(value);
-                    return;
-                  }
-                  const numValue = parseInt(value, 10);
-                  const maxPayments = selectedPosition
-                    ? Number(selectedPosition.termPeriods - selectedPosition.paymentsCompleted)
-                    : 30;
-                  if (!isNaN(numValue)) {
-                    const clampedValue = Math.min(maxPayments, Math.max(1, numValue));
-                    setNumPayments(clampedValue.toString());
-                  }
-                }}
-                onBlur={() => {
-                  const numValue = parseInt(numPayments, 10);
-                  if (isNaN(numValue) || numValue < 1) {
-                    setNumPayments("1");
-                  }
-                }}
-                className="h-12 bg-muted/30 border-border hover:bg-muted/50 transition-colors"
-              />
-              {selectedPosition && (
-                <div className="rounded-lg bg-muted/50 p-3 flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Total Payment</span>
-                  <div className="text-right">
-                    <span className="font-semibold text-primary">$<PrettyAmount amountFormatted={formatUSD(totalPaymentNeeded)} size="sm" /></span>
-                    {parseInt(numPayments) > 1 && (
-                      <span className="text-xs text-muted-foreground block">
-                        {numPayments} x $<PrettyAmount amountFormatted={formatUSD(selectedPosition.paymentPerPeriod)} size="xs" />
-                      </span>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Balance info */}
-            {balance !== null && (
-              <div className="rounded-lg bg-muted/50 p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Wallet className="w-4 h-4" />
-                    Your Balance
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className={`font-semibold ${insufficientBalance ? "text-red-500" : "text-foreground"}`}>
-                      $<PrettyAmount amountFormatted={formatUSD(balance)} size="sm" /> mUSD
+          {/* Number of payments */}
+          <div className="space-y-3">
+            <Label className="flex items-center gap-2 text-sm font-medium">
+              <Calculator className="w-4 h-4 text-muted-foreground" />
+              Number of Payments
+            </Label>
+            <Input
+              type="number"
+              min="1"
+              max={selectedPosition ? Number(selectedPosition.termPeriods - selectedPosition.paymentsCompleted) : 30}
+              value={numPayments}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value === "") {
+                  setNumPayments(value);
+                  return;
+                }
+                const numValue = parseInt(value, 10);
+                const maxPayments = selectedPosition
+                  ? Number(selectedPosition.termPeriods - selectedPosition.paymentsCompleted)
+                  : 30;
+                if (!isNaN(numValue)) {
+                  const clampedValue = Math.min(maxPayments, Math.max(1, numValue));
+                  setNumPayments(clampedValue.toString());
+                }
+              }}
+              onBlur={() => {
+                const numValue = parseInt(numPayments, 10);
+                if (isNaN(numValue) || numValue < 1) {
+                  setNumPayments("1");
+                }
+              }}
+              className="h-12 bg-muted/30 border-border hover:bg-muted/50 transition-colors"
+            />
+            {selectedPosition && (
+              <div className="rounded-lg bg-muted/50 p-3 flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Total Payment</span>
+                <div className="text-right">
+                  <span className="font-semibold text-primary">$<PrettyAmount amountFormatted={formatUSD(totalPaymentNeeded)} size="sm" /></span>
+                  {parseInt(numPayments) > 1 && (
+                    <span className="text-xs text-muted-foreground block">
+                      {numPayments} x $<PrettyAmount amountFormatted={formatUSD(selectedPosition.paymentPerPeriod)} size="xs" />
                     </span>
-                    {insufficientBalance && (
-                      <span className="text-xs text-red-500 bg-red-500/10 px-2 py-0.5 rounded">Insufficient</span>
-                    )}
-                  </div>
+                  )}
                 </div>
               </div>
             )}
+          </div>
 
-            {/* Transaction status */}
-            {txHash && (
-              <div className="rounded-lg border border-green-500/50 bg-green-500/10 p-4">
-                <div className="flex items-start gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
-                  <div className="space-y-1 min-w-0">
-                    <p className="font-semibold text-green-500">Payment successful!</p>
-                    <p className="font-mono text-xs text-muted-foreground break-all">{txHash}</p>
-                  </div>
+          {/* Balance info */}
+          {balance !== null && (
+            <div className="rounded-lg bg-muted/50 p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Wallet className="w-4 h-4" />
+                  Your Balance
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className={`font-semibold ${insufficientBalance ? "text-red-500" : "text-foreground"}`}>
+                    $<PrettyAmount amountFormatted={formatUSD(balance)} size="sm" /> mUSD
+                  </span>
+                  {insufficientBalance && (
+                    <span className="text-xs text-red-500 bg-red-500/10 px-2 py-0.5 rounded">Insufficient</span>
+                  )}
                 </div>
               </div>
-            )}
-            {txError && (
-              <div className="rounded-lg border border-red-500/50 bg-red-500/10 p-4">
-                <div className="flex items-start gap-3">
-                  <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
-                  <div className="space-y-1 min-w-0">
-                    <p className="font-semibold text-red-500">Transaction failed</p>
-                    <p className="text-xs text-muted-foreground">{txError}</p>
-                  </div>
+            </div>
+          )}
+
+          {/* Transaction status */}
+          {txHash && (
+            <div className="rounded-lg border border-green-500/50 bg-green-500/10 p-4">
+              <div className="flex items-start gap-3">
+                <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
+                <div className="space-y-1 min-w-0">
+                  <p className="font-semibold text-green-500">Payment successful!</p>
+                  <p className="font-mono text-xs text-muted-foreground break-all">{txHash}</p>
                 </div>
               </div>
+            </div>
+          )}
+          {txError && (
+            <div className="rounded-lg border border-red-500/50 bg-red-500/10 p-4">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+                <div className="space-y-1 min-w-0">
+                  <p className="font-semibold text-red-500">Transaction failed</p>
+                  <p className="text-xs text-muted-foreground">{txError}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Action buttons */}
+          <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-border/50">
+            {needsApproval && (
+              <Button
+                onClick={approveTokens}
+                disabled={isApproving}
+                variant="outline"
+                className="w-full sm:w-auto h-11 sm:h-12 px-4 sm:px-6 text-sm sm:text-base hover:shadow-md transition-all"
+              >
+                {isApproving ? (
+                  <>
+                    <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                    Approving...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 className="mr-2 h-4 w-4" />
+                    Approve Tokens
+                  </>
+                )}
+              </Button>
             )}
-          </>
-        )}
-      </CardContent>
-      {positions.length > 0 && (
-        <CardFooter className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-border/50">
-          {needsApproval && (
             <Button
-              onClick={approveTokens}
-              disabled={isApproving}
-              variant="outline"
-              className="w-full sm:w-auto h-11 sm:h-12 px-4 sm:px-6 text-sm sm:text-base hover:shadow-md transition-all"
+              onClick={makePayment}
+              disabled={isLoading || !selectedPositionId || insufficientBalance || needsApproval}
+              className="w-full sm:flex-1 h-11 sm:h-12 text-sm sm:text-base font-semibold transition-all hover:shadow-lg hover:shadow-primary/20"
+              size="lg"
             >
-              {isApproving ? (
+              {isLoading ? (
                 <>
-                  <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                  Approving...
+                  <RefreshCw className="mr-2 h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
+                  Processing...
                 </>
               ) : (
                 <>
-                  <CheckCircle2 className="mr-2 h-4 w-4" />
-                  Approve Tokens
+                  <CreditCard className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                  Make {numPayments} Payment{parseInt(numPayments) > 1 ? "s" : ""}
                 </>
               )}
             </Button>
-          )}
-          <Button
-            onClick={makePayment}
-            disabled={isLoading || !selectedPositionId || insufficientBalance || needsApproval}
-            className="w-full sm:flex-1 h-11 sm:h-12 text-sm sm:text-base font-semibold transition-all hover:shadow-lg hover:shadow-primary/20"
-            size="lg"
-          >
-            {isLoading ? (
-              <>
-                <RefreshCw className="mr-2 h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
-                Processing...
-              </>
-            ) : (
-              <>
-                <CreditCard className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                Make {numPayments} Payment{parseInt(numPayments) > 1 ? "s" : ""}
-              </>
-            )}
-          </Button>
-        </CardFooter>
+          </div>
+        </>
       )}
-    </Card>
+    </div>
   );
 }
 

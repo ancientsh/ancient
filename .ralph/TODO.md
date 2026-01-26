@@ -2,7 +2,7 @@
 
 - [x] Rename Mortgage page to Payments page (rename file, update imports, update navigation)
 - [x] Update Payments page header text from "Mortgage Portal" to "Payments"
-- [ ] Remove Card container wrapper from the payments card in Payments page (MakePaymentsForm)
+- [x] Remove Card container wrapper from the payments card in Payments page (MakePaymentsForm)
 - [ ] Remove "Available Properties" section from Dashboard page
 - [ ] Move the Create Mortgage section content to where Available Properties was (without Card container)
 
@@ -35,3 +35,14 @@ _Append progress and learnings here after each iteration_
 - **Learnings:**
   - The Payments page has three different render states: loading, error, and connected
   - Each state has its own header that needs to be updated for consistency
+
+## Remove Card container wrapper from MakePaymentsForm - Done
+- Removed `Card`, `CardHeader`, `CardContent`, and `CardFooter` wrappers from `MakePaymentsForm` component
+- Replaced with a simple `<div className="space-y-6">` container
+- Converted `CardTitle` and `CardDescription` to `<h2>` and `<p>` elements
+- Moved action buttons from `CardFooter` to a regular div with same flex styling
+- Files changed: `src/pages/Payments.tsx`
+- **Learnings:**
+  - The Card components are still imported and used elsewhere in the file (loading/error states and `CreateMortgageForm`), so no import changes needed
+  - The component structure was: Card > CardHeader/CardContent/CardFooter > content
+  - Converting to a flat div structure maintains the same visual spacing via `space-y-6` class
