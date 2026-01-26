@@ -3,7 +3,7 @@
 - [x] Rename Mortgage page to Payments page (rename file, update imports, update navigation)
 - [x] Update Payments page header text from "Mortgage Portal" to "Payments"
 - [x] Remove Card container wrapper from the payments card in Payments page (MakePaymentsForm)
-- [ ] Remove "Available Properties" section from Dashboard page
+- [x] Remove "Available Properties" section from Dashboard page
 - [ ] Move the Create Mortgage section content to where Available Properties was (without Card container)
 
 ---
@@ -46,3 +46,17 @@ _Append progress and learnings here after each iteration_
   - The Card components are still imported and used elsewhere in the file (loading/error states and `CreateMortgageForm`), so no import changes needed
   - The component structure was: Card > CardHeader/CardContent/CardFooter > content
   - Converting to a flat div structure maintains the same visual spacing via `space-y-6` class
+
+## Remove "Available Properties" section from Dashboard page - Done
+- Removed the entire "Available Properties" section (lines 282-327) from `src/pages/Dashboard.tsx`
+- Removed unused state variables: `properties`, `propertyMetadata`, `isLoadingProperties`
+- Removed `fetchProperties` callback function
+- Removed `fetchProperties` call from useEffect
+- Removed unused imports:
+  - `PropertySwiper`, `type PropertyMetadata` from `@/components/properties`
+  - `PropertyOracleAbi` from `../contracts`
+- Removed unused `Property` interface
+- Files changed: `src/pages/Dashboard.tsx`
+- **Learnings:**
+  - The Dashboard page now only shows "Your Mortgages" section
+  - The "no mortgage positions" message still references "Browse properties below" - this may need updating in a future task since the properties section is now gone

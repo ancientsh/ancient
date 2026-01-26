@@ -10,26 +10,14 @@ import {
   PrettyAmount,
 } from "liquidcn";
 import { PrettyDate } from "liquidcn/client";
-import { PropertySwiper, type PropertyMetadata } from "@/components/properties";
 import { TrendingUp, Calendar, DollarSign, Clock, RefreshCw } from "lucide-react";
 import {
   useWeb3,
   formatUSD,
   formatBps,
-  PropertyOracleAbi,
   MortgagePositionNFTAbi,
   getContractAddresses,
 } from "../contracts";
-
-interface Property {
-  id: number;
-  location: string;
-  originalValuation: bigint;
-  currentValuation: bigint;
-  registeredAt: bigint;
-  isActive: boolean;
-  metadataURI: string;
-}
 
 interface Position {
   tokenId: number;
@@ -48,83 +36,10 @@ interface Position {
 
 export function Dashboard() {
   const { isConnected, isConnecting, error, address, publicClient } = useWeb3();
-  const [properties, setProperties] = useState<Property[]>([]);
-  const [propertyMetadata, setPropertyMetadata] = useState<Map<number, PropertyMetadata>>(new Map());
   const [positions, setPositions] = useState<Position[]>([]);
-  const [isLoadingProperties, setIsLoadingProperties] = useState(false);
   const [isLoadingPositions, setIsLoadingPositions] = useState(false);
 
   const addresses = getContractAddresses();
-
-  // Fetch all properties
-  const fetchProperties = useCallback(async () => {
-    if (!publicClient) return;
-
-    setIsLoadingProperties(true);
-    try {
-      const totalCount = await publicClient.readContract({
-        address: addresses.propertyOracle,
-        abi: PropertyOracleAbi,
-        functionName: "totalProperties",
-      }) as bigint;
-
-      const props: Property[] = [];
-      let metadataUri: string | null = null;
-
-      for (let i = 0; i < Number(totalCount); i++) {
-        try {
-          const property = await publicClient.readContract({
-            address: addresses.propertyOracle,
-            abi: PropertyOracleAbi,
-            functionName: "getProperty",
-            args: [BigInt(i)],
-          }) as {
-            location: string;
-            originalValuation: bigint;
-            registeredAt: bigint;
-            currentValuation: bigint;
-            isActive: boolean;
-            metadataURI: string;
-          };
-
-          props.push({
-            id: i,
-            location: property.location,
-            originalValuation: property.originalValuation,
-            currentValuation: property.currentValuation,
-            registeredAt: property.registeredAt,
-            isActive: property.isActive,
-            metadataURI: property.metadataURI,
-          });
-
-          // Get metadataURI from first property (all share same URI)
-          if (!metadataUri && property.metadataURI) {
-            metadataUri = property.metadataURI;
-          }
-        } catch {
-          // Property might not exist
-        }
-      }
-      setProperties(props);
-
-      // Fetch metadata from the URI stored in contract
-      if (metadataUri) {
-        try {
-          const res = await fetch(metadataUri);
-          const data: PropertyMetadata[] = await res.json();
-          const metadataMap = new Map<number, PropertyMetadata>();
-          data.forEach((prop) => metadataMap.set(prop.id, prop));
-          setPropertyMetadata(metadataMap);
-        } catch (err) {
-          console.error("Failed to fetch property metadata from URI:", err);
-        }
-      }
-    } catch (err) {
-      console.error("Failed to fetch properties:", err);
-    } finally {
-      setIsLoadingProperties(false);
-    }
-  }, [publicClient, addresses.propertyOracle]);
 
   // Fetch user's mortgage positions
   const fetchPositions = useCallback(async () => {
@@ -190,9 +105,8 @@ export function Dashboard() {
   }, [publicClient, address, addresses.mortgagePositionNFT]);
 
   useEffect(() => {
-    fetchProperties();
     fetchPositions();
-  }, [fetchProperties, fetchPositions]);
+  }, [fetchPositions]);
 
   if (isConnecting) {
     return (
@@ -279,52 +193,6 @@ export function Dashboard() {
         )}
       </section>
 
-      {/* Available Properties Section */}
-      <section>
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-2xl font-bold">Available Properties</h2>
-            <p className="text-sm text-muted-foreground mt-1">Browse tokenized real estate</p>
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={fetchProperties}
-            disabled={isLoadingProperties}
-            className="gap-2"
-          >
-            <RefreshCw className={`h-4 w-4 ${isLoadingProperties ? "animate-spin" : ""}`} />
-            {isLoadingProperties ? "Loading..." : "Refresh"}
-          </Button>
-        </div>
-
-        {isLoadingProperties ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="flex flex-col items-center gap-3">
-              <RefreshCw className="h-8 w-8 animate-spin text-primary" />
-              <p className="text-muted-foreground">Loading properties...</p>
-            </div>
-          </div>
-        ) : properties.length === 0 ? (
-          <Card isGlass className="border-dashed">
-            <CardContent className="py-12 text-center">
-              <div className="flex flex-col items-center gap-4">
-                <div className="rounded-full bg-muted p-4">
-                  <DollarSign className="h-8 w-8 text-muted-foreground" />
-                </div>
-                <div>
-                  <p className="font-medium">No properties registered yet</p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Deploy the contracts to register sample properties.
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ) : (
-          <PropertySwiper properties={properties.filter(p => p.isActive)} propertyMetadata={propertyMetadata} />
-        )}
-      </section>
     </div>
   );
 }
