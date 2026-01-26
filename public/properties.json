@@ -2,6 +2,7 @@
   {
     "id": 0,
     "name": "Art Deco Loft",
+    "location": "Tulum, Mexico",
     "imageUrl": "/public/tulum.jpeg",
     "networkInvestment": {
       "citizenshipCost": 29670,
@@ -14,6 +15,7 @@
   {
     "id": 1,
     "name": "Beachfront Paradise",
+    "location": "Cancun, Mexico",
     "imageUrl": "/public/mexico_beachfront.jpg",
     "networkInvestment": {
       "citizenshipCost": 45000,
@@ -26,6 +28,7 @@
   {
     "id": 2,
     "name": "Ocean Bungalow",
+    "location": "Playa del Carmen, Mexico",
     "imageUrl": "/public/a-frame.jpeg",
     "networkInvestment": {
       "citizenshipCost": 19000,
@@ -38,6 +41,7 @@
   {
     "id": 3,
     "name": "Hillside Villa",
+    "location": "Puerto Vallarta, Mexico",
     "imageUrl": "/public/tony-stark.jpeg",
     "networkInvestment": {
       "citizenshipCost": 37000,

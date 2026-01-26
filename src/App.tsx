@@ -24,7 +24,7 @@ import {
 import { Github, Twitter, Landmark, ArrowRight } from "lucide-react";
 import "./index.css";
 
-type Page = "landing" | "faucet" | "dashboard" | "payments";
+type Page = "landing" | "faucet" | "create" | "mortgages";
 
 function AncientBrand({ onClick, showBadge = false }: { onClick: () => void; showBadge?: boolean }) {
   return (
@@ -73,8 +73,8 @@ function Navigation({ currentPage, setPage }: { currentPage: Page; setPage: (p: 
     ? []
     : [
         { name: "Faucet", link: "faucet" },
-        { name: "Dashboard", link: "dashboard" },
-        { name: "Payments", link: "payments" },
+        { name: "Create", link: "create" },
+        { name: "Mortgages", link: "mortgages" },
       ];
 
   const handleNavClick = (link: string) => {
@@ -202,8 +202,8 @@ function AppContent() {
       <main className="flex-1 pt-16">
         <div className="container mx-auto py-8">
           {currentPage === "faucet" && <Faucet />}
-          {currentPage === "dashboard" && <Dashboard />}
-          {currentPage === "payments" && <Payments />}
+          {currentPage === "create" && <Dashboard />}
+          {currentPage === "mortgages" && <Payments />}
         </div>
       </main>
 

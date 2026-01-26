@@ -1,4 +1,4 @@
-// Payments page - Create position and make payments
+// Payments page - Make mortgage payments
 import { useState, useEffect, useCallback } from "react";
 import { encodeFunctionData } from "viem";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -26,9 +26,7 @@ import {
   anvilChain,
 } from "../contracts";
 import { PropertyCard, type PropertyMetadata } from "@/components/properties/PropertyCard";
-import { CreateMortgageForm } from "@/components/mortgage";
 import {
-  Building2,
   Calculator,
   CreditCard,
   Wallet,
@@ -59,7 +57,6 @@ interface Position {
 
 export function Payments() {
   const { isConnected, isConnecting, error } = useWeb3();
-  const [activeTab, setActiveTab] = useState<"create" | "pay">("create");
 
   if (isConnecting) {
     return (
@@ -115,40 +112,7 @@ export function Payments() {
 
   return (
     <div className="max-w-3xl mx-auto space-y-6 sm:space-y-8 px-3 sm:px-4 py-4 sm:py-8">
-      {/* Header */}
-      <div className="text-center space-y-1 sm:space-y-2">
-        <h1 className="text-2xl sm:text-3xl font-bold">Payments</h1>
-        <p className="text-sm sm:text-base text-muted-foreground">Create mortgages or make payments</p>
-      </div>
-
-      {/* Tab navigation */}
-      <div className="flex gap-1 sm:gap-2 p-1 bg-muted/50 rounded-lg">
-        <button
-          onClick={() => setActiveTab("create")}
-          className={`flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-2.5 sm:py-3 rounded-md text-xs sm:text-sm font-medium transition-all ${
-            activeTab === "create"
-              ? "bg-card text-foreground shadow-md"
-              : "text-muted-foreground hover:text-foreground hover:bg-card/50"
-          }`}
-        >
-          <Building2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-          <span className="hidden xs:inline">Create</span> Mortgage
-        </button>
-        <button
-          onClick={() => setActiveTab("pay")}
-          className={`flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-2.5 sm:py-3 rounded-md text-xs sm:text-sm font-medium transition-all ${
-            activeTab === "pay"
-              ? "bg-card text-foreground shadow-md"
-              : "text-muted-foreground hover:text-foreground hover:bg-card/50"
-          }`}
-        >
-          <CreditCard className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-          <span className="hidden xs:inline">Make</span> Payments
-        </button>
-      </div>
-
-      {activeTab === "create" && <CreateMortgageForm />}
-      {activeTab === "pay" && <MakePaymentsForm />}
+      <MakePaymentsForm />
     </div>
   );
 }
@@ -494,11 +458,6 @@ function MakePaymentsForm() {
       setIsLoading(false);
     }
   };
-
-  // Calculate progress percentage
-  const progressPercent = selectedPosition
-    ? Number(selectedPosition.paymentsCompleted) / Number(selectedPosition.termPeriods) * 100
-    : 0;
 
   return (
     <div className="space-y-6">

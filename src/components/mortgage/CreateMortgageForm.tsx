@@ -220,9 +220,11 @@ function TermSelector({
 interface CreateMortgageFormProps {
   /** Whether to wrap the form in a Card container */
   showCard?: boolean;
+  /** Callback fired after successful mortgage creation */
+  onSuccess?: () => void;
 }
 
-export function CreateMortgageForm({ showCard = true }: CreateMortgageFormProps) {
+export function CreateMortgageForm({ showCard = true, onSuccess }: CreateMortgageFormProps) {
   const { address, publicClient, walletClient, account } = useWeb3();
   const addresses = getContractAddresses();
 
@@ -421,6 +423,7 @@ export function CreateMortgageForm({ showCard = true }: CreateMortgageFormProps)
       setTxHash(hash);
       await publicClient?.waitForTransactionReceipt({ hash });
       await fetchBalanceAndAllowance();
+      onSuccess?.();
     } catch (err) {
       setTxError(err instanceof Error ? err.message : "Transaction failed");
     } finally {
