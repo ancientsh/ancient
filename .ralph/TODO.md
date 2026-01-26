@@ -1,7 +1,7 @@
 # Tasks
 
 - [x] Rename Mortgage page to Payments page (rename file, update imports, update navigation)
-- [ ] Update Payments page header text from "Mortgage Portal" to "Payments"
+- [x] Update Payments page header text from "Mortgage Portal" to "Payments"
 - [ ] Remove Card container wrapper from the payments card in Payments page (MakePaymentsForm)
 - [ ] Remove "Available Properties" section from Dashboard page
 - [ ] Move the Create Mortgage section content to where Available Properties was (without Card container)
@@ -25,3 +25,13 @@ _Append progress and learnings here after each iteration_
 - **Learnings:**
   - Navigation is defined inline in the `Navigation` component as an array of `{ name, link }` objects
   - The Page type controls routing via conditional rendering in `AppContent`
+
+## Update Payments page header text from "Mortgage Portal" to "Payments" - Done
+- Changed header text in three locations in `src/pages/Payments.tsx`:
+  - Line 97: Loading state CardTitle
+  - Line 115: Error state CardTitle
+  - Line 144: Main page h1 header
+- All instances of "Mortgage Portal" replaced with "Payments"
+- **Learnings:**
+  - The Payments page has three different render states: loading, error, and connected
+  - Each state has its own header that needs to be updated for consistency

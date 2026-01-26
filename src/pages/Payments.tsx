@@ -94,7 +94,7 @@ export function Payments() {
               <RefreshCw className="w-8 h-8 text-primary animate-spin" />
             </div>
             <div>
-              <CardTitle className="text-2xl">Mortgage Portal</CardTitle>
+              <CardTitle className="text-2xl">Payments</CardTitle>
               <CardDescription className="mt-2">Connecting to local chain...</CardDescription>
             </div>
           </CardHeader>
@@ -112,7 +112,7 @@ export function Payments() {
               <AlertCircle className="w-8 h-8 text-destructive" />
             </div>
             <div>
-              <CardTitle className="text-2xl">Mortgage Portal</CardTitle>
+              <CardTitle className="text-2xl">Payments</CardTitle>
               <CardDescription className="text-destructive mt-2">
                 {error || "Not connected to local chain. Make sure Anvil is running."}
               </CardDescription>
@@ -141,7 +141,7 @@ export function Payments() {
     <div className="max-w-3xl mx-auto space-y-6 sm:space-y-8 px-3 sm:px-4 py-4 sm:py-8">
       {/* Header */}
       <div className="text-center space-y-1 sm:space-y-2">
-        <h1 className="text-2xl sm:text-3xl font-bold">Mortgage Portal</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold">Payments</h1>
         <p className="text-sm sm:text-base text-muted-foreground">Create mortgages or make payments</p>
       </div>
 
