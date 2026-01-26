@@ -1,4 +1,4 @@
-// Mortgage page - Create position and make payments
+// Payments page - Create position and make payments
 import { useState, useEffect, useCallback } from "react";
 import { encodeFunctionData } from "viem";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -81,7 +81,7 @@ interface Position {
   isActive: boolean;
 }
 
-export function Mortgage() {
+export function Payments() {
   const { isConnected, isConnecting, error } = useWeb3();
   const [activeTab, setActiveTab] = useState<"create" | "pay">("create");
 
@@ -1310,4 +1310,4 @@ function MakePaymentsForm() {
   );
 }
 
-export default Mortgage;
+export default Payments;

@@ -1,7 +1,0 @@
-{
-  "refs": [
-    "./.ralph/refs"
-  ],
-  "rule": "./.ralph/rule.md",
-  "output": "."
-}

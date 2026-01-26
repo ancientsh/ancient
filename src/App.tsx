@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Web3Provider, useWeb3, useAnvilAccounts } from "./contracts";
 import { Faucet } from "./pages/Faucet";
 import { Dashboard } from "./pages/Dashboard";
-import { Mortgage } from "./pages/Mortgage";
+import { Payments } from "./pages/Payments";
 import { Landing } from "./pages/Landing";
 import { Button, Footer } from "liquidcn";
 import {
@@ -24,7 +24,7 @@ import {
 import { Github, Twitter, Landmark, ArrowRight } from "lucide-react";
 import "./index.css";
 
-type Page = "landing" | "faucet" | "dashboard" | "mortgage";
+type Page = "landing" | "faucet" | "dashboard" | "payments";
 
 function AncientBrand({ onClick, showBadge = false }: { onClick: () => void; showBadge?: boolean }) {
   return (
@@ -74,7 +74,7 @@ function Navigation({ currentPage, setPage }: { currentPage: Page; setPage: (p: 
     : [
         { name: "Faucet", link: "faucet" },
         { name: "Dashboard", link: "dashboard" },
-        { name: "Mortgage", link: "mortgage" },
+        { name: "Payments", link: "payments" },
       ];
 
   const handleNavClick = (link: string) => {
@@ -203,7 +203,7 @@ function AppContent() {
         <div className="container mx-auto py-8">
           {currentPage === "faucet" && <Faucet />}
           {currentPage === "dashboard" && <Dashboard />}
-          {currentPage === "mortgage" && <Mortgage />}
+          {currentPage === "payments" && <Payments />}
         </div>
       </main>
 

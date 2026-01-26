@@ -1,7 +1,10 @@
 # Tasks
 
-- [x] Install liquidcn package
-- [x] Replace UI components with liquidcn components
+- [x] Rename Mortgage page to Payments page (rename file, update imports, update navigation)
+- [ ] Update Payments page header text from "Mortgage Portal" to "Payments"
+- [ ] Remove Card container wrapper from the payments card in Payments page (MakePaymentsForm)
+- [ ] Remove "Available Properties" section from Dashboard page
+- [ ] Move the Create Mortgage section content to where Available Properties was (without Card container)
 
 ---
 
@@ -9,31 +12,16 @@
 
 _Append progress and learnings here after each iteration_
 
-## Install liquidcn package - Done
-- Installed liquidcn@0.0.2 using `bun add liquidcn`
-- Verified build still passes after installation
-- Files changed: package.json, bun.lock
+## Rename Mortgage page to Payments page - Done
+- Renamed `src/pages/Mortgage.tsx` to `src/pages/Payments.tsx`
+- Updated export function name from `Mortgage` to `Payments`
+- Updated default export from `Mortgage` to `Payments`
+- Updated comment at top of file
+- In `src/App.tsx`:
+  - Changed import from `Mortgage` to `Payments`
+  - Changed Page type from `"mortgage"` to `"payments"`
+  - Changed navigation item name and link from "Mortgage"/"mortgage" to "Payments"/"payments"
+  - Changed route rendering from `<Mortgage />` to `<Payments />`
 - **Learnings:**
-  - liquidcn exports from `liquidcn`: Button, Card, Input, Textarea, PrettyAmount, Alert, Badge, Footer
-  - liquidcn exports from `liquidcn/client`: Select, PrettyDate, Dialog, ResizableNavbar, Slider, Sonner, Switch, Tabs
-  - The project currently has these matching local UI components that can be replaced: Button, Card, Input, Label, Select, Textarea
-  - Note: Label is not in liquidcn, so it needs to stay local
-
-## Replace UI components with liquidcn components - Done
-- Replaced 7 UI component files to re-export from liquidcn instead of local implementations
-- Files changed:
-  - `src/components/ui/button.tsx` - re-exports Button, buttonVariants, ButtonProps from `liquidcn`
-  - `src/components/ui/card.tsx` - re-exports Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle from `liquidcn`
-  - `src/components/ui/input.tsx` - re-exports Input from `liquidcn`
-  - `src/components/ui/textarea.tsx` - re-exports Textarea from `liquidcn`
-  - `src/components/ui/select.tsx` - re-exports Select components from `liquidcn/client`
-  - `src/components/ui/pretty-amount.tsx` - re-exports PrettyAmount, PrettyAmountSize from `liquidcn`
-  - `src/components/ui/pretty-date.tsx` - re-exports PrettyDate from `liquidcn/client`
-- Components kept local (not in liquidcn):
-  - `src/components/ui/label.tsx` - Label component
-  - `src/components/ui/section.tsx` - Section layout component
-- Build and TypeScript checks pass
-- **Learnings:**
-  - Re-exporting from the local UI files maintains all existing imports across the codebase
-  - Server components from `liquidcn` and client components from `liquidcn/client` need separate imports
-  - The `"use client"` directive is needed in select.tsx and pretty-date.tsx for client components
+  - Navigation is defined inline in the `Navigation` component as an array of `{ name, link }` objects
+  - The Page type controls routing via conditional rendering in `AppContent`
