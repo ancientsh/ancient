@@ -10,7 +10,7 @@ import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
  */
 contract MockUSD is ERC20 {
     uint8 private constant DECIMALS = 6; // USDC-like decimals
-    uint256 public constant FAUCET_AMOUNT = 10_000 * 10 ** DECIMALS; // 10,000 USD per faucet call
+    uint256 public constant FAUCET_AMOUNT = 300_000 * 10 ** DECIMALS; // 300,000 USD per faucet call
 
     event FaucetUsed(address indexed user, uint256 amount);
 

@@ -25,18 +25,18 @@ contract MockUSDTest is Test {
     }
 
     function test_FaucetAmount() public view {
-        assertEq(token.FAUCET_AMOUNT(), 10_000 * 10 ** 6);
+        assertEq(token.FAUCET_AMOUNT(), 300_000 * 10 ** 6);
     }
 
     function test_Faucet() public {
         vm.prank(user);
         token.faucet();
-        assertEq(token.balanceOf(user), 10_000 * 10 ** 6);
+        assertEq(token.balanceOf(user), 300_000 * 10 ** 6);
     }
 
     function test_FaucetEmitsEvent() public {
         vm.expectEmit(true, false, false, true);
-        emit MockUSD.FaucetUsed(user, 10_000 * 10 ** 6);
+        emit MockUSD.FaucetUsed(user, 300_000 * 10 ** 6);
         vm.prank(user);
         token.faucet();
     }
@@ -46,7 +46,7 @@ contract MockUSDTest is Test {
         token.faucet();
         token.faucet();
         vm.stopPrank();
-        assertEq(token.balanceOf(user), 20_000 * 10 ** 6);
+        assertEq(token.balanceOf(user), 600_000 * 10 ** 6);
     }
 
     function test_Mint() public {
