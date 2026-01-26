@@ -4,7 +4,7 @@
 - [x] Update Payments page header text from "Mortgage Portal" to "Payments"
 - [x] Remove Card container wrapper from the payments card in Payments page (MakePaymentsForm)
 - [x] Remove "Available Properties" section from Dashboard page
-- [ ] Move the Create Mortgage section content to where Available Properties was (without Card container)
+- [x] Move the Create Mortgage section content to where Available Properties was (without Card container)
 
 ---
 
@@ -60,3 +60,25 @@ _Append progress and learnings here after each iteration_
 - **Learnings:**
   - The Dashboard page now only shows "Your Mortgages" section
   - The "no mortgage positions" message still references "Browse properties below" - this may need updating in a future task since the properties section is now gone
+
+## Move Create Mortgage section to Dashboard - Done
+- Created shared `CreateMortgageForm` component at `src/components/mortgage/CreateMortgageForm.tsx`
+- Created barrel export at `src/components/mortgage/index.ts`
+- The component accepts a `showCard` prop (default `true`) to control Card wrapper rendering
+- Updated `src/pages/Dashboard.tsx`:
+  - Added import for `CreateMortgageForm` from `@/components/mortgage`
+  - Added Create Mortgage section after "Your Mortgages" section using `<CreateMortgageForm showCard={false} />`
+  - Updated "no mortgage positions" message from "Browse properties below" to "Create a mortgage below"
+- Updated `src/pages/Payments.tsx`:
+  - Replaced inline `CreateMortgageForm`, `PropertySwiperSelector`, `TermSelector` components with import from `@/components/mortgage`
+  - Removed unused interfaces: `Property`, `MortgagePreview`
+  - Removed unused imports: `formatBps`, `parseBps`, `CardFooter`, `DollarSign`, `Clock`, `Percent`, `AlertTriangle`, `Banknote`, `Wallet`, `Calculator`
+- Files changed:
+  - `src/components/mortgage/CreateMortgageForm.tsx` (new)
+  - `src/components/mortgage/index.ts` (new)
+  - `src/pages/Dashboard.tsx` (modified)
+  - `src/pages/Payments.tsx` (modified)
+- **Learnings:**
+  - The CreateMortgageForm is a large component (~800 lines) with complex dependencies (Swiper, contract interactions, multiple sub-components)
+  - Using a `showCard` prop allows the same component to be used with or without Card wrapper
+  - The Payments page now uses the shared component with Card wrapper (default), Dashboard uses it without

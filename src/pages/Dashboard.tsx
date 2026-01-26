@@ -18,6 +18,7 @@ import {
   MortgagePositionNFTAbi,
   getContractAddresses,
 } from "../contracts";
+import { CreateMortgageForm } from "@/components/mortgage";
 
 interface Position {
   tokenId: number;
@@ -178,7 +179,7 @@ export function Dashboard() {
                 <div>
                   <p className="font-medium">No mortgage positions yet</p>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Browse properties below and apply for a mortgage to get started.
+                    Create a mortgage below to get started.
                   </p>
                 </div>
               </div>
@@ -191,6 +192,11 @@ export function Dashboard() {
             ))}
           </div>
         )}
+      </section>
+
+      {/* Create Mortgage Section */}
+      <section>
+        <CreateMortgageForm showCard={false} />
       </section>
 
     </div>
