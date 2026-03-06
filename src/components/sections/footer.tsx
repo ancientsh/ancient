@@ -1,5 +1,5 @@
 import { Footer as LiquidFooter } from "liquidcn";
-import { Github, Twitter } from "lucide-react";
+import { Heart, Github, Twitter } from "lucide-react";
 
 const footerLinks = [
   { name: "GitHub", href: "https://github.com/ancientsh", icon: Github, showLabel: false },
@@ -13,9 +13,12 @@ export function Footer() {
   return (
     <LiquidFooter
       links={footerLinks}
-      builtByText="Built by"
-      builtByBrand="Ancient"
-      showLogo={true}
+      right={
+        <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
+          Built by <b className="text-primary">Ancient</b> team with{" "}
+          <Heart className="h-4 w-4 text-red-500 fill-red-500" />
+        </p>
+      }
     />
   );
 }
