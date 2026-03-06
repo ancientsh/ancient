@@ -28,6 +28,7 @@ export interface PositionData {
   paymentsCompleted: bigint;
   termPeriods: bigint;
   paymentPerPeriod: bigint;
+  isActive?: boolean;
 }
 
 interface PropertyCardProps {
@@ -121,9 +122,19 @@ export function PropertyCard({
         )}
 
         {/* Status Badge */}
-        <div className="rounded-lg border border-primary bg-primary px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-semibold text-primary-foreground backdrop-blur-sm shadow-lg">
-          {property?.isActive !== false ? "Available" : "Sold"}
-        </div>
+        {position?.isActive === false ? (
+          <div className="rounded-lg border border-green-500 bg-green-500 px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-semibold text-white backdrop-blur-sm shadow-lg">
+            Paid Off
+          </div>
+        ) : position ? (
+          <div className="rounded-lg border border-primary bg-primary px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-semibold text-white backdrop-blur-sm shadow-lg">
+            In Progress
+          </div>
+        ) : (
+          <div className="rounded-lg border border-primary bg-primary px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-semibold text-white backdrop-blur-sm shadow-lg">
+            {property?.isActive !== false ? "Available" : "Sold"}
+          </div>
+        )}
       </div>
 
       {/* Property Info Overlay */}

@@ -131,19 +131,25 @@ function Navigation({
                   value={accountIndex.toString()}
                   onValueChange={(v) => switchAccount(parseInt(v))}
                 >
-                  <SelectTrigger className="w-[140px] h-9 text-xs font-mono bg-muted/50 border-border hover:bg-muted transition-colors">
-                    <SelectValue>
-                      {address?.slice(0, 4)}...{address?.slice(-3)}
-                    </SelectValue>
+                  <SelectTrigger className="w-[170px] h-9 bg-muted/50 border-border hover:bg-muted transition-colors">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <img src="/public/avax.svg" alt="AVAX" className="w-4 h-4 shrink-0" />
+                      <span className="text-xs font-mono truncate">{address?.slice(0, 6)}...{address?.slice(-4)}</span>
+                    </div>
                   </SelectTrigger>
                   <SelectContent className="bg-card border-border">
                     {accounts.map(({ address: addr, index }) => (
                       <SelectItem
                         key={index}
                         value={index.toString()}
-                        className="text-xs font-mono"
+                        className="text-xs font-mono py-2"
                       >
-                        #{index}: {addr.slice(0, 6)}...{addr.slice(-4)}
+                        <div className="flex items-center gap-2.5">
+                          <span className="w-5 h-5 rounded-full bg-primary/15 text-primary text-[10px] font-bold flex items-center justify-center shrink-0 ring-1 ring-primary/30">
+                            {index}
+                          </span>
+                          <span className="text-foreground">{addr.slice(0, 6)}...{addr.slice(-4)}</span>
+                        </div>
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -201,19 +207,25 @@ function Navigation({
                     value={accountIndex.toString()}
                     onValueChange={(v) => switchAccount(parseInt(v))}
                   >
-                    <SelectTrigger className="w-full h-9 text-xs font-mono bg-muted/50 border-border">
-                      <SelectValue>
-                        {address?.slice(0, 4)}...{address?.slice(-3)}
-                      </SelectValue>
+                    <SelectTrigger className="w-full h-9 bg-muted/50 border-border">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <img src="/public/avax.svg" alt="AVAX" className="w-4 h-4 shrink-0" />
+                        <span className="text-xs font-mono truncate">{address?.slice(0, 6)}...{address?.slice(-4)}</span>
+                      </div>
                     </SelectTrigger>
                     <SelectContent className="bg-card border-border">
                       {accounts.map(({ address: addr, index }) => (
                         <SelectItem
                           key={index}
                           value={index.toString()}
-                          className="text-xs font-mono"
+                          className="text-xs font-mono py-2"
                         >
-                          #{index}: {addr.slice(0, 6)}...{addr.slice(-4)}
+                          <div className="flex items-center gap-2.5">
+                            <span className="w-5 h-5 rounded-full bg-primary/15 text-primary text-[10px] font-bold flex items-center justify-center shrink-0 ring-1 ring-primary/30">
+                              {index}
+                            </span>
+                            <span className="text-foreground">{addr.slice(0, 6)}...{addr.slice(-4)}</span>
+                          </div>
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -248,7 +260,7 @@ function AppContent() {
       <main className="flex-1 pt-16">
         <div className="container mx-auto py-8">
           {currentPage === "faucet" && <Faucet />}
-          {currentPage === "create" && <Dashboard />}
+          {currentPage === "create" && <Dashboard onMortgageCreated={() => setPage("mortgages")} />}
           {currentPage === "mortgages" && <Payments />}
         </div>
       </main>

@@ -246,12 +246,6 @@ export function Faucet() {
             )}
           </div>
 
-          {/* Help text */}
-          <p className="text-xs text-muted-foreground text-center pt-2 border-t border-border/50">
-            These are test tokens on a local Anvil chain.
-            <br />
-            They have no real value.
-          </p>
         </CardContent>
       </Card>
     </div>

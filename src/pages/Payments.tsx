@@ -349,9 +349,7 @@ function MakePaymentsForm() {
           termPeriods: bigint;
           isActive: boolean;
         };
-        if (position.isActive) {
-          positionList.push({ tokenId: Number(tokenId), ...position });
-        }
+        positionList.push({ tokenId: Number(tokenId), ...position });
       }
       setPositions(positionList);
     } catch (err) {
@@ -500,140 +498,153 @@ function MakePaymentsForm() {
             />
           </div>
 
-          {/* Number of payments */}
-          <div className="space-y-3">
-            <Label className="flex items-center gap-2 text-sm font-medium">
-              <Calculator className="w-4 h-4 text-muted-foreground" />
-              Number of Payments
-            </Label>
-            <Input
-              type="number"
-              min="1"
-              max={selectedPosition ? Number(selectedPosition.termPeriods - selectedPosition.paymentsCompleted) : 30}
-              value={numPayments}
-              onChange={(e) => {
-                const value = e.target.value;
-                if (value === "") {
-                  setNumPayments(value);
-                  return;
-                }
-                const numValue = parseInt(value, 10);
-                const maxPayments = selectedPosition
-                  ? Number(selectedPosition.termPeriods - selectedPosition.paymentsCompleted)
-                  : 30;
-                if (!isNaN(numValue)) {
-                  const clampedValue = Math.min(maxPayments, Math.max(1, numValue));
-                  setNumPayments(clampedValue.toString());
-                }
-              }}
-              onBlur={() => {
-                const numValue = parseInt(numPayments, 10);
-                if (isNaN(numValue) || numValue < 1) {
-                  setNumPayments("1");
-                }
-              }}
-              className="h-12 bg-muted/30 border-border hover:bg-muted/50 transition-colors"
-            />
-            {selectedPosition && (
-              <div className="rounded-lg bg-muted/50 p-3 flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Total Payment</span>
-                <div className="text-right">
-                  <span className="font-semibold text-primary">$<PrettyAmount amountFormatted={formatUSD(totalPaymentNeeded)} size="sm" /></span>
-                  {parseInt(numPayments) > 1 && (
-                    <span className="text-xs text-muted-foreground block">
-                      {numPayments} x $<PrettyAmount amountFormatted={formatUSD(selectedPosition.paymentPerPeriod)} size="xs" />
-                    </span>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Balance info */}
-          {balance !== null && (
-            <div className="rounded-lg bg-muted/50 p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Wallet className="w-4 h-4" />
-                  Your Balance
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className={`font-semibold ${insufficientBalance ? "text-red-500" : "text-foreground"}`}>
-                    $<PrettyAmount amountFormatted={formatUSD(balance)} size="sm" /> mUSD
-                  </span>
-                  {insufficientBalance && (
-                    <span className="text-xs text-red-500 bg-red-500/10 px-2 py-0.5 rounded">Insufficient</span>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Transaction status */}
-          {txHash && (
-            <div className="rounded-lg border border-green-500/50 bg-green-500/10 p-4">
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
-                <div className="space-y-1 min-w-0">
-                  <p className="font-semibold text-green-500">Payment successful!</p>
-                  <p className="font-mono text-xs text-muted-foreground break-all">{txHash}</p>
-                </div>
-              </div>
-            </div>
-          )}
-          {txError && (
-            <div className="rounded-lg border border-red-500/50 bg-red-500/10 p-4">
-              <div className="flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
-                <div className="space-y-1 min-w-0">
-                  <p className="font-semibold text-red-500">Transaction failed</p>
-                  <p className="text-xs text-muted-foreground">{txError}</p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Action buttons */}
-          <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-border/50">
-            {needsApproval && (
-              <Button
-                onClick={approveTokens}
-                disabled={isApproving}
-                variant="outline"
-                className="w-full sm:w-auto h-11 sm:h-12 px-4 sm:px-6 text-sm sm:text-base hover:shadow-md transition-all"
-              >
-                {isApproving ? (
-                  <>
-                    <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                    Approving...
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle2 className="mr-2 h-4 w-4" />
-                    Approve Tokens
-                  </>
+          {/* Payment controls - only for active positions */}
+          {selectedPosition?.isActive !== false ? (
+            <>
+              {/* Number of payments */}
+              <div className="space-y-3">
+                <Label className="flex items-center gap-2 text-sm font-medium">
+                  <Calculator className="w-4 h-4 text-muted-foreground" />
+                  Number of Payments
+                </Label>
+                <Input
+                  type="number"
+                  min="1"
+                  max={selectedPosition ? Number(selectedPosition.termPeriods - selectedPosition.paymentsCompleted) : 30}
+                  value={numPayments}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (value === "") {
+                      setNumPayments(value);
+                      return;
+                    }
+                    const numValue = parseInt(value, 10);
+                    const maxPayments = selectedPosition
+                      ? Number(selectedPosition.termPeriods - selectedPosition.paymentsCompleted)
+                      : 30;
+                    if (!isNaN(numValue)) {
+                      const clampedValue = Math.min(maxPayments, Math.max(1, numValue));
+                      setNumPayments(clampedValue.toString());
+                    }
+                  }}
+                  onBlur={() => {
+                    const numValue = parseInt(numPayments, 10);
+                    if (isNaN(numValue) || numValue < 1) {
+                      setNumPayments("1");
+                    }
+                  }}
+                  className="h-12 bg-muted/30 border-border hover:bg-muted/50 transition-colors"
+                />
+                {selectedPosition && (
+                  <div className="rounded-lg bg-muted/50 p-3 flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Total Payment</span>
+                    <div className="text-right">
+                      <span className="font-semibold text-primary">$<PrettyAmount amountFormatted={formatUSD(totalPaymentNeeded)} size="sm" /></span>
+                      {parseInt(numPayments) > 1 && (
+                        <span className="text-xs text-muted-foreground block">
+                          {numPayments} x $<PrettyAmount amountFormatted={formatUSD(selectedPosition.paymentPerPeriod)} size="xs" />
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 )}
-              </Button>
-            )}
-            <Button
-              onClick={makePayment}
-              disabled={isLoading || !selectedPositionId || insufficientBalance || needsApproval}
-              className="w-full sm:flex-1 h-11 sm:h-12 text-sm sm:text-base font-semibold transition-all hover:shadow-lg hover:shadow-primary/20"
-              size="lg"
-            >
-              {isLoading ? (
-                <>
-                  <RefreshCw className="mr-2 h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
-                  Processing...
-                </>
-              ) : (
-                <>
-                  <CreditCard className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                  Make {numPayments} Payment{parseInt(numPayments) > 1 ? "s" : ""}
-                </>
+              </div>
+
+              {/* Balance info */}
+              {balance !== null && (
+                <div className="rounded-lg bg-muted/50 p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Wallet className="w-4 h-4" />
+                      Your Balance
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className={`font-semibold ${insufficientBalance ? "text-red-500" : "text-foreground"}`}>
+                        $<PrettyAmount amountFormatted={formatUSD(balance)} size="sm" /> mUSD
+                      </span>
+                      {insufficientBalance && (
+                        <span className="text-xs text-red-500 bg-red-500/10 px-2 py-0.5 rounded">Insufficient</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
               )}
-            </Button>
-          </div>
+
+              {/* Transaction status */}
+              {txHash && (
+                <div className="rounded-lg border border-green-500/50 bg-green-500/10 p-4">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
+                    <div className="space-y-1 min-w-0">
+                      <p className="font-semibold text-green-500">Payment successful!</p>
+                      <p className="font-mono text-xs text-muted-foreground break-all">{txHash}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+              {txError && (
+                <div className="rounded-lg border border-red-500/50 bg-red-500/10 p-4">
+                  <div className="flex items-start gap-3">
+                    <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+                    <div className="space-y-1 min-w-0">
+                      <p className="font-semibold text-red-500">Transaction failed</p>
+                      <p className="text-xs text-muted-foreground">{txError}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Action buttons */}
+              <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-border/50">
+                {needsApproval && (
+                  <Button
+                    onClick={approveTokens}
+                    disabled={isApproving}
+                    variant="outline"
+                    className="w-full sm:w-auto h-11 sm:h-12 px-4 sm:px-6 text-sm sm:text-base hover:shadow-md transition-all"
+                  >
+                    {isApproving ? (
+                      <>
+                        <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                        Approving...
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle2 className="mr-2 h-4 w-4" />
+                        Approve Tokens
+                      </>
+                    )}
+                  </Button>
+                )}
+                <Button
+                  onClick={makePayment}
+                  disabled={isLoading || !selectedPositionId || insufficientBalance || needsApproval}
+                  className="w-full sm:flex-1 h-11 sm:h-12 text-sm sm:text-base font-semibold transition-all hover:shadow-lg hover:shadow-primary/20"
+                  size="lg"
+                >
+                  {isLoading ? (
+                    <>
+                      <RefreshCw className="mr-2 h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <CreditCard className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                      Make {numPayments} Payment{parseInt(numPayments) > 1 ? "s" : ""}
+                    </>
+                  )}
+                </Button>
+              </div>
+            </>
+          ) : (
+            <div className="rounded-lg border border-green-500/30 bg-green-500/10 p-4 flex items-center gap-3">
+              <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
+              <div>
+                <p className="font-semibold text-green-500">Mortgage fully paid off</p>
+                <p className="text-xs text-muted-foreground">All payments have been completed for this position.</p>
+              </div>
+            </div>
+          )}
         </>
       )}
     </div>

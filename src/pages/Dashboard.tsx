@@ -33,7 +33,7 @@ interface Position {
   isActive: boolean;
 }
 
-export function Dashboard() {
+export function Dashboard({ onMortgageCreated }: { onMortgageCreated?: () => void } = {}) {
   const { isConnected, isConnecting, error, address, publicClient } = useWeb3();
   const [positions, setPositions] = useState<Position[]>([]);
   const [propertyMetadata, setPropertyMetadata] = useState<Map<number, PropertyMetadata>>(new Map());
@@ -166,7 +166,7 @@ export function Dashboard() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <CreateMortgageForm showCard={false} onSuccess={fetchPositions} />
+      <CreateMortgageForm showCard={false} onSuccess={() => { fetchPositions(); onMortgageCreated?.(); }} />
     </div>
   );
 }
