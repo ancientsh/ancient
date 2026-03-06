@@ -1,6 +1,7 @@
 // Create Mortgage Form - Shared component for creating mortgages
 import { useState, useEffect, useCallback } from "react";
 import { encodeFunctionData } from "viem";
+import { toast } from "sonner";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCards, Navigation, Pagination } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
@@ -33,7 +34,6 @@ import {
   Calculator,
   Wallet,
   RefreshCw,
-  AlertCircle,
   CheckCircle2,
   DollarSign,
   Clock,
@@ -240,8 +240,6 @@ export function CreateMortgageForm({ showCard = true, onSuccess }: CreateMortgag
 
   const [isLoading, setIsLoading] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
-  const [txHash, setTxHash] = useState<string | null>(null);
-  const [txError, setTxError] = useState<string | null>(null);
 
   // Fetch properties and metadata from contract
   const fetchProperties = useCallback(async () => {
@@ -374,7 +372,6 @@ export function CreateMortgageForm({ showCard = true, onSuccess }: CreateMortgag
   const approveTokens = async () => {
     if (!walletClient || !account || !preview) return;
     setIsApproving(true);
-    setTxError(null);
     try {
       const data = encodeFunctionData({
         abi: MockUSDAbi,
@@ -389,8 +386,11 @@ export function CreateMortgageForm({ showCard = true, onSuccess }: CreateMortgag
       });
       await publicClient?.waitForTransactionReceipt({ hash });
       await fetchBalanceAndAllowance();
+      toast.success("Tokens approved!");
     } catch (err) {
-      setTxError(err instanceof Error ? err.message : "Approval failed");
+      toast.error("Approval failed", {
+        description: err instanceof Error ? err.message : "Approval failed",
+      });
     } finally {
       setIsApproving(false);
     }
@@ -400,8 +400,6 @@ export function CreateMortgageForm({ showCard = true, onSuccess }: CreateMortgag
   const createMortgage = async () => {
     if (!walletClient || !account || !selectedPropertyId || !preview) return;
     setIsLoading(true);
-    setTxHash(null);
-    setTxError(null);
     try {
       const downPaymentBps = parseBps(parseFloat(downPaymentPercent));
       const data = encodeFunctionData({
@@ -420,12 +418,16 @@ export function CreateMortgageForm({ showCard = true, onSuccess }: CreateMortgag
         account,
         chain: anvilChain,
       });
-      setTxHash(hash);
       await publicClient?.waitForTransactionReceipt({ hash });
       await fetchBalanceAndAllowance();
+      toast.success("Mortgage created successfully!", {
+        description: hash,
+      });
       onSuccess?.();
     } catch (err) {
-      setTxError(err instanceof Error ? err.message : "Transaction failed");
+      toast.error("Transaction failed", {
+        description: err instanceof Error ? err.message : "Transaction failed",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -613,29 +615,6 @@ export function CreateMortgageForm({ showCard = true, onSuccess }: CreateMortgag
           </div>
         )}
 
-        {/* Transaction status */}
-        {txHash && (
-          <div className="rounded-lg border border-green-500/50 bg-green-500/10 p-4">
-            <div className="flex items-start gap-3">
-              <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
-              <div className="space-y-1 min-w-0">
-                <p className="font-semibold text-green-500">Mortgage created successfully!</p>
-                <p className="font-mono text-xs text-muted-foreground break-all">{txHash}</p>
-              </div>
-            </div>
-          </div>
-        )}
-        {txError && (
-          <div className="rounded-lg border border-red-500/50 bg-red-500/10 p-4">
-            <div className="flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
-              <div className="space-y-1 min-w-0">
-                <p className="font-semibold text-red-500">Transaction failed</p>
-                <p className="text-xs text-muted-foreground">{txError}</p>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Action buttons */}
@@ -856,29 +835,6 @@ export function CreateMortgageForm({ showCard = true, onSuccess }: CreateMortgag
             </div>
           )}
 
-          {/* Transaction status */}
-          {txHash && (
-            <div className="rounded-lg border border-green-500/50 bg-green-500/10 p-4">
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
-                <div className="space-y-1 min-w-0">
-                  <p className="font-semibold text-green-500">Mortgage created successfully!</p>
-                  <p className="font-mono text-xs text-muted-foreground break-all">{txHash}</p>
-                </div>
-              </div>
-            </div>
-          )}
-          {txError && (
-            <div className="rounded-lg border border-red-500/50 bg-red-500/10 p-4">
-              <div className="flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
-                <div className="space-y-1 min-w-0">
-                  <p className="font-semibold text-red-500">Transaction failed</p>
-                  <p className="text-xs text-muted-foreground">{txError}</p>
-                </div>
-              </div>
-            </div>
-          )}
         </CardContent>
         <CardFooter className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-border/50">
           {needsApproval && (

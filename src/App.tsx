@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { Web3Provider, useWeb3, useAnvilAccounts, formatUSD } from "./contracts";
+import {
+  Web3Provider,
+  useWeb3,
+  useAnvilAccounts,
+  formatUSD,
+} from "./contracts";
 import { Faucet } from "./pages/Faucet";
 import { Dashboard } from "./pages/Dashboard";
 import { Payments } from "./pages/Payments";
@@ -21,6 +26,7 @@ import {
   MobileNavToggle,
   NavbarLogo,
   NavbarButton,
+  Toaster,
 } from "liquidcn/client";
 import { ArrowRight } from "lucide-react";
 import logo from "../public/logo-64.png";
@@ -70,7 +76,7 @@ function LaunchAppButton({
   return (
     <button
       onClick={onClick}
-      className={`group relative inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-semibold text-sm shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:scale-105 active:scale-100 transition-all duration-200 ${className}`}
+      className={`group relative inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-primary to-primary/80 text-white font-semibold text-sm shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:scale-105 active:scale-100 transition-all duration-200 ${className}`}
     >
       <span>Launch App</span>
       <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
@@ -85,7 +91,8 @@ function Navigation({
   currentPage: Page;
   setPage: (p: Page) => void;
 }) {
-  const { address, accountIndex, switchAccount, isConnected, balances } = useWeb3();
+  const { address, accountIndex, switchAccount, isConnected, balances } =
+    useWeb3();
   const accounts = useAnvilAccounts();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -133,13 +140,26 @@ function Navigation({
                 >
                   <SelectTrigger className="h-9 bg-muted/50 border-border hover:bg-muted transition-colors">
                     <div className="flex items-center gap-2 min-w-0">
-                      <img src="/public/avax.svg" alt="AVAX" className="w-4 h-4 shrink-0" />
-                      <span className="text-xs font-mono truncate">{address?.slice(0, 6)}...{address?.slice(-4)}</span>
-                      {address && balances[address.toLowerCase()] !== undefined && (
-                        <span className="text-xs font-semibold text-primary shrink-0">
-                          $<PrettyAmount amountFormatted={formatUSD(balances[address.toLowerCase()])} size="xs" />
-                        </span>
-                      )}
+                      <img
+                        src="/public/avax.svg"
+                        alt="AVAX"
+                        className="w-4 h-4 shrink-0"
+                      />
+                      <span className="text-xs font-mono truncate">
+                        {address?.slice(0, 6)}...{address?.slice(-4)}
+                      </span>
+                      {address &&
+                        balances[address.toLowerCase()] !== undefined && (
+                          <span className="text-xs font-semibold text-primary shrink-0">
+                            $
+                            <PrettyAmount
+                              amountFormatted={formatUSD(
+                                balances[address.toLowerCase()],
+                              )}
+                              size="xs"
+                            />
+                          </span>
+                        )}
                     </div>
                   </SelectTrigger>
                   <SelectContent className="bg-card border-border min-w-[280px]">
@@ -153,10 +173,18 @@ function Navigation({
                           <span className="w-5 h-5 rounded-full bg-primary/15 text-primary text-[10px] font-bold flex items-center justify-center shrink-0 ring-1 ring-primary/30">
                             {index}
                           </span>
-                          <span className="text-foreground">{addr.slice(0, 6)}...{addr.slice(-4)}</span>
+                          <span className="text-foreground">
+                            {addr.slice(0, 6)}...{addr.slice(-4)}
+                          </span>
                           {balances[addr.toLowerCase()] !== undefined && (
                             <span className="text-primary font-semibold ml-auto">
-                              $<PrettyAmount amountFormatted={formatUSD(balances[addr.toLowerCase()])} size="xs" />
+                              $
+                              <PrettyAmount
+                                amountFormatted={formatUSD(
+                                  balances[addr.toLowerCase()],
+                                )}
+                                size="xs"
+                              />
                             </span>
                           )}
                         </div>
@@ -219,13 +247,26 @@ function Navigation({
                   >
                     <SelectTrigger className="w-full h-9 bg-muted/50 border-border">
                       <div className="flex items-center gap-2 min-w-0">
-                        <img src="/public/avax.svg" alt="AVAX" className="w-4 h-4 shrink-0" />
-                        <span className="text-xs font-mono truncate">{address?.slice(0, 6)}...{address?.slice(-4)}</span>
-                        {address && balances[address.toLowerCase()] !== undefined && (
-                          <span className="text-xs font-semibold text-primary shrink-0">
-                            $<PrettyAmount amountFormatted={formatUSD(balances[address.toLowerCase()])} size="xs" />
-                          </span>
-                        )}
+                        <img
+                          src="/public/avax.svg"
+                          alt="AVAX"
+                          className="w-4 h-4 shrink-0"
+                        />
+                        <span className="text-xs font-mono truncate">
+                          {address?.slice(0, 6)}...{address?.slice(-4)}
+                        </span>
+                        {address &&
+                          balances[address.toLowerCase()] !== undefined && (
+                            <span className="text-xs font-semibold text-primary shrink-0">
+                              $
+                              <PrettyAmount
+                                amountFormatted={formatUSD(
+                                  balances[address.toLowerCase()],
+                                )}
+                                size="xs"
+                              />
+                            </span>
+                          )}
                       </div>
                     </SelectTrigger>
                     <SelectContent className="bg-card border-border min-w-[280px]">
@@ -239,10 +280,18 @@ function Navigation({
                             <span className="w-5 h-5 rounded-full bg-primary/15 text-primary text-[10px] font-bold flex items-center justify-center shrink-0 ring-1 ring-primary/30">
                               {index}
                             </span>
-                            <span className="text-foreground">{addr.slice(0, 6)}...{addr.slice(-4)}</span>
+                            <span className="text-foreground">
+                              {addr.slice(0, 6)}...{addr.slice(-4)}
+                            </span>
                             {balances[addr.toLowerCase()] !== undefined && (
                               <span className="text-primary font-semibold ml-auto">
-                                $<PrettyAmount amountFormatted={formatUSD(balances[addr.toLowerCase()])} size="xs" />
+                                $
+                                <PrettyAmount
+                                  amountFormatted={formatUSD(
+                                    balances[addr.toLowerCase()],
+                                  )}
+                                  size="xs"
+                                />
                               </span>
                             )}
                           </div>
@@ -280,7 +329,9 @@ function AppContent() {
       <main className="flex-1 pt-16">
         <div className="container mx-auto py-8">
           {currentPage === "faucet" && <Faucet />}
-          {currentPage === "create" && <Dashboard onMortgageCreated={() => setPage("mortgages")} />}
+          {currentPage === "create" && (
+            <Dashboard onMortgageCreated={() => setPage("mortgages")} />
+          )}
           {currentPage === "mortgages" && <Payments />}
         </div>
       </main>
@@ -294,6 +345,7 @@ export function App() {
   return (
     <Web3Provider>
       <AppContent />
+      <Toaster position="bottom-right" theme="dark" />
     </Web3Provider>
   );
 }

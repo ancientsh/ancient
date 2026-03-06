@@ -52,11 +52,11 @@ export function JourneySection() {
                 <div className="mb-3 sm:mb-4 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-primary/10">
                   <step.icon className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
                 </div>
-                <div className="absolute right-2 sm:right-4 top-2 sm:top-4 text-4xl sm:text-6xl font-bold text-primary/10">
+                <div className="absolute right-2 sm:right-4 top-2 sm:top-4 text-4xl sm:text-6xl font-bold text-primary/20">
                   {step.number}
                 </div>
-                <h3 className="mb-1 sm:mb-2 text-lg sm:text-xl font-bold">{step.title}</h3>
-                <p className="text-xs sm:text-sm text-muted-foreground">
+                <h3 className="mb-1 sm:mb-2 text-lg sm:text-xl font-bold text-foreground">{step.title}</h3>
+                <p className="text-xs sm:text-sm text-foreground/70">
                   {step.description}
                 </p>
               </CardContent>

@@ -1,6 +1,7 @@
 // Payments page - Make mortgage payments
 import { useState, useEffect, useCallback } from "react";
 import { encodeFunctionData } from "viem";
+import { toast } from "sonner";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCards, Navigation, Pagination } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
@@ -235,7 +236,7 @@ function PositionSwiperSelector({
       </div>
 
       {/* Slide counter */}
-      <div className="text-center text-sm text-muted-foreground">
+      <div className="text-center text-sm text-muted-foreground -mt-2">
         {selectedPositionId && (
           <span>
             Position {positions.findIndex((p) => p.tokenId.toString() === selectedPositionId) + 1} of {positions.length}
@@ -295,8 +296,6 @@ function MakePaymentsForm() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
-  const [txHash, setTxHash] = useState<string | null>(null);
-  const [txError, setTxError] = useState<string | null>(null);
 
   // Fetch property metadata from contract
   const fetchPropertyMetadata = useCallback(async () => {
@@ -396,7 +395,6 @@ function MakePaymentsForm() {
   const approveTokens = async () => {
     if (!walletClient || !account) return;
     setIsApproving(true);
-    setTxError(null);
     try {
       const data = encodeFunctionData({
         abi: MockUSDAbi,
@@ -411,8 +409,11 @@ function MakePaymentsForm() {
       });
       await publicClient?.waitForTransactionReceipt({ hash });
       await fetchBalanceAndAllowance();
+      toast.success("Tokens approved!");
     } catch (err) {
-      setTxError(err instanceof Error ? err.message : "Approval failed");
+      toast.error("Approval failed", {
+        description: err instanceof Error ? err.message : "Approval failed",
+      });
     } finally {
       setIsApproving(false);
     }
@@ -422,8 +423,6 @@ function MakePaymentsForm() {
   const makePayment = async () => {
     if (!walletClient || !account || !selectedPositionId) return;
     setIsLoading(true);
-    setTxHash(null);
-    setTxError(null);
     try {
       const num = parseInt(numPayments);
       let data: `0x${string}`;
@@ -446,12 +445,16 @@ function MakePaymentsForm() {
         account,
         chain: anvilChain,
       });
-      setTxHash(hash);
       await publicClient?.waitForTransactionReceipt({ hash });
       await fetchPositions();
       await fetchBalanceAndAllowance();
+      toast.success("Payment successful!", {
+        description: hash,
+      });
     } catch (err) {
-      setTxError(err instanceof Error ? err.message : "Transaction failed");
+      toast.error("Transaction failed", {
+        description: err instanceof Error ? err.message : "Transaction failed",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -565,30 +568,6 @@ function MakePaymentsForm() {
                       {insufficientBalance && (
                         <span className="text-xs text-red-500 bg-red-500/10 px-2 py-0.5 rounded">Insufficient</span>
                       )}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Transaction status */}
-              {txHash && (
-                <div className="rounded-lg border border-green-500/50 bg-green-500/10 p-4">
-                  <div className="flex items-start gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
-                    <div className="space-y-1 min-w-0">
-                      <p className="font-semibold text-green-500">Payment successful!</p>
-                      <p className="font-mono text-xs text-muted-foreground break-all">{txHash}</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-              {txError && (
-                <div className="rounded-lg border border-red-500/50 bg-red-500/10 p-4">
-                  <div className="flex items-start gap-3">
-                    <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
-                    <div className="space-y-1 min-w-0">
-                      <p className="font-semibold text-red-500">Transaction failed</p>
-                      <p className="text-xs text-muted-foreground">{txError}</p>
                     </div>
                   </div>
                 </div>

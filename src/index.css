@@ -14,6 +14,13 @@
   }
 }
 
+/* Push swiper pagination dots below the slides */
+.mortgage-property-swiper-horizontal .swiper-pagination {
+  position: relative;
+  margin-top: 0.5rem;
+  bottom: auto;
+}
+
 @media (prefers-reduced-motion) {
   *,
   ::before,

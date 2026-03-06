@@ -1,6 +1,7 @@
 // Faucet page - Get MockUSD test tokens
 import { useState, useEffect, useCallback } from "react";
 import { encodeFunctionData } from "viem";
+import { toast } from "sonner";
 import {
   Card,
   CardContent,
@@ -11,14 +12,12 @@ import {
   PrettyAmount,
 } from "liquidcn";
 import { useWeb3, formatUSD, MockUSDAbi, getContractAddresses, anvilChain } from "../contracts";
-import { Coins, Wallet, RefreshCw, CheckCircle2, AlertCircle, Droplets } from "lucide-react";
+import { Coins, Wallet, RefreshCw, AlertCircle, Droplets } from "lucide-react";
 
 export function Faucet() {
   const { isConnected, isConnecting, error, address, publicClient, walletClient, account } = useWeb3();
   const [balance, setBalance] = useState<bigint | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [txHash, setTxHash] = useState<string | null>(null);
-  const [txError, setTxError] = useState<string | null>(null);
   const [faucetAmount, setFaucetAmount] = useState<bigint | null>(null);
 
   const addresses = getContractAddresses();
@@ -66,8 +65,6 @@ export function Faucet() {
     if (!walletClient || !account) return;
 
     setIsLoading(true);
-    setTxHash(null);
-    setTxError(null);
 
     try {
       const data = encodeFunctionData({
@@ -82,16 +79,20 @@ export function Faucet() {
         chain: anvilChain,
       });
 
-      setTxHash(hash);
-
       // Wait for confirmation
       await publicClient?.waitForTransactionReceipt({ hash });
 
       // Refresh balance
       await fetchBalance();
+
+      toast.success("Transaction confirmed!", {
+        description: hash,
+      });
     } catch (err) {
       const message = err instanceof Error ? err.message : "Transaction failed";
-      setTxError(message);
+      toast.error("Transaction failed", {
+        description: message,
+      });
       console.error("Faucet claim failed:", err);
     } finally {
       setIsLoading(false);
@@ -220,30 +221,6 @@ export function Faucet() {
               )}
             </Button>
 
-            {/* Transaction result */}
-            {txHash && (
-              <div className="rounded-lg border border-green-500/50 bg-green-500/10 p-4">
-                <div className="flex items-start gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
-                  <div className="space-y-1 min-w-0">
-                    <p className="font-semibold text-green-500">Transaction confirmed!</p>
-                    <p className="font-mono text-xs text-muted-foreground break-all">{txHash}</p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {txError && (
-              <div className="rounded-lg border border-red-500/50 bg-red-500/10 p-4">
-                <div className="flex items-start gap-3">
-                  <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
-                  <div className="space-y-1 min-w-0">
-                    <p className="font-semibold text-red-500">Transaction failed</p>
-                    <p className="text-xs text-muted-foreground">{txError}</p>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
 
         </CardContent>
