@@ -12,6 +12,7 @@ import {
   type WalletClient,
   type Account,
   type Address,
+  encodeFunctionData,
 } from "viem";
 
 import {
@@ -21,7 +22,11 @@ import {
   ANVIL_PRIVATE_KEYS,
   type ContractInstances,
   getReadContracts,
+  anvilChain,
+  parseUSD,
+  formatUSD,
 } from "./client";
+import { MockUSDAbi } from "./abis";
 import { ANVIL_ACCOUNTS } from "./addresses";
 
 interface Web3State {
@@ -38,6 +43,10 @@ interface Web3State {
   account: Account | null;
   address: Address | null;
   accountIndex: number;
+
+  // Balances
+  balances: Record<string, bigint>;
+  refreshBalances: () => Promise<void>;
 
   // Contracts
   contracts: ContractInstances | null;
@@ -73,6 +82,31 @@ export function Web3Provider({ children }: Web3ProviderProps) {
   const [address, setAddress] = useState<Address | null>(null);
   const [accountIndex, setAccountIndex] = useState(0);
   const [contracts, setContracts] = useState<ContractInstances | null>(null);
+  const [balances, setBalances] = useState<Record<string, bigint>>({});
+
+  // Fetch balances for all accounts
+  const fetchAllBalances = useCallback(async (client: PublicClient) => {
+    const addresses = (await import("./addresses")).getContractAddresses();
+    const results: Record<string, bigint> = {};
+    await Promise.all(
+      ANVIL_ACCOUNTS.map(async (addr) => {
+        try {
+          const bal = await client.readContract({
+            address: addresses.mockUSD,
+            abi: MockUSDAbi,
+            functionName: "balanceOf",
+            args: [addr],
+          }) as bigint;
+          results[addr.toLowerCase()] = bal;
+        } catch {}
+      })
+    );
+    setBalances(results);
+  }, []);
+
+  const refreshBalances = useCallback(async () => {
+    if (publicClient) await fetchAllBalances(publicClient);
+  }, [publicClient, fetchAllBalances]);
 
   // Connect to local Anvil chain
   const connect = useCallback(async (index: number = 0) => {
@@ -110,6 +144,41 @@ export function Web3Provider({ children }: Web3ProviderProps) {
       setAccountIndex(index);
       setContracts(contractInstances);
       setIsConnected(true);
+
+      // Auto-fund all wallets with 1M mUSD if they have zero balance
+      const mockUSDAddress = contractInstances.mockUSD.address;
+      try {
+        const ONE_MILLION = parseUSD("1000000");
+        await Promise.all(
+          ANVIL_ACCOUNTS.map(async (addr) => {
+            const bal = await readClient.readContract({
+              address: mockUSDAddress,
+              abi: MockUSDAbi,
+              functionName: "balanceOf",
+              args: [addr],
+            }) as bigint;
+            if (bal === 0n) {
+              const data = encodeFunctionData({
+                abi: MockUSDAbi,
+                functionName: "mint",
+                args: [addr, ONE_MILLION],
+              });
+              const hash = await writeClient.sendTransaction({
+                to: mockUSDAddress,
+                data,
+                account: acc,
+                chain: anvilChain,
+              });
+              await readClient.waitForTransactionReceipt({ hash });
+            }
+          })
+        );
+      } catch (err) {
+        console.error("Auto-fund failed:", err);
+      }
+
+      // Fetch balances after funding
+      await fetchAllBalances(readClient);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to connect";
       setError(message);
@@ -117,7 +186,7 @@ export function Web3Provider({ children }: Web3ProviderProps) {
     } finally {
       setIsConnecting(false);
     }
-  }, []);
+  }, [fetchAllBalances]);
 
   // Disconnect
   const disconnect = useCallback(() => {
@@ -152,6 +221,8 @@ export function Web3Provider({ children }: Web3ProviderProps) {
     account,
     address,
     accountIndex,
+    balances,
+    refreshBalances,
     contracts,
     connect,
     disconnect,

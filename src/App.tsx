@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Web3Provider, useWeb3, useAnvilAccounts } from "./contracts";
+import { Web3Provider, useWeb3, useAnvilAccounts, formatUSD } from "./contracts";
 import { Faucet } from "./pages/Faucet";
 import { Dashboard } from "./pages/Dashboard";
 import { Payments } from "./pages/Payments";
 import { Landing } from "./pages/Landing";
 import { Footer } from "@/components/sections";
-import { Button } from "liquidcn";
+import { Button, PrettyAmount } from "liquidcn";
 import {
   Select,
   SelectContent,
@@ -85,7 +85,7 @@ function Navigation({
   currentPage: Page;
   setPage: (p: Page) => void;
 }) {
-  const { address, accountIndex, switchAccount, isConnected } = useWeb3();
+  const { address, accountIndex, switchAccount, isConnected, balances } = useWeb3();
   const accounts = useAnvilAccounts();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -93,9 +93,9 @@ function Navigation({
     currentPage === "landing"
       ? []
       : [
-          { name: "Faucet", link: "faucet" },
           { name: "Create", link: "create" },
           { name: "Mortgages", link: "mortgages" },
+          { name: "Faucet", link: "faucet" },
         ];
 
   const handleNavClick = (link: string) => {
@@ -131,24 +131,34 @@ function Navigation({
                   value={accountIndex.toString()}
                   onValueChange={(v) => switchAccount(parseInt(v))}
                 >
-                  <SelectTrigger className="w-[170px] h-9 bg-muted/50 border-border hover:bg-muted transition-colors">
+                  <SelectTrigger className="h-9 bg-muted/50 border-border hover:bg-muted transition-colors">
                     <div className="flex items-center gap-2 min-w-0">
                       <img src="/public/avax.svg" alt="AVAX" className="w-4 h-4 shrink-0" />
                       <span className="text-xs font-mono truncate">{address?.slice(0, 6)}...{address?.slice(-4)}</span>
+                      {address && balances[address.toLowerCase()] !== undefined && (
+                        <span className="text-xs font-semibold text-primary shrink-0">
+                          $<PrettyAmount amountFormatted={formatUSD(balances[address.toLowerCase()])} size="xs" />
+                        </span>
+                      )}
                     </div>
                   </SelectTrigger>
-                  <SelectContent className="bg-card border-border">
+                  <SelectContent className="bg-card border-border min-w-[280px]">
                     {accounts.map(({ address: addr, index }) => (
                       <SelectItem
                         key={index}
                         value={index.toString()}
                         className="text-xs font-mono py-2"
                       >
-                        <div className="flex items-center gap-2.5">
+                        <div className="flex items-center gap-2.5 w-full">
                           <span className="w-5 h-5 rounded-full bg-primary/15 text-primary text-[10px] font-bold flex items-center justify-center shrink-0 ring-1 ring-primary/30">
                             {index}
                           </span>
                           <span className="text-foreground">{addr.slice(0, 6)}...{addr.slice(-4)}</span>
+                          {balances[addr.toLowerCase()] !== undefined && (
+                            <span className="text-primary font-semibold ml-auto">
+                              $<PrettyAmount amountFormatted={formatUSD(balances[addr.toLowerCase()])} size="xs" />
+                            </span>
+                          )}
                         </div>
                       </SelectItem>
                     ))}
@@ -159,7 +169,7 @@ function Navigation({
           </>
         )}
         {currentPage === "landing" && (
-          <LaunchAppButton onClick={() => setPage("faucet")} />
+          <LaunchAppButton onClick={() => setPage("create")} />
         )}
       </NavBody>
 
@@ -178,7 +188,7 @@ function Navigation({
           {currentPage === "landing" ? (
             <LaunchAppButton
               onClick={() => {
-                setPage("faucet");
+                setPage("create");
                 setMobileMenuOpen(false);
               }}
               className="w-full justify-center"
@@ -211,20 +221,30 @@ function Navigation({
                       <div className="flex items-center gap-2 min-w-0">
                         <img src="/public/avax.svg" alt="AVAX" className="w-4 h-4 shrink-0" />
                         <span className="text-xs font-mono truncate">{address?.slice(0, 6)}...{address?.slice(-4)}</span>
+                        {address && balances[address.toLowerCase()] !== undefined && (
+                          <span className="text-xs font-semibold text-primary shrink-0">
+                            $<PrettyAmount amountFormatted={formatUSD(balances[address.toLowerCase()])} size="xs" />
+                          </span>
+                        )}
                       </div>
                     </SelectTrigger>
-                    <SelectContent className="bg-card border-border">
+                    <SelectContent className="bg-card border-border min-w-[280px]">
                       {accounts.map(({ address: addr, index }) => (
                         <SelectItem
                           key={index}
                           value={index.toString()}
                           className="text-xs font-mono py-2"
                         >
-                          <div className="flex items-center gap-2.5">
+                          <div className="flex items-center gap-2.5 w-full">
                             <span className="w-5 h-5 rounded-full bg-primary/15 text-primary text-[10px] font-bold flex items-center justify-center shrink-0 ring-1 ring-primary/30">
                               {index}
                             </span>
                             <span className="text-foreground">{addr.slice(0, 6)}...{addr.slice(-4)}</span>
+                            {balances[addr.toLowerCase()] !== undefined && (
+                              <span className="text-primary font-semibold ml-auto">
+                                $<PrettyAmount amountFormatted={formatUSD(balances[addr.toLowerCase()])} size="xs" />
+                              </span>
+                            )}
                           </div>
                         </SelectItem>
                       ))}
@@ -247,7 +267,7 @@ function AppContent() {
     return (
       <div className="min-h-screen flex flex-col px-4 sm:px-6 lg:px-8">
         <Navigation currentPage={currentPage} setPage={setPage} />
-        <Landing onNavigateToMVP={() => setPage("faucet")} />
+        <Landing onNavigateToMVP={() => setPage("create")} />
       </div>
     );
   }
