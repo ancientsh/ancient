@@ -12,7 +12,6 @@ import {
   type WalletClient,
   type Account,
   type Address,
-  encodeFunctionData,
 } from "viem";
 
 import {
@@ -22,9 +21,6 @@ import {
   ANVIL_PRIVATE_KEYS,
   type ContractInstances,
   getReadContracts,
-  anvilChain,
-  parseUSD,
-  formatUSD,
 } from "./client";
 import { MockUSDAbi } from "./abis";
 import { ANVIL_ACCOUNTS } from "./addresses";
@@ -145,39 +141,7 @@ export function Web3Provider({ children }: Web3ProviderProps) {
       setContracts(contractInstances);
       setIsConnected(true);
 
-      // Auto-fund all wallets with 1M mUSD if they have zero balance
-      const mockUSDAddress = contractInstances.mockUSD.address;
-      try {
-        const ONE_MILLION = parseUSD("1000000");
-        await Promise.all(
-          ANVIL_ACCOUNTS.map(async (addr) => {
-            const bal = await readClient.readContract({
-              address: mockUSDAddress,
-              abi: MockUSDAbi,
-              functionName: "balanceOf",
-              args: [addr],
-            }) as bigint;
-            if (bal === 0n) {
-              const data = encodeFunctionData({
-                abi: MockUSDAbi,
-                functionName: "mint",
-                args: [addr, ONE_MILLION],
-              });
-              const hash = await writeClient.sendTransaction({
-                to: mockUSDAddress,
-                data,
-                account: acc,
-                chain: anvilChain,
-              });
-              await readClient.waitForTransactionReceipt({ hash });
-            }
-          })
-        );
-      } catch (err) {
-        console.error("Auto-fund failed:", err);
-      }
-
-      // Fetch balances after funding
+      // Fetch balances (accounts are funded during contract deployment)
       await fetchAllBalances(readClient);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to connect";
