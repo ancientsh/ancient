@@ -4,7 +4,8 @@ import { Faucet } from "./pages/Faucet";
 import { Dashboard } from "./pages/Dashboard";
 import { Payments } from "./pages/Payments";
 import { Landing } from "./pages/Landing";
-import { Button, Footer } from "liquidcn";
+import { Footer } from "@/components/sections";
+import { Button } from "liquidcn";
 import {
   Select,
   SelectContent,
@@ -21,12 +22,19 @@ import {
   NavbarLogo,
   NavbarButton,
 } from "liquidcn/client";
-import { Github, Twitter, Landmark, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import logo from "../public/logo-64.png";
 import "./index.css";
 
 type Page = "landing" | "faucet" | "create" | "mortgages";
 
-function AncientBrand({ onClick, showBadge = false }: { onClick: () => void; showBadge?: boolean }) {
+function AncientBrand({
+  onClick,
+  showBadge = false,
+}: {
+  onClick: () => void;
+  showBadge?: boolean;
+}) {
   return (
     <button
       type="button"
@@ -37,8 +45,8 @@ function AncientBrand({ onClick, showBadge = false }: { onClick: () => void; sho
       }}
       className="group relative z-50 flex items-center gap-2.5 px-1 py-1 cursor-pointer"
     >
-      <div className="relative flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-primary via-primary/90 to-primary/70 shadow-lg shadow-primary/30 group-hover:shadow-primary/50 group-hover:scale-105 transition-all duration-200">
-        <Landmark className="w-5 h-5 text-primary-foreground" strokeWidth={2.5} />
+      <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 group-hover:bg-primary/20 group-hover:scale-105 transition-all duration-200 p-1">
+        <img src={logo} alt="Ancient" className="w-full h-full invert" />
       </div>
       <span className="text-xl font-bold text-foreground group-hover:text-primary transition-colors duration-200">
         Ancient
@@ -52,7 +60,13 @@ function AncientBrand({ onClick, showBadge = false }: { onClick: () => void; sho
   );
 }
 
-function LaunchAppButton({ onClick, className = "" }: { onClick: () => void; className?: string }) {
+function LaunchAppButton({
+  onClick,
+  className = "",
+}: {
+  onClick: () => void;
+  className?: string;
+}) {
   return (
     <button
       onClick={onClick}
@@ -64,18 +78,25 @@ function LaunchAppButton({ onClick, className = "" }: { onClick: () => void; cla
   );
 }
 
-function Navigation({ currentPage, setPage }: { currentPage: Page; setPage: (p: Page) => void }) {
+function Navigation({
+  currentPage,
+  setPage,
+}: {
+  currentPage: Page;
+  setPage: (p: Page) => void;
+}) {
   const { address, accountIndex, switchAccount, isConnected } = useWeb3();
   const accounts = useAnvilAccounts();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const navItems = currentPage === "landing"
-    ? []
-    : [
-        { name: "Faucet", link: "faucet" },
-        { name: "Create", link: "create" },
-        { name: "Mortgages", link: "mortgages" },
-      ];
+  const navItems =
+    currentPage === "landing"
+      ? []
+      : [
+          { name: "Faucet", link: "faucet" },
+          { name: "Create", link: "create" },
+          { name: "Mortgages", link: "mortgages" },
+        ];
 
   const handleNavClick = (link: string) => {
     setPage(link as Page);
@@ -85,7 +106,10 @@ function Navigation({ currentPage, setPage }: { currentPage: Page; setPage: (p: 
   return (
     <Navbar className="px-4" menuOpen={mobileMenuOpen}>
       <NavBody>
-        <AncientBrand onClick={() => setPage("landing")} showBadge={currentPage !== "landing"} />
+        <AncientBrand
+          onClick={() => setPage("landing")}
+          showBadge={currentPage !== "landing"}
+        />
         {currentPage !== "landing" && (
           <>
             <NavItems
@@ -93,7 +117,12 @@ function Navigation({ currentPage, setPage }: { currentPage: Page; setPage: (p: 
               currentPath={currentPage}
               onItemClick={() => {}}
               LinkComponent={({ href, children, ...props }) => (
-                <button {...props} onClick={() => handleNavClick(href as string)}>{children}</button>
+                <button
+                  {...props}
+                  onClick={() => handleNavClick(href as string)}
+                >
+                  {children}
+                </button>
               )}
             />
             <div className="flex items-center gap-3">
@@ -109,7 +138,11 @@ function Navigation({ currentPage, setPage }: { currentPage: Page; setPage: (p: 
                   </SelectTrigger>
                   <SelectContent className="bg-card border-border">
                     {accounts.map(({ address: addr, index }) => (
-                      <SelectItem key={index} value={index.toString()} className="text-xs font-mono">
+                      <SelectItem
+                        key={index}
+                        value={index.toString()}
+                        className="text-xs font-mono"
+                      >
                         #{index}: {addr.slice(0, 6)}...{addr.slice(-4)}
                       </SelectItem>
                     ))}
@@ -126,12 +159,24 @@ function Navigation({ currentPage, setPage }: { currentPage: Page; setPage: (p: 
 
       <MobileNav>
         <MobileNavHeader>
-          <AncientBrand onClick={() => setPage("landing")} showBadge={currentPage !== "landing"} />
-          <MobileNavToggle isOpen={mobileMenuOpen} onClick={() => setMobileMenuOpen(!mobileMenuOpen)} />
+          <AncientBrand
+            onClick={() => setPage("landing")}
+            showBadge={currentPage !== "landing"}
+          />
+          <MobileNavToggle
+            isOpen={mobileMenuOpen}
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          />
         </MobileNavHeader>
         <MobileNavMenu isOpen={mobileMenuOpen}>
           {currentPage === "landing" ? (
-            <LaunchAppButton onClick={() => { setPage("faucet"); setMobileMenuOpen(false); }} className="w-full justify-center" />
+            <LaunchAppButton
+              onClick={() => {
+                setPage("faucet");
+                setMobileMenuOpen(false);
+              }}
+              className="w-full justify-center"
+            />
           ) : (
             <>
               {navItems.map((item) => (
@@ -149,7 +194,9 @@ function Navigation({ currentPage, setPage }: { currentPage: Page; setPage: (p: 
               ))}
               {isConnected && (
                 <div className="w-full px-4 pt-2 border-t border-border">
-                  <span className="text-xs text-muted-foreground mb-2 block">Account:</span>
+                  <span className="text-xs text-muted-foreground mb-2 block">
+                    Account:
+                  </span>
                   <Select
                     value={accountIndex.toString()}
                     onValueChange={(v) => switchAccount(parseInt(v))}
@@ -161,7 +208,11 @@ function Navigation({ currentPage, setPage }: { currentPage: Page; setPage: (p: 
                     </SelectTrigger>
                     <SelectContent className="bg-card border-border">
                       {accounts.map(({ address: addr, index }) => (
-                        <SelectItem key={index} value={index.toString()} className="text-xs font-mono">
+                        <SelectItem
+                          key={index}
+                          value={index.toString()}
+                          className="text-xs font-mono"
+                        >
                           #{index}: {addr.slice(0, 6)}...{addr.slice(-4)}
                         </SelectItem>
                       ))}
@@ -176,11 +227,6 @@ function Navigation({ currentPage, setPage }: { currentPage: Page; setPage: (p: 
     </Navbar>
   );
 }
-
-const footerLinks = [
-  { name: "GitHub", href: "https://github.com/ancientsh", icon: Github, showLabel: false },
-  { name: "Twitter", href: "https://x.com/ancientsh", icon: Twitter, showLabel: false },
-];
 
 function AppContent() {
   const [currentPage, setPage] = useState<Page>("landing");
@@ -207,12 +253,7 @@ function AppContent() {
         </div>
       </main>
 
-      <Footer
-        links={footerLinks}
-        builtByText="Built by"
-        builtByBrand="Ancient"
-        showLogo={true}
-      />
+      <Footer />
     </div>
   );
 }
