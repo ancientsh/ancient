@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, Button, Input } from "liquidcn";
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, Button } from "liquidcn";
 import { Label } from "liquidcn/client";
-import { Shield, Upload, CheckCircle, Loader2 } from "lucide-react";
+import { Shield, CheckCircle, Loader2 } from "lucide-react";
 
 interface KycModalProps {
   isOpen: boolean;
@@ -9,30 +9,42 @@ interface KycModalProps {
   onContinue: () => void;
 }
 
+const STORAGE_KEY = "ancient_kyc_verified_session";
+
 export function KycModal({ isOpen, onClose, onContinue }: KycModalProps) {
   const [step, setStep] = useState<"form" | "verifying" | "verified">("form");
-  const [fullName, setFullName] = useState("");
-  const [country, setCountry] = useState("");
-  const [idDocument, setIdDocument] = useState<File | null>(null);
 
-  const handleSubmit = () => {
-    if (!fullName || !country) return;
+  // Prefilled KYC data for demonstration
+  const kycData = {
+    fullName: "John Doe",
+    country: "United States",
+    idDocument: "passport.pdf",
+  };
 
+  // Check sessionStorage when modal opens
+  useEffect(() => {
+    const stored = sessionStorage.getItem(STORAGE_KEY);
+    if (stored === "true") {
+      setStep("verified");
+    } else {
+      setStep("form");
+    }
+  }, [isOpen]);
+
+  const handleConfirm = () => {
     setStep("verifying");
 
     // Simulate verification delay
     setTimeout(() => {
+      // Persist verified state to sessionStorage
+      sessionStorage.setItem(STORAGE_KEY, "true");
       setStep("verified");
-    }, 2000);
+    }, 1500);
   };
 
   const handleContinue = () => {
-    // Reset state for next time
-    setStep("form");
-    setFullName("");
-    setCountry("");
-    setIdDocument(null);
     onContinue();
+    onClose();
   };
 
   if (!isOpen) return null;
@@ -62,68 +74,37 @@ export function KycModal({ isOpen, onClose, onContinue }: KycModalProps) {
         <CardContent className="space-y-6">
           {step === "form" && (
             <>
-              {/* Full Name */}
+              {/* Demo notice */}
+              <div className="rounded-lg bg-primary/5 border border-primary/20 p-3 text-center">
+                <p className="text-sm text-muted-foreground">
+                  <span className="font-semibold text-primary">Demonstration Mode</span>
+                  <br />
+                  KYC data is prefilled for testing purposes
+                </p>
+              </div>
+
+              {/* Full Name (read-only) */}
               <div className="space-y-2">
                 <Label htmlFor="fullName">Full Legal Name</Label>
-                <Input
-                  id="fullName"
-                  type="text"
-                  placeholder="John Doe"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="h-11 bg-muted/30 border-border"
-                />
+                <div className="flex h-11 w-full rounded-md border border-border bg-muted/20 px-3 py-2 text-sm text-muted-foreground">
+                  {kycData.fullName}
+                </div>
               </div>
 
-              {/* Country */}
+              {/* Country (read-only) */}
               <div className="space-y-2">
                 <Label htmlFor="country">Country of Residence</Label>
-                <select
-                  id="country"
-                  value={country}
-                  onChange={(e) => setCountry(e.target.value)}
-                  className="flex h-11 w-full rounded-md border border-border bg-muted/30 px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  <option value="">Select a country</option>
-                  <option value="US">United States</option>
-                  <option value="CA">Canada</option>
-                  <option value="GB">United Kingdom</option>
-                  <option value="DE">Germany</option>
-                  <option value="FR">France</option>
-                  <option value="ES">Spain</option>
-                  <option value="IT">Italy</option>
-                  <option value="PT">Portugal</option>
-                  <option value="MX">Mexico</option>
-                  <option value="BR">Brazil</option>
-                  <option value="AR">Argentina</option>
-                  <option value="CO">Colombia</option>
-                  <option value="CR">Costa Rica</option>
-                  <option value="PA">Panama</option>
-                  <option value="AE">United Arab Emirates</option>
-                  <option value="SG">Singapore</option>
-                  <option value="AU">Australia</option>
-                  <option value="NZ">New Zealand</option>
-                  <option value="OTHER">Other</option>
-                </select>
+                <div className="flex h-11 w-full rounded-md border border-border bg-muted/20 px-3 py-2 text-sm text-muted-foreground">
+                  {kycData.country}
+                </div>
               </div>
 
-              {/* ID Upload */}
+              {/* ID Document (read-only) */}
               <div className="space-y-2">
-                <Label htmlFor="idDocument">Government ID (Placeholder)</Label>
-                <div
-                  className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary/50 transition-colors cursor-pointer bg-muted/30"
-                  onClick={() => {
-                    // Placeholder - in production this would trigger file upload
-                    setIdDocument({ name: "passport.pdf" } as File);
-                  }}
-                >
-                  <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
-                  <p className="text-sm text-muted-foreground">
-                    {idDocument ? idDocument.name : "Click to upload passport or driver's license"}
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    PDF, JPG, PNG (Max 5MB)
-                  </p>
+                <Label htmlFor="idDocument">Government ID</Label>
+                <div className="flex h-11 w-full rounded-md border border-border bg-muted/20 px-3 py-2 text-sm text-muted-foreground items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                  {kycData.idDocument}
                 </div>
               </div>
 
@@ -146,11 +127,10 @@ export function KycModal({ isOpen, onClose, onContinue }: KycModalProps) {
                   Cancel
                 </Button>
                 <Button
-                  onClick={handleSubmit}
-                  disabled={!fullName || !country}
+                  onClick={handleConfirm}
                   className="flex-1 h-11 font-semibold"
                 >
-                  Verify Identity
+                  Confirm & Verify
                 </Button>
               </div>
             </>
@@ -183,7 +163,7 @@ export function KycModal({ isOpen, onClose, onContinue }: KycModalProps) {
                 onClick={handleContinue}
                 className="w-full h-11 font-semibold"
               >
-                Continue to Purchase
+                Continue
               </Button>
             </div>
           )}

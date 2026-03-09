@@ -245,6 +245,14 @@ export function CreateMortgageForm({ showCard = true, onSuccess }: CreateMortgag
   const [kycModalOpen, setKycModalOpen] = useState(false);
   const [kycVerified, setKycVerified] = useState(false);
 
+  // Check sessionStorage for KYC verified state on mount
+  useEffect(() => {
+    const stored = sessionStorage.getItem("ancient_kyc_verified_session");
+    if (stored === "true") {
+      setKycVerified(true);
+    }
+  }, []);
+
   // Fetch properties and metadata from contract
   const fetchProperties = useCallback(async () => {
     if (!publicClient) return;

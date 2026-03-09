@@ -34,7 +34,7 @@ contract Deploy is Script {
     // These match the properties in public/properties.json
     uint256 constant PROPERTY_0_VALUE = 129_000 * 1e6;  // $129,000 - Art Deco Loft
     uint256 constant PROPERTY_1_VALUE = 225_000 * 1e6;  // $225,000 - Beachfront Paradise
-    uint256 constant PROPERTY_2_VALUE = 95_000 * 1e6;   // $95,000 - Ocean Bungalow
+    uint256 constant PROPERTY_2_VALUE = 95_000 * 1e6;   // $95,000 - Jungle Cabin
     uint256 constant PROPERTY_3_VALUE = 185_000 * 1e6;  // $185,000 - Hillside Villa
 
     // Base URI for property metadata (served from /public/properties.json)
@@ -117,7 +117,7 @@ contract Deploy is Script {
         );
         console.log("Property 1 registered with ID:", prop1);
 
-        // Property 2: Ocean Bungalow - $95,000
+        // Property 2: Jungle Cabin - $95,000
         uint256 prop2 = propertyOracle.registerProperty(
             "Bahia, Brazil",
             PROPERTY_2_VALUE,
@@ -185,7 +185,7 @@ contract Deploy is Script {
         console.log("Sample Properties (matching public/properties.json):");
         console.log("  ID 0: $129,000 - Art Deco Loft, Mazunte, Mexico");
         console.log("  ID 1: $225,000 - Beachfront Paradise, Tulum, Mexico");
-        console.log("  ID 2: $95,000 - Ocean Bungalow, Bahia, Brazil");
+        console.log("  ID 2: $95,000 - Jungle Cabin, Bahia, Brazil");
         console.log("  ID 3: $185,000 - Hillside Villa, Sacred Valley, Peru");
         console.log("=========================================\n");
     }
