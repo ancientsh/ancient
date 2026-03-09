@@ -4,6 +4,7 @@
     "name": "Art Deco Loft",
     "location": "Tulum, Mexico",
     "imageUrl": "/public/tulum.jpeg",
+    "description": "Stunning Art Deco-inspired loft nestled in the jungle near Tulum's pristine beaches. Features open-concept living, rooftop terrace, and modern amenities surrounded by ancient Mayan culture.",
     "networkInvestment": {
       "citizenshipCost": 29670,
       "monthlyNetworkYield": 764,
@@ -17,6 +18,7 @@
     "name": "Beachfront Paradise",
     "location": "Cancun, Mexico",
     "imageUrl": "/public/mexico_beachfront.jpg",
+    "description": "Luxurious beachfront property with panoramic Caribbean views. Direct beach access, infinity pool, and premium finishes throughout. Perfect for vacation rentals or permanent residence.",
     "networkInvestment": {
       "citizenshipCost": 45000,
       "monthlyNetworkYield": 1350,
@@ -30,6 +32,7 @@
     "name": "Ocean Bungalow",
     "location": "Playa del Carmen, Mexico",
     "imageUrl": "/public/a-frame.jpeg",
+    "description": "Charming A-frame bungalow with ocean breezes and tropical gardens. Modern design meets coastal living with spacious deck, outdoor shower, and walking distance to beaches and Fifth Avenue.",
     "networkInvestment": {
       "citizenshipCost": 19000,
       "monthlyNetworkYield": 580,
@@ -43,6 +46,7 @@
     "name": "Hillside Villa",
     "location": "Puerto Vallarta, Mexico",
     "imageUrl": "/public/tony-stark.jpeg",
+    "description": "Architectural masterpiece perched on the hills of Puerto Vallarta. Floor-to-ceiling windows, panoramic bay views, and resort-style amenities. A true sanctuary of luxury and privacy.",
     "networkInvestment": {
       "citizenshipCost": 37000,
       "monthlyNetworkYield": 1120,

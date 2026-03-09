@@ -49,12 +49,10 @@ function AncientBrand({
         e.stopPropagation();
         onClick();
       }}
-      className="group relative z-50 flex items-center gap-2.5 px-1 py-1 cursor-pointer"
+      className="group relative z-50 flex items-center gap-2 px-1 py-1 cursor-pointer"
     >
-      <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 group-hover:bg-primary/20 group-hover:scale-105 transition-all duration-200 p-1">
-        <img src={logo} alt="Ancient" className="w-full h-full invert" />
-      </div>
-      <span className="text-xl font-bold text-foreground group-hover:text-primary transition-colors duration-200">
+      <img src={logo} alt="Ancient" className="w-8 h-8 invert" />
+      <span className="text-xl font-bold text-foreground group-hover:text-primary transition-colors duration-200" style={{ fontFamily: 'var(--font-brand)', letterSpacing: '0.05em' }}>
         Ancient
       </span>
       {showBadge && (

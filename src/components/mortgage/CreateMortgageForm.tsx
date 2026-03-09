@@ -29,6 +29,7 @@ import {
   anvilChain,
 } from "../../contracts";
 import { PropertyCard, type PropertyMetadata } from "@/components/properties/PropertyCard";
+import { KycModal } from "@/components/mortgage/KycModal";
 import {
   Building2,
   Calculator,
@@ -43,6 +44,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Banknote,
+  Shield,
 } from "lucide-react";
 
 // Import Swiper styles
@@ -240,6 +242,8 @@ export function CreateMortgageForm({ showCard = true, onSuccess }: CreateMortgag
 
   const [isLoading, setIsLoading] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
+  const [kycModalOpen, setKycModalOpen] = useState(false);
+  const [kycVerified, setKycVerified] = useState(false);
 
   // Fetch properties and metadata from contract
   const fetchProperties = useCallback(async () => {
@@ -398,6 +402,12 @@ export function CreateMortgageForm({ showCard = true, onSuccess }: CreateMortgag
 
   // Create mortgage
   const createMortgage = async () => {
+    // Show KYC modal first if not verified
+    if (!kycVerified) {
+      setKycModalOpen(true);
+      return;
+    }
+
     if (!walletClient || !account || !selectedPropertyId || !preview) return;
     setIsLoading(true);
     try {
@@ -431,6 +441,14 @@ export function CreateMortgageForm({ showCard = true, onSuccess }: CreateMortgag
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Handle KYC completion
+  const handleKycContinue = () => {
+    setKycVerified(true);
+    setKycModalOpen(false);
+    // Proceed with mortgage creation after KYC
+    createMortgage();
   };
 
   const selectedProperty = properties.find(p => p.id.toString() === selectedPropertyId);
@@ -639,31 +657,40 @@ export function CreateMortgageForm({ showCard = true, onSuccess }: CreateMortgag
             )}
           </Button>
         )}
-        <Button
-          onClick={createMortgage}
-          disabled={isLoading || !preview || isWhitelisted !== true || insufficientBalance === true || needsApproval}
-          className="w-full sm:flex-1 h-11 sm:h-12 text-sm sm:text-base font-semibold transition-all hover:shadow-lg hover:shadow-primary/20"
-          size="lg"
-        >
-          {isLoading ? (
-            <>
-              <RefreshCw className="mr-2 h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
-              Creating...
-            </>
-          ) : (
-            <>
-              <Building2 className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-              Create Mortgage
-            </>
+        <div className="flex-1 flex flex-col gap-2">
+          <Button
+            onClick={createMortgage}
+            disabled={isLoading || !preview || isWhitelisted !== true || insufficientBalance === true || needsApproval}
+            className="w-full h-11 sm:h-12 text-sm sm:text-base font-semibold transition-all hover:shadow-lg hover:shadow-primary/20"
+            size="lg"
+          >
+            {isLoading ? (
+              <>
+                <RefreshCw className="mr-2 h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
+                Creating...
+              </>
+            ) : (
+              <>
+                <Building2 className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                {kycVerified ? "Create Mortgage" : "Verify Identity & Create Mortgage"}
+              </>
+            )}
+          </Button>
+          {!kycVerified && (
+            <p className="text-xs text-muted-foreground text-center">
+              <Shield className="w-3 h-3 inline mr-1" />
+              Quick identity verification required before purchase
+            </p>
           )}
-        </Button>
+        </div>
       </div>
     </>
   );
 
   if (showCard) {
     return (
-      <Card isGlass className="shadow-xl border-border/50 transition-shadow hover:shadow-2xl">
+      <>
+        <Card isGlass className="shadow-xl border-border/50 transition-shadow hover:shadow-2xl">
         <CardHeader className="space-y-4 pb-2">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
@@ -857,34 +884,55 @@ export function CreateMortgageForm({ showCard = true, onSuccess }: CreateMortgag
               )}
             </Button>
           )}
-          <Button
-            onClick={createMortgage}
-            disabled={isLoading || !preview || isWhitelisted !== true || insufficientBalance === true || needsApproval}
-            className="w-full sm:flex-1 h-11 sm:h-12 text-sm sm:text-base font-semibold transition-all hover:shadow-lg hover:shadow-primary/20"
-            size="lg"
-          >
-            {isLoading ? (
-              <>
-                <RefreshCw className="mr-2 h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
-                Creating...
-              </>
-            ) : (
-              <>
-                <Building2 className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                Create Mortgage
-              </>
+          <div className="flex-1 flex flex-col gap-2 w-full sm:w-auto">
+            <Button
+              onClick={createMortgage}
+              disabled={isLoading || !preview || isWhitelisted !== true || insufficientBalance === true || needsApproval}
+              className="w-full h-11 sm:h-12 text-sm sm:text-base font-semibold transition-all hover:shadow-lg hover:shadow-primary/20"
+              size="lg"
+            >
+              {isLoading ? (
+                <>
+                  <RefreshCw className="mr-2 h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                <>
+                  <Building2 className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                  {kycVerified ? "Create Mortgage" : "Verify Identity & Create Mortgage"}
+                </>
+              )}
+            </Button>
+            {!kycVerified && (
+              <p className="text-xs text-muted-foreground text-center">
+                <Shield className="w-3 h-3 inline mr-1" />
+                Quick identity verification required before purchase
+              </p>
             )}
-          </Button>
+          </div>
         </CardFooter>
       </Card>
-    );
+      <KycModal
+        isOpen={kycModalOpen}
+        onClose={() => setKycModalOpen(false)}
+        onContinue={handleKycContinue}
+      />
+    </>
+  );
   }
 
   // Non-card variant
   return (
-    <div className="space-y-6">
-      {formContent}
-    </div>
+    <>
+      <div className="space-y-6">
+        {formContent}
+      </div>
+      <KycModal
+        isOpen={kycModalOpen}
+        onClose={() => setKycModalOpen(false)}
+        onContinue={handleKycContinue}
+      />
+    </>
   );
 }
 

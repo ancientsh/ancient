@@ -8,6 +8,7 @@ export interface LandingProperty {
   name: string;
   location?: string; // Comes from contract, optional in JSON
   imageUrl: string;
+  description?: string;
   networkInvestment: {
     citizenshipCost: number;
     monthlyNetworkYield: number;

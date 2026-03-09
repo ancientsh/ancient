@@ -100,6 +100,7 @@ export function PropertySwiperSection({ onPropertySelect }: PropertySwiperSectio
               name: metadata?.name ?? `Property #${contractProp.id}`,
               location: contractProp.location, // Use contract location as SOT
               imageUrl: metadata?.imageUrl ?? "/public/tulum.jpeg",
+              description: metadata?.description,
               currentValuation: contractProp.currentValuation, // From contract
               networkInvestment: metadata?.networkInvestment ?? {
                 listPrice: 0,
@@ -258,6 +259,13 @@ function LandingPropertyDetailsCard({
       </CardHeader>
 
       <CardContent className="space-y-4 sm:space-y-6">
+        {/* Property Description */}
+        {property.description && (
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            {property.description}
+          </p>
+        )}
+
         {/* Stats Grid */}
         <div className="grid grid-cols-2 gap-3 sm:gap-4">
           <div>
@@ -301,7 +309,7 @@ function LandingPropertyDetailsCard({
           className="h-10 sm:h-12 w-full text-sm sm:text-base font-semibold"
           size="lg"
         >
-          Become a Citizen
+          Buy with Mortgage
         </Button>
       </CardContent>
     </Card>

@@ -16,7 +16,7 @@ export function BenefitsSection() {
     {
       icon: Landmark,
       title: "Early Governance",
-      subtitle: "Rights & staking benefits",
+      subtitle: "Rights",
       description: "",
     },
     {
@@ -47,7 +47,9 @@ export function BenefitsSection() {
                 <div className="mb-3 sm:mb-4 flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-primary/10">
                   <benefit.icon className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
                 </div>
-                <h3 className="mb-1 sm:mb-2 text-xl sm:text-2xl font-bold">{benefit.title}</h3>
+                <h3 className="mb-1 sm:mb-2 text-xl sm:text-2xl font-bold">
+                  {benefit.title}
+                </h3>
                 <p className="mb-1 text-sm sm:text-base font-semibold text-muted-foreground">
                   {benefit.subtitle}
                 </p>

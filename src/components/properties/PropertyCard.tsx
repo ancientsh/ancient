@@ -7,6 +7,7 @@ export interface PropertyMetadata {
   name: string;
   location: string;
   imageUrl: string;
+  description?: string;
   availability?: {
     sold: number;
     total: number;
