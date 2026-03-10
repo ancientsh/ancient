@@ -4,6 +4,8 @@
 
 A full-stack DeFi protocol that tokenizes mortgage positions, enabling compliant real estate financing through NFT-backed loans.
 
+**[📄 Read the Litepaper →](LITEPAPER.md)**
+
 ---
 
 ## Stack
